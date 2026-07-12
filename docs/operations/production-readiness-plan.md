@@ -82,15 +82,15 @@ Definition of done:
 
 ## 6. Initial administrator account policy
 
-- Bootstrap one administrator through environment-controlled seed or a one-time admin creation runbook.
-- Force password rotation immediately after first login where the product flow supports it; until then, rotate through operations procedure.
+- Bootstrap one production administrator through `scripts/bootstrap-admin.ps1` or `python -m app.admin_bootstrap`; keep demo seed accounts separate from production access.
+- Force password rotation immediately after first login where the product flow supports it; until then, rotate by re-running the production bootstrap for the same active administrator email or through an approved operations procedure.
 - Use a unique email alias controlled by the operating organization.
 - Disable or remove sample users and sample inquiries before external production.
-- Record all administrator changes through audit logs.
+- Record CMS administrator changes through audit logs; record out-of-band bootstrap and password rotation events in the operations log.
 
 Definition of done:
 
-- Initial admin creation procedure is documented.
+- Initial admin creation procedure is documented in [Production administrator bootstrap](admin-bootstrap.md).
 - Sample accounts are removed, disabled, or isolated from production.
 - At least two authorized operators can recover admin access without sharing a password.
 
@@ -227,7 +227,7 @@ Items that still require formal decision or implementation:
 | Approve hosting baseline | Cloud VM + Docker Compose, single VPS exception, or PaaS choice is approved by operations and security; deployment architecture docs updated |
 | Approve RPO/RTO | Numeric RPO/RTO recorded; `scripts/backup-postgres.ps1` or equivalent backup schedule configured; first isolated restore drill using `scripts/restore-postgres.ps1` passes |
 | Establish production secrets process | Secret inventory, owners, storage location, and rotation procedure are documented; no secrets in Git/logs |
-| Initial admin runbook | Admin bootstrap, rotation, recovery, and sample-account removal procedure is documented and tested |
+| Initial admin runbook | `scripts/bootstrap-admin.ps1`, rotation behavior, recovery expectations, and sample-account removal procedure are documented and tested |
 | Production domain and HTTPS | DNS, TLS, redirect, and exact CORS are configured and verified |
 | Monitoring minimum viable dashboard | Readiness, 5xx, latency, database disk, backup age, and alert route are visible and tested |
 | Rollback rehearsal | Previous tag redeploy and health smoke pass in a rehearsal environment |

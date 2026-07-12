@@ -28,6 +28,10 @@ The script builds backend/frontend images in an isolated Compose project, starts
 
 Docker unavailable is reported as `BLOCKED` with exit code 2. A runtime, build, readiness, smoke, persistence, log, or cleanup failure is reported as `FAIL` with exit code 1.
 
+## Production administrator bootstrap
+
+Use [Production administrator bootstrap](admin-bootstrap.md) to create or rotate the first real operator account. The `ADMIN_EMAIL` and `ADMIN_PASSWORD` settings are for demo seed data only; production bootstrap uses `PRODUCTION_ADMIN_EMAIL`, `PRODUCTION_ADMIN_INITIAL_PASSWORD`, and `PRODUCTION_ADMIN_NAME`.
+
 ## PostgreSQL backup and restore
 
 Use [Backup and restore](backup-restore.md) for the Docker Compose PostgreSQL runbook.
