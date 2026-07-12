@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-07-12",
+  "policy": "reference-only / reuse-prohibited",
+  "downloaded_files": [],
+  "resources": [
+    {"url": "https://i-nuri.go.kr/teacher/index.do", "type": "public-html", "size": null, "hash": null, "license": "unclear; reuse prohibited"},
+    {"url": "https://i-nuri.go.kr/parents/index.do", "type": "public-html", "size": null, "hash": null, "license": "unclear; reuse prohibited"},
+    {"url": "https://i-nuri.go.kr/teacher/html.do?menu_idx=18", "type": "public-html", "size": null, "hash": null, "license": "copyright notice; reuse prohibited"}
+  ]
+}
