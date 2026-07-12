@@ -17,6 +17,8 @@ def test_health():
     client = TestClient(app)
     assert client.get("/health/live").json() == {"status": "ok"}
     assert client.get("/health/ready").status_code == 200
+    assert client.get("/health").json() == {"status": "ok"}
+    assert client.get("/ready").status_code == 200
 
 
 def test_register_login_and_duplicate():

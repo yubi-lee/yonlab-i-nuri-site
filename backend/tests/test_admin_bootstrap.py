@@ -78,3 +78,36 @@ def test_bootstrap_admin_rejects_weak_password():
             raise AssertionError("weak password was accepted")
 
         assert count_admins(db) == 0
+
+def test_bootstrap_admin_rotates_same_active_admin_email_without_duplicate():
+    with make_session() as db:
+        db.add(
+            User(
+                email="owner@example.test",
+                name="Old Owner",
+                password_hash=hash_password("OldOwner!234567"),
+                role=Role.admin,
+            )
+        )
+        db.commit()
+        before = db.scalar(select(User).where(User.email == "owner@example.test"))
+        assert before is not None
+        old_hash = before.password_hash
+
+        result = bootstrap_admin(
+            db,
+            email="OWNER@example.test",
+            password="Fresh!Bootstrap2026",
+            name="Rotated Owner",
+        )
+
+        user = db.scalar(select(User).where(User.email == "owner@example.test"))
+        assert result.created is False
+        assert result.reason == "admin_rotated"
+        assert result.email == "owner@example.test"
+        assert count_admins(db) == 1
+        assert user is not None
+        assert user.name == "Rotated Owner"
+        assert user.password_hash != old_hash
+        assert verify_password("Fresh!Bootstrap2026", user.password_hash)
+        assert "Fresh!Bootstrap2026" not in result.message

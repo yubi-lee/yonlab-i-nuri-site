@@ -60,3 +60,14 @@ The restore script validates that the file exists, is non-empty, uses the `.dump
 - Assign an accountable restore owner.
 - Back up future uploaded attachments separately with checksums until object storage is adopted.
 - Record first restore drill evidence before opening external production access.
+## Pending production decisions
+
+Local logical backup and isolated restore are executable now. The following remain pending external operations decisions before external production access:
+
+- off-host backup storage provider or vault;
+- encryption key ownership and rotation;
+- retention automation and deletion approval;
+- backup age monitoring and alert routing;
+- restore drill owner and quarterly cadence.
+
+Backup age monitoring should alert when the newest approved production backup is older than the RPO threshold. The current pilot proposal is daily backup with an alert when backup age exceeds 30 hours.

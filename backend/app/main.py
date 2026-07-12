@@ -85,11 +85,13 @@ async def safe_error(_: Request, exc: Exception):
 
 
 
+@app.get("/health", tags=["health"])
 @app.get("/health/live", tags=["health"])
 def live():
     return {"status": "ok"}
 
 
+@app.get("/ready", tags=["health"])
 @app.get("/health/ready", tags=["health"])
 def ready(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))

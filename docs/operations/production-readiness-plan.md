@@ -35,7 +35,7 @@ Single VPS remains acceptable for a time-boxed internal pilot, not for external 
 - Use Let's Encrypt or cloud-managed certificates with automatic renewal.
 - Enforce HTTP to HTTPS redirect.
 - Set production CORS to the exact frontend origin only.
-- Keep `/health/live` and `/health/ready` available for platform health checks, but do not expose internal diagnostics.
+- Keep `/health` and `/health/live` available for liveness; keep `/ready` and `/health/ready` available for dependency readiness. Do not expose internal diagnostics.
 
 Definition of done:
 
@@ -73,6 +73,8 @@ Definition of done:
 - `JWT_SECRET` must be generated with high entropy and rotated through a documented maintenance window.
 - Local development may use `.env`, but production values must not be copied into development machines or screenshots.
 - Verification scripts may use dummy values only.
+- Use `.env.production.example` as the production handoff template; filled production env files remain outside Git.
+- Use `scripts/verify-production-readiness.ps1` to check required keys, placeholder replacement, Compose config, operations artifacts, and runtime endpoints without printing secret values.
 
 Definition of done:
 
@@ -148,7 +150,7 @@ Minimum production signals:
 
 Initial alert thresholds:
 
-- `/health/ready` fails for 3 consecutive checks.
+- `/ready` or `/health/ready` fails for 3 consecutive checks.
 - HTTP 5xx rate exceeds 2% for 10 minutes.
 - Database disk usage exceeds 75% warning and 85% critical.
 - Backup age exceeds 30 hours for daily backup policy.
@@ -175,7 +177,7 @@ Incident procedure:
 - Freeze non-essential changes.
 - Capture current tag, container status, logs, database backup age, and user-visible impact.
 - Choose rollback level.
-- Verify `/health/ready`, login, search, resource detail, admin dashboard, and inquiry flow after rollback.
+- Verify `/health`, `/ready`, login, search, resource detail, admin dashboard, and inquiry flow after rollback.
 - Record post-incident review and prevention action.
 
 Definition of done:
@@ -192,7 +194,7 @@ Definition of done:
 | PC-002 Email Provider / selection criteria | Defines provider selection criteria and operational controls | Partially addressed | Select provider or approve provider-agnostic criteria; add email contract tests and update auth/privacy docs |
 | PC-003 RPO/RTO objectives | Proposes numeric RPO/RTO and drill cadence | Addressable by approval | Product/operations must approve objectives and record first restore drill |
 | PC-004 Search expansion criteria | Defines an operational review trigger for search expansion below | Partially addressed | Approve thresholds and update search/API verification docs |
-| PC-005 Hosting platform | Recommends Cloud VM + Docker Compose for first production | Addressable by approval | Operations/security must approve platform and update deployment architecture/runbook |
+| PC-005 Hosting platform | Recommends Cloud VM + Docker Compose and documents a reproducible handoff runbook | Partially addressed | Operations/security must formally approve the platform and record server-specific DNS/TLS details |
 | PC-006 CI/CD platform | Defines CI/CD as P1 backlog with gates and rollback evidence | Not resolved | Choose CI/CD platform and map pipeline gates to quality gates |
 | PC-007 Affected design doc updates | Lists affected documents to update after approvals | Not resolved | Update DOC/CDD/ICD/SEC/OPS/VER docs after PC-001 through PC-006 approvals |
 | PC-008 Design-document verification | This work will run design-doc verification | Verification evidence only | Re-run after all affected design docs are updated |
@@ -213,7 +215,7 @@ Items that still require formal decision or implementation:
 - PC-002 provider approval and email contract tests.
 - PC-003 formal RPO/RTO owner approval and first restore drill record.
 - PC-004 formal search threshold approval and verification update.
-- PC-005 formal hosting platform approval and deployment design update.
+- PC-005 formal hosting platform approval and server-specific DNS/TLS record.
 - PC-006 CI/CD platform decision.
 - PC-007 updates to affected design documents.
 - PC-009 final internal CDR disposition.

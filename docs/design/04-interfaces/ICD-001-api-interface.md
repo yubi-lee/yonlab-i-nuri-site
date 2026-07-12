@@ -15,7 +15,9 @@
 
 | Method | Path | Auth | Input | Output | Success |
 |---|---|---|---|---|---|
+| GET | `/health` | None | None | Health document | Process is alive |
 | GET | `/health/live` | None | None | Health document | Process is alive |
+| GET | `/ready` | None | None | Dependency readiness | Required dependencies are ready |
 | GET | `/health/ready` | None | None | Dependency readiness | Required dependencies are ready |
 | POST | `/auth/register` | None | email, name, password | Token session | User account created |
 | POST | `/auth/login` | None | email, password | Token session | Valid credentials |
