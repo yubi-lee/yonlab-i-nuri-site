@@ -32,3 +32,13 @@ docker compose exec backend python -m app.seed
 ```
 
 E2E? ? ?? ?? ? `npm run e2e --prefix frontend`? ?????. ??? ??? `docs/qa/test-report.md`? ?????.
+
+## Production Target Design
+
+The production-ready target system design starts at [docs/design/README.md](docs/design/README.md). It defines the intended architecture, requirements, CDD/ICD set, data model, security, operations, verification strategy, and CDR package.
+
+Validate the design documentation with:
+
+```powershell
+.\scripts\verify-design-docs.ps1
+```

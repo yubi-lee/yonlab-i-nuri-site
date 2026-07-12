@@ -28,9 +28,11 @@ function WaitReady([string]$Url, [int]$TimeoutSeconds = 45) {
 try {
     $required = @(".\.venv\Scripts\ruff.exe", ".\.venv\Scripts\python.exe", "frontend\node_modules\.bin\vite.cmd", "frontend\node_modules\.bin\playwright.cmd")
     foreach ($path in $required) { if (-not (Test-Path -LiteralPath $path)) { Write-Host "FAIL: missing required command $path"; $failed = $true } }
+    if (-not (Test-Path -LiteralPath '.\scripts\verify-design-docs.ps1')) { Write-Host 'FAIL: missing required command .\scripts\verify-design-docs.ps1'; $failed = $true }
     Write-Host "RESULT: failed=$failed blocked=$blocked"
 if ($failed) { exit 1 }
 
+    Gate "production target design documentation" { & .\scripts\verify-design-docs.ps1 }
     Gate "Ruff" { & .\.venv\Scripts\ruff.exe check backend }
     Gate "Pytest" { & .\.venv\Scripts\python.exe -m pytest backend\tests -q }
     Gate "ESLint" { npm run lint --prefix frontend }
