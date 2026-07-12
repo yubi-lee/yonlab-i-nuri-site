@@ -54,6 +54,8 @@ Initial production objective proposal:
 - Backup retention: 7 daily, 4 weekly, 3 monthly copies for production.
 - Backup storage: off-host object storage or cloud backup vault; never only on the application VM.
 - Recovery drills: at least once before launch and then quarterly.
+- Current automation: `scripts/backup-postgres.ps1` creates timestamped custom-format dumps from the Docker Compose `postgres` service; `scripts/restore-postgres.ps1` restores an explicitly named dump only after an interactive confirmation or `-Force`.
+- Runbook: [Backup and restore](backup-restore.md).
 
 Definition of done:
 
@@ -61,6 +63,7 @@ Definition of done:
 - Application starts against the restored database.
 - Admin login, resource search, inquiry list, and health endpoints are verified after restore.
 - Drill result is recorded in operations notes.
+- Backup artifacts are excluded from Git and copied to off-host storage before production use.
 
 ## 5. `.env` and secrets policy
 
@@ -222,7 +225,7 @@ Items that still require formal decision or implementation:
 | Item | Definition of done |
 |---|---|
 | Approve hosting baseline | Cloud VM + Docker Compose, single VPS exception, or PaaS choice is approved by operations and security; deployment architecture docs updated |
-| Approve RPO/RTO | Numeric RPO/RTO recorded; backup schedule configured; first restore drill passes |
+| Approve RPO/RTO | Numeric RPO/RTO recorded; `scripts/backup-postgres.ps1` or equivalent backup schedule configured; first isolated restore drill using `scripts/restore-postgres.ps1` passes |
 | Establish production secrets process | Secret inventory, owners, storage location, and rotation procedure are documented; no secrets in Git/logs |
 | Initial admin runbook | Admin bootstrap, rotation, recovery, and sample-account removal procedure is documented and tested |
 | Production domain and HTTPS | DNS, TLS, redirect, and exact CORS are configured and verified |

@@ -19,3 +19,4 @@ docs/qa/screenshots/*.png
 frontend/tsconfig.tsbuildinfo
 backend/*.egg-info/
 storage/
+backups/

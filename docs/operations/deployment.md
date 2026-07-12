@@ -27,3 +27,14 @@ Run the containerized deployment gate before release handoff:
 The script builds backend/frontend images in an isolated Compose project, starts PostgreSQL/backend/frontend on verification ports 18080/18081, checks backend and frontend readiness, verifies Alembic/seed/API smoke behavior, restarts services in dependency order, confirms data persists across restart, scans container logs for fatal markers, and removes only the resources it created.
 
 Docker unavailable is reported as `BLOCKED` with exit code 2. A runtime, build, readiness, smoke, persistence, log, or cleanup failure is reported as `FAIL` with exit code 1.
+
+## PostgreSQL backup and restore
+
+Use [Backup and restore](backup-restore.md) for the Docker Compose PostgreSQL runbook.
+
+```powershell
+.\scripts\backup-postgres.ps1
+.\scripts\restore-postgres.ps1 -BackupFile .\backups\<backup-file>.dump
+```
+
+Restore is destructive and requires either the interactive `RESTORE` confirmation or an explicit `-Force` flag. Run restore verification in an isolated Compose project or fresh deploy environment, not against an operator's active local project.
