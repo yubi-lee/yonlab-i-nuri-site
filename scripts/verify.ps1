@@ -182,6 +182,8 @@ try {
     $started += $frontend
     if (-not (WaitReady "http://127.0.0.1:$backendPort/health/ready") -or -not (WaitReady "http://127.0.0.1:$frontendPort")) { Set-Failed "E2E readiness timeout" } else { Gate "Playwright E2E" { npm run e2e --prefix frontend } }
     Invoke-SecretScan
+    foreach ($process in $started) { if ($process -and -not $process.HasExited) { StopTree $process.Id } }
+    $started = @()
     git status --short
     if (Get-Command docker -ErrorAction SilentlyContinue) {
         try {

@@ -128,7 +128,7 @@ try {
     Set-Content -LiteralPath $overrideFile -Encoding UTF8 -Value @"
 services:
   backend:
-    ports:
+    ports: !override
       - "18080:8000"
     environment:
       JWT_SECRET: docker-verify-secret-at-least-thirty-two-characters
@@ -136,10 +136,11 @@ services:
       ADMIN_EMAIL: admin@example.com
       ADMIN_PASSWORD: AdminPass1234
   frontend:
-    ports:
+    ports: !override
       - "18081:80"
 "@
     $script:composeArgs = @("-p", $project, "-f", "docker-compose.yml", "-f", $overrideFile)
+    $started = $true
 
     Run-Step "Docker Compose config" { [void](Compose @("config", "--quiet")) }
     if ($failed) { throw "__VERIFY_STOP__" }
@@ -149,7 +150,6 @@ services:
 
     Run-Step "Docker Compose up" { [void](Compose @("up", "-d")) }
     if ($failed) { throw "__VERIFY_STOP__" }
-    $started = $true
 
     foreach ($service in @("postgres", "backend")) {
         if (Wait-ContainerReady $service) { Pass "Docker container ready: $service" } else { Fail "Docker container not ready: $service" }
