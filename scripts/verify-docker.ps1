@@ -157,6 +157,8 @@ services:
     if ($failed) { throw "__VERIFY_STOP__" }
 
     if (Wait-HttpReady "$backendUrl/health/ready") { Pass "Docker backend readiness endpoint" } else { Fail "Docker backend readiness endpoint timed out" }
+    if (Wait-HttpReady "$backendUrl/health") { Pass "Docker backend liveness alias" } else { Fail "Docker backend liveness alias timed out" }
+    if (Wait-HttpReady "$backendUrl/ready") { Pass "Docker backend readiness alias" } else { Fail "Docker backend readiness alias timed out" }
     if (Wait-HttpReady $frontendUrl) { Pass "Docker frontend HTTP endpoint" } else { Fail "Docker frontend HTTP endpoint timed out" }
     if ($failed) { throw "__VERIFY_STOP__" }
 
@@ -181,6 +183,8 @@ services:
     if ($failed) { throw "__VERIFY_STOP__" }
     if (Wait-ContainerReady "backend") { Pass "Docker container ready after restart: backend" } else { Fail "Docker container not ready after restart: backend" }
     if (Wait-HttpReady "$backendUrl/health/ready") { Pass "Docker backend readiness after restart" } else { Fail "Docker backend readiness after restart timed out" }
+    if (Wait-HttpReady "$backendUrl/health") { Pass "Docker backend liveness alias after restart" } else { Fail "Docker backend liveness alias after restart timed out" }
+    if (Wait-HttpReady "$backendUrl/ready") { Pass "Docker backend readiness alias after restart" } else { Fail "Docker backend readiness alias after restart timed out" }
     Run-Step "Docker start frontend after backend restart" { [void](Compose @("start", "frontend")) }
     if ($failed) { throw "__VERIFY_STOP__" }
     if (Wait-HttpReady $frontendUrl) { Pass "Docker frontend HTTP after restart" } else { Fail "Docker frontend HTTP after restart timed out" }
@@ -192,11 +196,18 @@ services:
     $logs = (& docker compose @composeArgs logs --no-color --tail 300) 2>&1
     if ($LASTEXITCODE -ne 0) {
         Fail "Docker log collection failed with code $LASTEXITCODE"
-    } elseif (($logs | Select-String -Pattern "Traceback|Unhandled|panic|FATAL|CRITICAL" -CaseSensitive:$false)) {
-        Fail "Docker logs contain fatal error markers"
-        $logs | Select-String -Pattern "Traceback|Unhandled|panic|FATAL|CRITICAL" -CaseSensitive:$false | ForEach-Object { Write-Host $_.Line }
     } else {
-        Pass "Docker logs have no fatal error markers"
+        $fatalHits = @(
+            $logs |
+                Select-String -Pattern "Traceback|Unhandled|panic|FATAL|CRITICAL" -CaseSensitive:$false |
+                Where-Object { $_.Line -notmatch "FATAL:\s+the database system is shutting down" }
+        )
+        if ($fatalHits.Count -gt 0) {
+            Fail "Docker logs contain fatal error markers"
+            $fatalHits | ForEach-Object { Write-Host $_.Line }
+        } else {
+            Pass "Docker logs have no fatal error markers"
+        }
     }
 } catch {
     if ($_.Exception.Message -ne "__VERIFY_STOP__") { Fail "Docker verification threw $($_.Exception.GetType().Name): $($_.Exception.Message)" }

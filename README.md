@@ -42,3 +42,15 @@ Validate the design documentation with:
 ```powershell
 .\scripts\verify-design-docs.ps1
 ```
+## Health endpoints
+
+The backend exposes liveness and readiness aliases for local and Docker checks:
+
+```powershell
+Invoke-WebRequest http://localhost:8000/health
+Invoke-WebRequest http://localhost:8000/ready
+Invoke-WebRequest http://localhost:8000/health/live
+Invoke-WebRequest http://localhost:8000/health/ready
+```
+
+Use `docs/operations/deployment.md` and `.env.production.example` for the production-readiness handoff. Filled production `.env` files and real secrets must stay outside Git.

@@ -33,8 +33,11 @@
 | `ACCESS_TOKEN_MINUTES` | existing key | Access token lifetime | No |
 | `REFRESH_TOKEN_DAYS` | existing key | Refresh session lifetime | No |
 | `CORS_ORIGINS` | existing key | Exact browser origin allowlist | No |
-| `ADMIN_EMAIL` | existing key | Bootstrap administrator email for controlled environments | May be personal data |
-| `ADMIN_PASSWORD` | existing key | Bootstrap administrator password for controlled environments | Yes |
+| `ADMIN_EMAIL` | existing key | Demo seed administrator email for local verification and sample CMS workflows | May be personal data |
+| `ADMIN_PASSWORD` | existing key | Demo seed administrator password for local verification only | Yes |
+| `PRODUCTION_ADMIN_EMAIL` | existing key | One-time production administrator bootstrap email | May be personal data |
+| `PRODUCTION_ADMIN_INITIAL_PASSWORD` | existing key | One-time production administrator initial password supplied from protected channel | Yes |
+| `PRODUCTION_ADMIN_NAME` | existing key | Production administrator display name for bootstrap | No |
 | `UPLOAD_DIR` | existing key | Local development storage root | No |
 | `VITE_API_URL` | existing key | Frontend API base URL | No |
 | `OBJECT_STORAGE_ENDPOINT` | target key | Object storage endpoint | No |
