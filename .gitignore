@@ -20,3 +20,6 @@ frontend/tsconfig.tsbuildinfo
 backend/*.egg-info/
 storage/
 backups/
+
+reference/private/
+*.zip
