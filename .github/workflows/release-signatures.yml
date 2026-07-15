@@ -1,0 +1,33 @@
+name: release-signatures
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: release-signatures
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify unsigned release policy fixtures
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $runner = Join-Path $env:GITHUB_WORKSPACE 'scripts/invoke-ai-training-platform-v1.ps1'
+          $validatorTests = Join-Path $env:GITHUB_WORKSPACE 'scripts/tests/test-validate-codex-final-result.ps1'
+          $policyTests = Join-Path $env:GITHUB_WORKSPACE 'scripts/tests/test-runner-policy-fixtures.ps1'
+          foreach ($path in @($runner, $validatorTests, $policyTests)) {
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "required release policy test is missing: $path" }
+          }
+          & powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $validatorTests
+          if ($LASTEXITCODE -ne 0) { throw 'final-result policy tests failed' }
+          & powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $policyTests -RunnerPath $runner
+          if ($LASTEXITCODE -ne 0) { throw 'runner policy fixture tests failed' }
+          git diff --check

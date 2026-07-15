@@ -1,0 +1,29 @@
+name: security-and-schema
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: security-and-schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify security and schema contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="docs/planning/ai-training-platform-v1"
+          python3 -I -S -B "$package/verify-machine-contracts.py" --package-root "$package"
+          python3 -I -S -B "$package/verify-normative-test-semantics.py" --package-root "$package"
+          python3 -I -S -B "$package/verify-semantic-depth-contracts.py" --base-dir "$package"
+          python3 -I -S -B "$package/verify-ai-gateway-safeguarding.py" --package-root "$package"
+          python3 -I -S -B "$package/verify-tch-015-authorization.py" --package-root "$package"
+          git diff --check
