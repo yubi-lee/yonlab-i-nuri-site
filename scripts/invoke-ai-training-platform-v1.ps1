@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProjectRoot = "D:\Views\yonlab-inuri-site",
     [string]$ReleaseTrustPath = "C:\ProgramData\YOnLab\release-trust.json",
@@ -76,7 +76,7 @@ function Get-ForbiddenExecutionEnvironmentNames {
     )
 }
 function Assert-NoExecutionEnvironmentOverrides {
-    $exact = New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase)
+    $exact = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
     foreach ($name in (Get-ForbiddenExecutionEnvironmentNames)) { [void]$exact.Add($name) }
     $prefixes = @("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_", "GIT_SSH")
     foreach ($entry in [Environment]::GetEnvironmentVariables().GetEnumerator()) {
@@ -263,7 +263,7 @@ function Assert-StrictJsonLexical([string]$Text, [string]$Context) {
         if ($containers.Count -eq 0) {
             if ($rootState -ceq 'done') { if ($index -ne $Text.Length) { throw "$Context has data after the root value" }; break }
             $rootState = 'done'; $token = Read-StrictValueToken $index; $index = $token.End
-            if ($null -ne $token.Container) { $state = $(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }
+            if ($null -ne $token.Container) { $state = $(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }
             continue
         }
         $frame = $containers.Peek()
@@ -276,11 +276,11 @@ function Assert-StrictJsonLexical([string]$Text, [string]$Context) {
                 $frame.state = 'colon'; continue
             }
             if ($frame.state -ceq 'colon') { if ($index -ge $Text.Length -or $Text[$index] -cne ':') { throw "$Context object property requires a colon" }; $frame.state='value'; $index += 1; continue }
-            if ($frame.state -ceq 'value') { $frame.state='comma-or-end'; $token=Read-StrictValueToken $index; $index=$token.End; if ($null -ne $token.Container) { $state=$(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }; continue }
+            if ($frame.state -ceq 'value') { $frame.state='comma-or-end'; $token=Read-StrictValueToken $index; $index=$token.End; if ($null -ne $token.Container) { $state=$(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }; continue }
             if ($frame.state -ceq 'comma-or-end') { if ($index -lt $Text.Length -and $Text[$index] -ceq ',') { $frame.state='key'; $index += 1; continue }; if ($index -lt $Text.Length -and $Text[$index] -ceq '}') { [void]$containers.Pop(); $index += 1; continue }; throw "$Context object requires comma or end" }
         } else {
             if ($frame.state -ceq 'value-or-end' -and $index -lt $Text.Length -and $Text[$index] -ceq ']') { [void]$containers.Pop(); $index += 1; continue }
-            if ($frame.state -ceq 'value-or-end' -or $frame.state -ceq 'value') { $frame.state='comma-or-end'; $token=Read-StrictValueToken $index; $index=$token.End; if ($null -ne $token.Container) { $state=$(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }; continue }
+            if ($frame.state -ceq 'value-or-end' -or $frame.state -ceq 'value') { $frame.state='comma-or-end'; $token=Read-StrictValueToken $index; $index=$token.End; if ($null -ne $token.Container) { $state=$(if ($token.Container -ceq 'object') {'key-or-end'} else {'value-or-end'}); $containers.Push([pscustomobject]@{kind=$token.Container;state=$state;names=$(if ($token.Container -ceq 'object') { New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase) } else { $null })}) }; continue }
             if ($frame.state -ceq 'comma-or-end') { if ($index -lt $Text.Length -and $Text[$index] -ceq ',') { $frame.state='value'; $index += 1; continue }; if ($index -lt $Text.Length -and $Text[$index] -ceq ']') { [void]$containers.Pop(); $index += 1; continue }; throw "$Context array requires comma or end" }
         }
         throw "$Context parser entered an invalid state"
@@ -831,7 +831,7 @@ function Get-BoundedFileInventory([string]$Root, [string[]]$RelativePaths, [stri
     $paths = @($RelativePaths)
     [Array]::Sort($paths, [StringComparer]::Ordinal)
     if ($paths.Count -gt $MaxWorktreeFiles) { Stop-Launcher "WORKTREE-SNAPSHOT" "too many $Label files" 6 }
-    $seen = New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase)
+    $seen = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
     $files = New-Object Collections.Generic.List[object]
     $total = 0L
     foreach ($relativeValue in $paths) {
@@ -979,7 +979,7 @@ function Try-PersistThreadReceipt([string]$JsonlPath, [string]$ReceiptPath, [str
         return $persisted
     }
     if (-not (Test-Path -LiteralPath $JsonlPath -PathType Leaf)) { return $null }
-    $ids = New-Object Collections.Generic.HashSet[string] ([StringComparer]::Ordinal)
+    $ids = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::Ordinal)
     $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
     $stream = [IO.File]::Open($JsonlPath, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
     try {
@@ -1096,7 +1096,7 @@ function Get-GitControlPlaneSnapshot([string]$GitDirectory, [string]$CommonDirec
     )) { Add-ControlCandidate $pair[0] $pair[1] $true }
 
     $entries = New-Object Collections.Generic.List[object]
-    $seenPhysical = New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase)
+    $seenPhysical = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
     foreach ($candidate in @($candidates | Sort-Object label)) {
         $path = [string]$candidate.path
         if (-not $seenPhysical.Add($path)) { continue }
@@ -1155,7 +1155,7 @@ function Get-GitReferenceSnapshot([string]$GitDirectory, [string]$CommonDirector
         @("common/refs/tags",(Join-Path $commonDir "refs/tags"),$true)
     )) { $candidates.Add([pscustomobject]@{label=$pair[0];path=[IO.Path]::GetFullPath($pair[1]);recursive=[bool]$pair[2]}) }
     $entries=New-Object Collections.Generic.List[object]
-    $seenPhysical=New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase)
+    $seenPhysical=New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
     foreach ($candidate in @($candidates | Sort-Object label)) {
         $path=[string]$candidate.path
         if (-not $seenPhysical.Add($path)) { continue }
@@ -2437,3 +2437,4 @@ Write-Host "CANDIDATE_RESULT: $finalResult"
 Write-Host "CANDIDATE_RESULT_SHA256: $resultSha256"
 Write-Host "NEXT: copy the result to the protected attestation root, collect external signatures, then run -Mode VerifyCandidate"
 exit 5
+

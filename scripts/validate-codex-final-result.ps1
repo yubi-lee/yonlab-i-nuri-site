@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$ResultPath,
     [string]$ExpectedRunId = "",
@@ -46,7 +46,7 @@ function ConvertFrom-StrictJsonText([string]$Text, [string]$Context) {
         $index = 0
         while ($index -lt $Text.Length) {
             $character = $Text[$index]
-            if ($character -ceq '{') { [void]$outside.Append($character); $containers.Push([pscustomobject]@{kind="object";names=(New-Object Collections.Generic.HashSet[string] ([StringComparer]::OrdinalIgnoreCase))}); $index += 1; continue }
+            if ($character -ceq '{') { [void]$outside.Append($character); $containers.Push([pscustomobject]@{kind="object";names=(New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase))}); $index += 1; continue }
             if ($character -ceq '[') { [void]$outside.Append($character); $containers.Push([pscustomobject]@{kind="array";names=$null}); $index += 1; continue }
             if ($character -ceq '}') {
                 [void]$outside.Append($character)
@@ -387,3 +387,4 @@ if ([string]$result.candidate_phase -ceq "UNSIGNED_CANDIDATE / REVIEW PENDING") 
 } else {
     Invalid "unknown candidate phase: $($result.candidate_phase)"
 }
+
