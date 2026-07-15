@@ -1,0 +1,37 @@
+name: design-package-windows
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: design-package-windows
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify tracked design contracts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $package = Join-Path $env:GITHUB_WORKSPACE 'docs/planning/ai-training-platform-v1'
+          if (-not (Test-Path -LiteralPath $package -PathType Container)) { throw 'design package directory is missing' }
+          function Invoke-PythonGate {
+            param([string]$Script, [string[]]$Arguments)
+            & python -I -S -B $Script @Arguments
+            if ($LASTEXITCODE -ne 0) { throw "validator failed: $Script" }
+          }
+          Invoke-PythonGate (Join-Path $package 'verify-completeness-contracts.py') @('--root', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-source-traceability.py') @('--root', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-machine-contracts.py') @('--package-root', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-normative-test-semantics.py') @('--package-root', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-semantic-depth-contracts.py') @('--base-dir', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-ai-gateway-safeguarding.py') @('--package-root', $package)
+          Invoke-PythonGate (Join-Path $package 'verify-tch-015-authorization.py') @('--package-root', $package)
+          git diff --check
