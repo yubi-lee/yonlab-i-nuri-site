@@ -107,7 +107,7 @@ function Resolve-VerifiedRelativeFile([string]$Relative, [string]$Context) {
     if ([string]::IsNullOrWhiteSpace($Relative) -or [IO.Path]::IsPathRooted($Relative) -or $Relative -match '^[A-Za-z]:' -or $Relative -match '^[\\/]' -or $Relative.IndexOf([char]0) -ge 0) { Invalid "$Context must be a safe relative path: $Relative" }
     $segments = @($Relative -split '[\\/]')
     if ($segments.Count -eq 0 -or @($segments | Where-Object { [string]::IsNullOrWhiteSpace($_) -or $_ -ceq "." -or $_ -ceq ".." -or $_.Contains(":") }).Count -gt 0) { Invalid "$Context contains an unsafe path component: $Relative" }
-    $root = [IO.Path]::GetFullPath($ProjectRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
+    $root = [IO.Path]::GetFullPath($ProjectRoot).TrimEnd([char[]]@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar))
     if (-not (Test-Path -LiteralPath $root -PathType Container)) { Invalid "ProjectRoot does not exist: $root" }
     $normalized = $segments -join [IO.Path]::DirectorySeparatorChar
     $full = [IO.Path]::GetFullPath((Join-Path $root $normalized))
@@ -387,4 +387,5 @@ if ([string]$result.candidate_phase -ceq "UNSIGNED_CANDIDATE / REVIEW PENDING") 
 } else {
     Invalid "unknown candidate phase: $($result.candidate_phase)"
 }
+
 

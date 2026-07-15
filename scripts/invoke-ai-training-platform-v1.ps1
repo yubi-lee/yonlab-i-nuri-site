@@ -65,7 +65,7 @@ function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) {
     exit $ExitCode
 }
 function Write-Pass([string]$Message) { Write-Host "PASS: $Message" }
-function Canonical([string]$Path) { return [IO.Path]::GetFullPath($Path).TrimEnd('\', '/') }
+function Canonical([string]$Path) { return [IO.Path]::GetFullPath($Path).TrimEnd([char[]]@('\','/')) }
 function Get-ForbiddenExecutionEnvironmentNames {
     return @(
         "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_SYSTEM", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM",
@@ -163,7 +163,7 @@ function Assert-CanonicalProductionHostInvocation([string]$SelectedMode, [string
         }
     }
     $observation=[pscustomobject]@{
-        is_windows=$true;process_path=$processResolved;expected_process_path=$expectedProcessPath;process_path_is_canonical=([IO.Path]::IsPathRooted($processPath) -and [StringComparer]::OrdinalIgnoreCase.Equals($processFull.TrimEnd('\','/'),$processResolved))
+        is_windows=$true;process_path=$processResolved;expected_process_path=$expectedProcessPath;process_path_is_canonical=([IO.Path]::IsPathRooted($processPath) -and [StringComparer]::OrdinalIgnoreCase.Equals($processFull.TrimEnd([char[]]@('\','/')),$processResolved))
         process_has_reparse=$false;host_name=[IO.Path]::GetFileName($processResolved);argv0_matches=$argv0Matches;argv_prefix_matches=$argvPrefixMatches
         no_profile_count=$noProfile;non_interactive_count=$nonInteractive;file_count=$fileIndexes.Count;forbidden_switch_count=$forbidden;file_target_matches=$fileTargetMatches
     }
@@ -174,7 +174,7 @@ function Native([string]$Command, [string[]]$Arguments = @()) {
     $captured = Invoke-NativeCaptureBytes $Command $Arguments $MaxNativeCaptureBytes
     $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
     try { $stdoutText = $strictUtf8.GetString($captured.Bytes) } catch { throw "native stdout is not strict UTF-8" }
-    $combined = $(if ([string]::IsNullOrWhiteSpace($captured.ErrorText)) { $stdoutText } elseif ([string]::IsNullOrWhiteSpace($stdoutText)) { $captured.ErrorText } else { $stdoutText.TrimEnd("`r","`n") + "`n" + $captured.ErrorText })
+    $combined = $(if ([string]::IsNullOrWhiteSpace($captured.ErrorText)) { $stdoutText } elseif ([string]::IsNullOrWhiteSpace($stdoutText)) { $captured.ErrorText } else { $stdoutText.TrimEnd([char[]]@([char]13,[char]10)) + "`n" + $captured.ErrorText })
     return [pscustomobject]@{ ExitCode=$captured.ExitCode; Text=$combined.Trim() }
 }
 function Native-OK($Result, [string]$Code, [string]$Operation) { if ($Result.ExitCode -ne 0) { Stop-Launcher $Code "$Operation failed ($($Result.ExitCode)): $($Result.Text)" } }
@@ -451,7 +451,7 @@ function Test-SafeTrustedExecutablePathSyntax([string]$Path) {
         $Path.IndexOf(':', 2) -ge 0 -or $Path -match '["''$`%!;&|<>\x00-\x1f]' -or $Path -match '(^|[\\/])\.\.?(?:[\\/]|$)' -or
         [IO.Path]::GetExtension($Path) -ine ".exe") { return $false }
     if ($env:OS -cne "Windows_NT") { return $true }
-    try { return [StringComparer]::OrdinalIgnoreCase.Equals((Canonical $Path), $Path.TrimEnd('\','/')) } catch { return $false }
+    try { return [StringComparer]::OrdinalIgnoreCase.Equals((Canonical $Path), $Path.TrimEnd([char[]]@('\','/'))) } catch { return $false }
 }
 
 function Get-TrustedExecutableAllowedRoots {
@@ -1351,7 +1351,7 @@ function Invoke-Utf8Process(
                     if ($lastNewline -ge 0) {
                         $completedLines = @($tailText.Substring(0, $lastNewline) -split "`n" | Where-Object { $_.Trim().Length -gt 0 })
                         if ($completedLines.Count -gt 0) {
-                            $lastComplete = $completedLines[-1].TrimEnd("`r") | ConvertFrom-Json
+                            $lastComplete = $completedLines[-1].TrimEnd([char]13) | ConvertFrom-Json
                             if ($lastComplete.PSObject.Properties.Name -contains "type") { $eventSummary = [string]$lastComplete.type }
                         }
                     }
@@ -2112,7 +2112,7 @@ function Invoke-PolicySelfTest([string]$FixturePath) {
 if ($Mode -ceq "PolicySelfTest") { Invoke-PolicySelfTest $PolicyFixture; exit 0 }
 
 Assert-CanonicalProductionHostInvocation $Mode $PSCommandPath
-$literalProjectRoot = $ProjectRoot.TrimEnd('\', '/')
+$literalProjectRoot = $ProjectRoot.TrimEnd([char[]]@('\','/'))
 if ($ProjectRoot.IndexOf(':', 2) -ge 0 -or $ProjectRoot -match '(^|[\\/])\.\.?(?:[\\/]|$)' -or -not [StringComparer]::OrdinalIgnoreCase.Equals($literalProjectRoot, $ExpectedRoot)) { Stop-Launcher "PRE-ROOT" "project root must be the literal canonical path '$ExpectedRoot' without ADS or dot segments" }
 if (-not (Test-Path -LiteralPath $ProjectRoot -PathType Container)) { Stop-Launcher "PRE-ROOT" "target repository does not exist: $ProjectRoot" }
 Assert-NoReparseComponent $ProjectRoot "PRE-ROOT"
@@ -2121,7 +2121,7 @@ if (-not [StringComparer]::OrdinalIgnoreCase.Equals($resolvedRoot, (Canonical $E
 Assert-NoReparseComponent $resolvedRoot "PRE-ROOT"
 Assert-NoExecutionEnvironmentOverrides
 $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
-$literalTrustPath = $ReleaseTrustPath.TrimEnd('\', '/')
+$literalTrustPath = $ReleaseTrustPath.TrimEnd([char[]]@('\','/'))
 if ($ReleaseTrustPath.IndexOf(':', 2) -ge 0 -or $ReleaseTrustPath -match '(^|[\/])\.\.?(?:[\/]|$)' -or -not [StringComparer]::OrdinalIgnoreCase.Equals($literalTrustPath, $ExpectedReleaseTrustPath) -or -not (Test-Path -LiteralPath $ReleaseTrustPath -PathType Leaf)) { Stop-Launcher "PRE-TRUST" "release trust store must be the literal protected file '$ExpectedReleaseTrustPath'" }
 Assert-NoReparseComponent $ReleaseTrustPath "PRE-TRUST"
 $resolvedTrustPath = Canonical (Resolve-Path -LiteralPath $ReleaseTrustPath).Path
@@ -2437,4 +2437,5 @@ Write-Host "CANDIDATE_RESULT: $finalResult"
 Write-Host "CANDIDATE_RESULT_SHA256: $resultSha256"
 Write-Host "NEXT: copy the result to the protected attestation root, collect external signatures, then run -Mode VerifyCandidate"
 exit 5
+
 
