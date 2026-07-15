@@ -1,0 +1,168 @@
+{
+  "schema_version": "rag-policy-golden.v1",
+  "retrieval_policy": {
+    "policy_version": "retrieval-ranking.v1",
+    "scale": 1000000,
+    "candidate_budgets": {
+      "lexical": 100,
+      "vector": 100,
+      "metadata_union_max": 200,
+      "rerank_input_max": 80,
+      "evidence_budget_max": 20
+    },
+    "acl_filter_stage": "BEFORE_LEXICAL_AND_ANN_CANDIDATE_GENERATION",
+    "rrf_k": 60,
+    "rrf_channels": [
+      "lexical",
+      "vector"
+    ],
+    "weights_microunit": {
+      "rrf": 800000,
+      "metadata": 100000,
+      "structure": 100000,
+      "duplicate_penalty": 50000
+    },
+    "formula": "rrf_norm=div_half_up(SCALE*sum(channel contribution), channel_count*div_half_up(SCALE,k+1)); final=max(0,div_half_up(800000*rrf_norm+100000*metadata+100000*structure,SCALE)-div_half_up(50000*duplicate,SCALE))",
+    "tie_break": [
+      "final_score_microunit DESC",
+      "current_rights_decision=ALLOW",
+      "effective_at DESC",
+      "document_version_id UTF8 ASC",
+      "chunk_id UTF8 ASC"
+    ],
+    "unknown_feature": "REJECT_CANDIDATE"
+  },
+  "claim_citation_policy": {
+    "policy_version": "claim-citation.v1",
+    "claim_segmentation": "sentence and list-item boundaries after NFC normalization; one atomic predicate per claim",
+    "important_claim_types": [
+      "NUMERIC",
+      "DATE_OR_VERSION",
+      "LEGAL_OR_SAFETY",
+      "PRESCRIPTIVE",
+      "ATTRIBUTED_FACT",
+      "DIRECT_QUOTE"
+    ],
+    "nonclaim_types": [
+      "GREETING",
+      "NAVIGATION",
+      "DISCLOSURE",
+      "LIMITATION"
+    ],
+    "importance_source": "independent rule classifier; generator label cannot remove denominator",
+    "validity_checks": [
+      "CURRENT_TENANT_MEMBERSHIP",
+      "CURRENT_ACL_VERSION",
+      "CURRENT_PUBLICATION_AND_LICENSE",
+      "SOURCE_SHA256",
+      "LOCATOR_RESOLVES",
+      "QUOTED_SPAN_MATCHES",
+      "ENTAILMENT_THRESHOLD"
+    ],
+    "entailment_microunit_minimum": 850000,
+    "important_claim_coverage_minimum": 950000,
+    "invalid_citation_maximum": 0,
+    "authorization_failure": "REMOVE_CLAIM_OR_NO_ANSWER"
+  },
+  "document_quality_policy": {
+    "policy_version": "document-quality.v1",
+    "scale": 1000000,
+    "weights_microunit": {
+      "text": 250000,
+      "reading_order": 250000,
+      "table_structure": 250000,
+      "style_preservation": 150000,
+      "metadata": 100000
+    },
+    "rounding": "div_half_up",
+    "automatic_review_candidate_minimum": 900000,
+    "sample_review_minimum": 750000,
+    "below_sample_review": "FULL_REVIEW",
+    "automatic_publish": false
+  },
+  "retrieval_vectors": [
+    {
+      "vector_id": "RAG-RANK-001",
+      "input": {
+        "ranks": [
+          1,
+          3
+        ],
+        "metadata_microunit": 800000,
+        "structure_microunit": 600000,
+        "duplicate_microunit": 200000
+      },
+      "expected": {
+        "rrf_microunit": 984140,
+        "final_score_microunit": 917312
+      }
+    },
+    {
+      "vector_id": "RAG-RANK-002",
+      "input": {
+        "ranks": [
+          1,
+          null
+        ],
+        "metadata_microunit": 1000000,
+        "structure_microunit": 1000000,
+        "duplicate_microunit": 0
+      },
+      "expected": {
+        "rrf_microunit": 500000,
+        "final_score_microunit": 600000
+      }
+    },
+    {
+      "vector_id": "RAG-RANK-003",
+      "input": {
+        "ranks": [
+          null,
+          null
+        ],
+        "metadata_microunit": 0,
+        "structure_microunit": 0,
+        "duplicate_microunit": 0
+      },
+      "expected": {
+        "rrf_microunit": 0,
+        "final_score_microunit": 0
+      }
+    }
+  ],
+  "quality_vectors": [
+    {
+      "vector_id": "DOC-QUALITY-001",
+      "input_scores_microunit": [
+        900000,
+        900000,
+        900000,
+        900000,
+        900000
+      ],
+      "expected_quality_microunit": 900000
+    },
+    {
+      "vector_id": "DOC-QUALITY-002",
+      "input_scores_microunit": [
+        750000,
+        750000,
+        750000,
+        750000,
+        750000
+      ],
+      "expected_quality_microunit": 750000
+    },
+    {
+      "vector_id": "DOC-QUALITY-003",
+      "input_scores_microunit": [
+        749999,
+        749999,
+        749999,
+        749999,
+        749999
+      ],
+      "expected_quality_microunit": 749999
+    }
+  ]
+}

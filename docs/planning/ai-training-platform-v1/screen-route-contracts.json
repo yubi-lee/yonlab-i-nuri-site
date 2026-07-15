@@ -1,0 +1,4791 @@
+{
+  "schema_version": "screen-route-contracts.v1",
+  "route_parameter_style": "React Router colon parameters; OpenAPI operation paths use braces",
+  "common_invariants": [
+    "Every route resolves to exactly one screen_id and every screen_id is present exactly once.",
+    "UI role visibility and API authorization use the same policy decision; hidden navigation never substitutes for server authorization.",
+    "ACTIVE_TENANT guards require token active_tenant_id, current membership, route resource tenant equality, and transaction-local RLS context.",
+    "PUBLIC_REGISTRY_READ permits only allowlisted immutable public registry data; no tenant-scoped row is addressable without current rights.",
+    "MFA_REAUTH guards require a verified MFA session and reauthentication age at most 15 minutes."
+  ],
+  "allowed_dynamic_segment": "Named route parameters shown with a leading colon only; implementations percent-decode once, reject slash/backslash/dot-segment ambiguity, and validate typed IDs before lookup.",
+  "authorization_contract": {
+    "allowed_roles": [
+      "ANONYMOUS",
+      "AUTHENTICATED",
+      "CONTENT_ADMIN",
+      "CONTENT_REVIEWER",
+      "EXPERT_REVIEWER",
+      "INSTITUTION_ADMIN",
+      "OPERATIONS_OPERATOR",
+      "SECURITY_AUDITOR",
+      "SYSTEM_ADMIN",
+      "TEACHER"
+    ],
+    "tenant_guards": [
+      "ACTIVE_TENANT_CURRENT_RIGHTS",
+      "ACTIVE_TENANT_MEMBERSHIP",
+      "ACTIVE_TENANT_OWNERSHIP",
+      "ACTIVE_TENANT_ROLE_MFA",
+      "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "NO_TENANT_PREAUTH",
+      "PUBLIC_OR_ACTIVE_TENANT_RIGHTS",
+      "PUBLIC_REGISTRY_READ"
+    ],
+    "deny_unknown_values": true
+  },
+  "operation_resolution_contract": {
+    "operation_count": 113,
+    "requirement_link_field": "requirement_ids",
+    "test_link_field": "e2e_test_ids",
+    "inheritance_rule": "Every api_operations entry inherits the same screen row requirement_ids as its capability/intent and e2e_test_ids as its executable evidence path. requirement_ids MUST equal the reverse screen_ids edges in requirements-test-registry.json, and at least one screen test MUST link back to one inherited requirement.",
+    "operation_contract_field": "operation_contracts",
+    "row_closure_rule": "Each operation_id occurs once and its requirement_ids, test_ids, and evidence_ids exactly equal the enclosing screen capability and executable evidence edges; every linked test shares at least one linked requirement."
+  },
+  "screen_count": 36,
+  "screens": [
+    {
+      "screen_id": "PUB-001",
+      "route": "/",
+      "route_aliases": [],
+      "allowed_roles": [
+        "ANONYMOUS",
+        "AUTHENTICATED"
+      ],
+      "tenant_guard": "PUBLIC_REGISTRY_READ",
+      "api_operations": [
+        "GET /api/v1/portal/home",
+        "GET /api/v1/public/catalog"
+      ],
+      "events": [
+        "portal.home.viewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR"
+      ],
+      "requirement_ids": [
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-A11Y-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/portal/home",
+          "capability_id": "CAP-PUB-001-001",
+          "intent_id": "INTENT-GET-API-V1-PORTAL-HOME",
+          "method": "GET",
+          "path_template": "/api/v1/portal/home",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-PUB-001-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "def89bba4674c66098498150362cfc68c640a7b3b4add55e890fa64e6c509712"
+        },
+        {
+          "operation_id": "GET /api/v1/public/catalog",
+          "capability_id": "CAP-PUB-001-002",
+          "intent_id": "INTENT-GET-API-V1-PUBLIC-CATALOG",
+          "method": "GET",
+          "path_template": "/api/v1/public/catalog",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-PUB-001-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "edbe3a6f63745c189be303319e691dc5656dd90f2901b81e3e3beb7560cb5c28"
+        }
+      ]
+    },
+    {
+      "screen_id": "PUB-002",
+      "route": "/search",
+      "route_aliases": [],
+      "allowed_roles": [
+        "ANONYMOUS",
+        "AUTHENTICATED"
+      ],
+      "tenant_guard": "PUBLIC_REGISTRY_READ",
+      "api_operations": [
+        "GET /api/v1/public/search"
+      ],
+      "events": [
+        "portal.search.executed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-A11Y-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/public/search",
+          "capability_id": "CAP-PUB-002-001",
+          "intent_id": "INTENT-GET-API-V1-PUBLIC-SEARCH",
+          "method": "GET",
+          "path_template": "/api/v1/public/search",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-PUB-002-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "db9798640275a368119b8dd96faf701ec5132c2173cfbcbcd7ec481bf5a74814"
+        }
+      ]
+    },
+    {
+      "screen_id": "PUB-003",
+      "route": "/resources/:resourceId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "ANONYMOUS",
+        "AUTHENTICATED"
+      ],
+      "tenant_guard": "PUBLIC_OR_ACTIVE_TENANT_RIGHTS",
+      "api_operations": [
+        "GET /api/v1/public/resources/{resource_id}",
+        "POST /api/v1/files/{file_id}/download-authorizations"
+      ],
+      "events": [
+        "portal.resource.opened"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "FORBIDDEN",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-A11Y-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/public/resources/{resource_id}",
+          "capability_id": "CAP-PUB-003-001",
+          "intent_id": "INTENT-GET-API-V1-PUBLIC-RESOURCES-RESOURCE-ID",
+          "method": "GET",
+          "path_template": "/api/v1/public/resources/{resource_id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-PUB-003-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "3537d484a5c9b2d632674ba226316d7cbce166fd403750e953d766f24643f023"
+        },
+        {
+          "operation_id": "POST /api/v1/files/{file_id}/download-authorizations",
+          "capability_id": "CAP-PUB-003-002",
+          "intent_id": "INTENT-POST-API-V1-FILES-FILE-ID-DOWNLOAD-AUTHORIZATIONS",
+          "method": "POST",
+          "path_template": "/api/v1/files/{file_id}/download-authorizations",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-003-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "d3c59fbf05ee50d18e4544f39785615639244b25cfad0d28dabcbf88cfe45509"
+        }
+      ]
+    },
+    {
+      "screen_id": "PUB-004",
+      "route": "/auth/login",
+      "route_aliases": [
+        "/auth/register",
+        "/auth/password-reset",
+        "/auth/mfa/challenge",
+        "/auth/mfa/recovery"
+      ],
+      "allowed_roles": [
+        "ANONYMOUS",
+        "AUTHENTICATED"
+      ],
+      "tenant_guard": "NO_TENANT_PREAUTH",
+      "api_operations": [
+        "POST /api/v1/auth/register",
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/password-resets",
+        "POST /api/v1/auth/mfa/challenges",
+        "POST /api/v1/auth/mfa/challenges/{challenge_id}/verify",
+        "POST /api/v1/auth/mfa/recovery"
+      ],
+      "events": [
+        "identity.login.completed",
+        "identity.mfa.challenge.completed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "MFA_REQUIRED",
+        "MFA_RECOVERY"
+      ],
+      "requirement_ids": [
+        "SYS-F-014",
+        "SYS-NF-001"
+      ],
+      "e2e_test_ids": [
+        "T-UX-002",
+        "T-SEC-003",
+        "T-A11Y-001",
+        "T-SEC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/auth/register",
+          "capability_id": "CAP-PUB-004-001",
+          "intent_id": "INTENT-POST-API-V1-AUTH-REGISTER",
+          "method": "POST",
+          "path_template": "/api/v1/auth/register",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "24d5756763b64f72db6ac5cdddcda969973cadd68de3336f486457c944c6f67c"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/login",
+          "capability_id": "CAP-PUB-004-002",
+          "intent_id": "INTENT-POST-API-V1-AUTH-LOGIN",
+          "method": "POST",
+          "path_template": "/api/v1/auth/login",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "f4309eeeaffda80cd0cb221db1c27b267e8785c039c1c73792f80f1c6ac6e272"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/password-resets",
+          "capability_id": "CAP-PUB-004-003",
+          "intent_id": "INTENT-POST-API-V1-AUTH-PASSWORD-RESETS",
+          "method": "POST",
+          "path_template": "/api/v1/auth/password-resets",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "702bc8fe75ff2a7694caa668b0fbe1d2c365f65af9332c9110babda5a7a8788a"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/challenges",
+          "capability_id": "CAP-PUB-004-004",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-CHALLENGES",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/challenges",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "142431d92ce9e6cb86043079fb3f0933647436db0745aae9631d897942fa13a5"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/challenges/{challenge_id}/verify",
+          "capability_id": "CAP-PUB-004-005",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-CHALLENGES-CHALLENGE-ID-VERIFY",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/challenges/{challenge_id}/verify",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "a97c6ccf8a7ddd200e73803c3f6216f0013fe0add3c0061df0c17e19e027e342"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/recovery",
+          "capability_id": "CAP-PUB-004-006",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-RECOVERY",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/recovery",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-PUB-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "9f02674c2c088b84ccb893545f9e4ba17885398b4a372967ebd17ddced5ebc82"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-001",
+      "route": "/workspace",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/me/dashboard"
+      ],
+      "events": [
+        "workspace.dashboard.viewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-A11Y-002",
+        "T-A11Y-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/me/dashboard",
+          "capability_id": "CAP-TCH-001-001",
+          "intent_id": "INTENT-GET-API-V1-ME-DASHBOARD",
+          "method": "GET",
+          "path_template": "/api/v1/me/dashboard",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-001-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-014"
+          ],
+          "test_ids": [
+            "T-A11Y-001"
+          ],
+          "evidence_ids": [
+            "EVD-A11Y-001"
+          ],
+          "semantic_case_sha256": "4a51f4da5351c24c0d3c137a44c0657a65594b0a4de4bae2b8964949ee19d4e7"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-002",
+      "route": "/workspace/profile",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/me",
+        "PATCH /api/v1/me",
+        "GET /api/v1/me/consents",
+        "POST /api/v1/me/consents",
+        "POST /api/v1/tenants/{tenant_id}/activate"
+      ],
+      "events": [
+        "consent.changed",
+        "tenant.activated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "CONSENT_WITHDRAWN"
+      ],
+      "requirement_ids": [
+        "SYS-F-002",
+        "SYS-F-014",
+        "SYS-NF-002"
+      ],
+      "e2e_test_ids": [
+        "T-UX-002",
+        "T-PRIV-001",
+        "T-A11Y-002",
+        "T-AI-005"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/me",
+          "capability_id": "CAP-TCH-002-001",
+          "intent_id": "INTENT-GET-API-V1-ME",
+          "method": "GET",
+          "path_template": "/api/v1/me",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-002-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "c6658359f0c6f4759ae2afc38184b2c52298f1d3e654edbcf8bbe50ab549589e"
+        },
+        {
+          "operation_id": "PATCH /api/v1/me",
+          "capability_id": "CAP-TCH-002-002",
+          "intent_id": "INTENT-PATCH-API-V1-ME",
+          "method": "PATCH",
+          "path_template": "/api/v1/me",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-TCH-002-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "cb593da2a37e4311bd0951b202bd85b9b7588eb1cfd0b59a5f050e94b32d8175"
+        },
+        {
+          "operation_id": "GET /api/v1/me/consents",
+          "capability_id": "CAP-TCH-002-003",
+          "intent_id": "INTENT-GET-API-V1-ME-CONSENTS",
+          "method": "GET",
+          "path_template": "/api/v1/me/consents",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-002-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-002"
+          ],
+          "test_ids": [
+            "T-PRIV-001"
+          ],
+          "evidence_ids": [
+            "EVD-PRIV-001"
+          ],
+          "semantic_case_sha256": "b6270a3d04e2e053e37abf032a8691c10b0f328e2c875fcad621a121b7ca19c2"
+        },
+        {
+          "operation_id": "POST /api/v1/me/consents",
+          "capability_id": "CAP-TCH-002-004",
+          "intent_id": "INTENT-POST-API-V1-ME-CONSENTS",
+          "method": "POST",
+          "path_template": "/api/v1/me/consents",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-002-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-002"
+          ],
+          "test_ids": [
+            "T-PRIV-001"
+          ],
+          "evidence_ids": [
+            "EVD-PRIV-001"
+          ],
+          "semantic_case_sha256": "a5ca85cb0f0c919c8b2d1016787b3232a604173bee59811704ec872c21e642f7"
+        },
+        {
+          "operation_id": "POST /api/v1/tenants/{tenant_id}/activate",
+          "capability_id": "CAP-TCH-002-005",
+          "intent_id": "INTENT-POST-API-V1-TENANTS-TENANT-ID-ACTIVATE",
+          "method": "POST",
+          "path_template": "/api/v1/tenants/{tenant_id}/activate",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-002-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "f87358e9b682ac98380e7b17e07539a30c1eead02dde1fc562f77873820c7cf0"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-003",
+      "route": "/workspace/diagnosis/start",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "POST /api/v1/diagnoses"
+      ],
+      "events": [
+        "diagnosis.started"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "POLICY_BLOCKED"
+      ],
+      "requirement_ids": [
+        "SYS-F-001",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-002",
+        "T-A11Y-002",
+        "T-AI-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/diagnoses",
+          "capability_id": "CAP-TCH-003-001",
+          "intent_id": "INTENT-POST-API-V1-DIAGNOSES",
+          "method": "POST",
+          "path_template": "/api/v1/diagnoses",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-003-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-001"
+          ],
+          "test_ids": [
+            "T-AI-001"
+          ],
+          "evidence_ids": [
+            "EVD-AI-001"
+          ],
+          "semantic_case_sha256": "23f491935befd7eebef1d4810406f5f2f4a0915238a594b844675fe39d0602e9"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-004",
+      "route": "/workspace/diagnoses/:diagnosisId/chat",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "GET /api/v1/diagnoses/{id}",
+        "POST /api/v1/diagnoses/{id}/turns",
+        "POST /api/v1/diagnoses/{id}/pause",
+        "POST /api/v1/diagnoses/{id}/resume"
+      ],
+      "events": [
+        "diagnosis.turn.recorded"
+      ],
+      "state_ids": [
+        "QUEUED",
+        "STREAMING",
+        "COMPLETED",
+        "PARTIAL",
+        "ERROR",
+        "OFFLINE",
+        "POLICY_BLOCKED"
+      ],
+      "requirement_ids": [
+        "SYS-F-001",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "e2e_test_ids": [
+        "T-UX-003",
+        "T-AI-003",
+        "T-A11Y-003",
+        "T-AI-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/diagnoses/{id}",
+          "capability_id": "CAP-TCH-004-001",
+          "intent_id": "INTENT-GET-API-V1-DIAGNOSES-ID",
+          "method": "GET",
+          "path_template": "/api/v1/diagnoses/{id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-004-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-001"
+          ],
+          "test_ids": [
+            "T-AI-001"
+          ],
+          "evidence_ids": [
+            "EVD-AI-001"
+          ],
+          "semantic_case_sha256": "4532667c54cbf39b7595d210dc7f9f7a9895e168356b230f9195b6924c0cefb0"
+        },
+        {
+          "operation_id": "POST /api/v1/diagnoses/{id}/turns",
+          "capability_id": "CAP-TCH-004-002",
+          "intent_id": "INTENT-POST-API-V1-DIAGNOSES-ID-TURNS",
+          "method": "POST",
+          "path_template": "/api/v1/diagnoses/{id}/turns",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-001"
+          ],
+          "test_ids": [
+            "T-AI-001"
+          ],
+          "evidence_ids": [
+            "EVD-AI-001"
+          ],
+          "semantic_case_sha256": "3b417784a25de3a11835414ffc9062662d43e6dc80f02ae5c5582bd677e9c3ac"
+        },
+        {
+          "operation_id": "POST /api/v1/diagnoses/{id}/pause",
+          "capability_id": "CAP-TCH-004-003",
+          "intent_id": "INTENT-POST-API-V1-DIAGNOSES-ID-PAUSE",
+          "method": "POST",
+          "path_template": "/api/v1/diagnoses/{id}/pause",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-001"
+          ],
+          "test_ids": [
+            "T-AI-001"
+          ],
+          "evidence_ids": [
+            "EVD-AI-001"
+          ],
+          "semantic_case_sha256": "7f65ba590d8b3195e12cf9b081202035d562319fa7154065072338396ee2049e"
+        },
+        {
+          "operation_id": "POST /api/v1/diagnoses/{id}/resume",
+          "capability_id": "CAP-TCH-004-004",
+          "intent_id": "INTENT-POST-API-V1-DIAGNOSES-ID-RESUME",
+          "method": "POST",
+          "path_template": "/api/v1/diagnoses/{id}/resume",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-001"
+          ],
+          "test_ids": [
+            "T-AI-001"
+          ],
+          "evidence_ids": [
+            "EVD-AI-001"
+          ],
+          "semantic_case_sha256": "bc6568fbedb6144bb95beba9579de9627795638d1c7e6d5df4d14a085907a223"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-005",
+      "route": "/workspace/diagnoses/:diagnosisId/result",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "GET /api/v1/diagnoses/{id}/results",
+        "GET /api/v1/diagnoses/{id}/evidence",
+        "PATCH /api/v1/evidence/{id}",
+        "POST /api/v1/diagnoses/{id}/rescore"
+      ],
+      "events": [
+        "evidence.corrected",
+        "diagnosis.rescored"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "INSUFFICIENT_EVIDENCE",
+        "DISPUTED"
+      ],
+      "requirement_ids": [
+        "SYS-F-001",
+        "SYS-F-003",
+        "SYS-F-014",
+        "SYS-NF-009"
+      ],
+      "e2e_test_ids": [
+        "T-UX-003",
+        "T-AI-002",
+        "T-A11Y-003"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/diagnoses/{id}/results",
+          "capability_id": "CAP-TCH-005-001",
+          "intent_id": "INTENT-GET-API-V1-DIAGNOSES-ID-RESULTS",
+          "method": "GET",
+          "path_template": "/api/v1/diagnoses/{id}/results",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-005-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "e2e04c2a8611469d3de9f17b3ec2125a352c0e0fae926312d7d17d029b0a395b"
+        },
+        {
+          "operation_id": "GET /api/v1/diagnoses/{id}/evidence",
+          "capability_id": "CAP-TCH-005-002",
+          "intent_id": "INTENT-GET-API-V1-DIAGNOSES-ID-EVIDENCE",
+          "method": "GET",
+          "path_template": "/api/v1/diagnoses/{id}/evidence",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-005-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "42ddcaad1557065b1df71852b15a2bf1ae57a403e1799af74d0b41260a8aba73"
+        },
+        {
+          "operation_id": "PATCH /api/v1/evidence/{id}",
+          "capability_id": "CAP-TCH-005-003",
+          "intent_id": "INTENT-PATCH-API-V1-EVIDENCE-ID",
+          "method": "PATCH",
+          "path_template": "/api/v1/evidence/{id}",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-TCH-005-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "bf0d83ffd7ffec100f6a8edb1337029d0f4a2d11a3a63271482f4e1d78a652a2"
+        },
+        {
+          "operation_id": "POST /api/v1/diagnoses/{id}/rescore",
+          "capability_id": "CAP-TCH-005-004",
+          "intent_id": "INTENT-POST-API-V1-DIAGNOSES-ID-RESCORE",
+          "method": "POST",
+          "path_template": "/api/v1/diagnoses/{id}/rescore",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-005-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "cf9304064a1fa35cdd607d53660892c6c54aec78ee25cb97732b488205e8fb5e"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-006",
+      "route": "/workspace/diagnoses/:diagnosisId/persona",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "GET /api/v1/diagnoses/{id}/personas",
+        "PATCH /api/v1/diagnoses/{id}/persona-context"
+      ],
+      "events": [
+        "persona.context.corrected"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "MIXED_OR_UNDETERMINED"
+      ],
+      "requirement_ids": [
+        "SYS-F-002",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-003",
+        "T-AI-005",
+        "T-A11Y-003"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/diagnoses/{id}/personas",
+          "capability_id": "CAP-TCH-006-001",
+          "intent_id": "INTENT-GET-API-V1-DIAGNOSES-ID-PERSONAS",
+          "method": "GET",
+          "path_template": "/api/v1/diagnoses/{id}/personas",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-006-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "5aae91d44f171086639c13027b3137e6ff868985600c1747d0303e8e93fc7c58"
+        },
+        {
+          "operation_id": "PATCH /api/v1/diagnoses/{id}/persona-context",
+          "capability_id": "CAP-TCH-006-002",
+          "intent_id": "INTENT-PATCH-API-V1-DIAGNOSES-ID-PERSONA-CONTEXT",
+          "method": "PATCH",
+          "path_template": "/api/v1/diagnoses/{id}/persona-context",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-TCH-006-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "dd4da598553c5d40358d3dabab1c7f636cecc8c5c22ce5835231966c74b632e1"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-007",
+      "route": "/workspace/recommendations",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/recommendations",
+        "POST /api/v1/recommendations/{id}/feedback"
+      ],
+      "events": [
+        "recommendation.viewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-004",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-003",
+        "T-REC-001",
+        "T-A11Y-003"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/recommendations",
+          "capability_id": "CAP-TCH-007-001",
+          "intent_id": "INTENT-GET-API-V1-RECOMMENDATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/recommendations",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-007-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-004"
+          ],
+          "test_ids": [
+            "T-REC-001"
+          ],
+          "evidence_ids": [
+            "EVD-REC-001"
+          ],
+          "semantic_case_sha256": "a1df5a5645e950ded814f7b4f6f43b902c1f036bcc6c2085016b7306ebedacec"
+        },
+        {
+          "operation_id": "POST /api/v1/recommendations/{id}/feedback",
+          "capability_id": "CAP-TCH-007-002",
+          "intent_id": "INTENT-POST-API-V1-RECOMMENDATIONS-ID-FEEDBACK",
+          "method": "POST",
+          "path_template": "/api/v1/recommendations/{id}/feedback",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-007-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-004"
+          ],
+          "test_ids": [
+            "T-REC-001"
+          ],
+          "evidence_ids": [
+            "EVD-REC-001"
+          ],
+          "semantic_case_sha256": "ea0667d304488d95cc9c512faca28e4f1fa16062f343ca0662e37ab8d7e3e7f0"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-008",
+      "route": "/workspace/learning-paths/:pathId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "POST /api/v1/learning-paths",
+        "GET /api/v1/learning-paths/{id}",
+        "PATCH /api/v1/learning-paths/{id}"
+      ],
+      "events": [
+        "learning_path.updated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "POLICY_CONFLICT"
+      ],
+      "requirement_ids": [
+        "SYS-F-005",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-REC-005",
+        "T-A11Y-002",
+        "T-REC-004"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/learning-paths",
+          "capability_id": "CAP-TCH-008-001",
+          "intent_id": "INTENT-POST-API-V1-LEARNING-PATHS",
+          "method": "POST",
+          "path_template": "/api/v1/learning-paths",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-008-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "eb1817b2828fe357a6bd1cdd84dcd94b4b604be75a6d10e32bf7cf7bf5df81b6"
+        },
+        {
+          "operation_id": "GET /api/v1/learning-paths/{id}",
+          "capability_id": "CAP-TCH-008-002",
+          "intent_id": "INTENT-GET-API-V1-LEARNING-PATHS-ID",
+          "method": "GET",
+          "path_template": "/api/v1/learning-paths/{id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-008-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "1e461adaf6ede289b05cc9247078a0b8ba6465a222d0745764bcacc7bea3c7fc"
+        },
+        {
+          "operation_id": "PATCH /api/v1/learning-paths/{id}",
+          "capability_id": "CAP-TCH-008-003",
+          "intent_id": "INTENT-PATCH-API-V1-LEARNING-PATHS-ID",
+          "method": "PATCH",
+          "path_template": "/api/v1/learning-paths/{id}",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-TCH-008-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "2d821c2a97b52a1918f67e0d06264537b292aa54754c00f30063fa328ab9bc88"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-009",
+      "route": "/workspace/learning-paths/:pathId/practice/:stepId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "POST /api/v1/steps/{id}/start",
+        "POST /api/v1/steps/{id}/complete",
+        "POST /api/v1/practice-submissions"
+      ],
+      "events": [
+        "practice.submitted"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "AUTOSAVING",
+        "SUBMITTED"
+      ],
+      "requirement_ids": [
+        "SYS-F-005",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-002",
+        "T-REC-007",
+        "T-A11Y-002",
+        "T-REC-004"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/steps/{id}/start",
+          "capability_id": "CAP-TCH-009-001",
+          "intent_id": "INTENT-POST-API-V1-STEPS-ID-START",
+          "method": "POST",
+          "path_template": "/api/v1/steps/{id}/start",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-009-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "ac3243f7c3c6381be7792cc039e04ba3637846ee0b04b059a155d51139a0a233"
+        },
+        {
+          "operation_id": "POST /api/v1/steps/{id}/complete",
+          "capability_id": "CAP-TCH-009-002",
+          "intent_id": "INTENT-POST-API-V1-STEPS-ID-COMPLETE",
+          "method": "POST",
+          "path_template": "/api/v1/steps/{id}/complete",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-009-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "fd92e4328bbb80bed0a6aad0690fdc65b03ee2cfba9770868f7af8156e8989ff"
+        },
+        {
+          "operation_id": "POST /api/v1/practice-submissions",
+          "capability_id": "CAP-TCH-009-003",
+          "intent_id": "INTENT-POST-API-V1-PRACTICE-SUBMISSIONS",
+          "method": "POST",
+          "path_template": "/api/v1/practice-submissions",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-009-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-005"
+          ],
+          "test_ids": [
+            "T-REC-004"
+          ],
+          "evidence_ids": [
+            "EVD-REC-004"
+          ],
+          "semantic_case_sha256": "d3f59b25ad8f85508f96c7d5d8cd58f140fe9eb5401b2c964a4da90394f2f964"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-010",
+      "route": "/workspace/reports/:reportId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+      "api_operations": [
+        "POST /api/v1/reports",
+        "GET /api/v1/reports/{id}",
+        "GET /api/v1/reports/{id}/artifact"
+      ],
+      "events": [
+        "report.opened"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-006",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-RPT-004",
+        "T-A11Y-007",
+        "T-RPT-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/reports",
+          "capability_id": "CAP-TCH-010-001",
+          "intent_id": "INTENT-POST-API-V1-REPORTS",
+          "method": "POST",
+          "path_template": "/api/v1/reports",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-010-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "605808f98dffc4b0b5889d4a3517e94b014312164306c1f5e2358a855264d8c8"
+        },
+        {
+          "operation_id": "GET /api/v1/reports/{id}",
+          "capability_id": "CAP-TCH-010-002",
+          "intent_id": "INTENT-GET-API-V1-REPORTS-ID",
+          "method": "GET",
+          "path_template": "/api/v1/reports/{id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-010-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "b4a89e34f2acb44c2c181b4e33aabf0649e69642892819c142de86119b36e3dc"
+        },
+        {
+          "operation_id": "GET /api/v1/reports/{id}/artifact",
+          "capability_id": "CAP-TCH-010-003",
+          "intent_id": "INTENT-GET-API-V1-REPORTS-ID-ARTIFACT",
+          "method": "GET",
+          "path_template": "/api/v1/reports/{id}/artifact",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-010-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "5bd73a551acec790f6aa63e828e26732f6a5e1fb82921844f66e851bb64f6b4c"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-011",
+      "route": "/workspace/documents/search",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "POST /api/v1/search"
+      ],
+      "events": [
+        "document.search.executed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "FORBIDDEN",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-010",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-001",
+        "T-DOC-008",
+        "T-A11Y-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/search",
+          "capability_id": "CAP-TCH-011-001",
+          "intent_id": "INTENT-POST-API-V1-SEARCH",
+          "method": "POST",
+          "path_template": "/api/v1/search",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-011-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-010"
+          ],
+          "test_ids": [
+            "T-DOC-008"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-008"
+          ],
+          "semantic_case_sha256": "46386c3ba2fb21c8c263612b04ac38d107630911ffb4fdd520533226f9127e32"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-012",
+      "route": "/workspace/rag/:sessionId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "POST /api/v1/rag/sessions",
+        "POST /api/v1/rag/sessions/{id}/messages"
+      ],
+      "events": [
+        "rag.asked"
+      ],
+      "state_ids": [
+        "QUEUED",
+        "STREAMING",
+        "GROUNDED",
+        "NO_ANSWER",
+        "PARTIAL",
+        "ERROR",
+        "POLICY_BLOCKED"
+      ],
+      "requirement_ids": [
+        "SYS-F-010",
+        "SYS-F-011",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "e2e_test_ids": [
+        "T-UX-003",
+        "T-DOC-009",
+        "T-A11Y-003",
+        "T-DOC-008"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/rag/sessions",
+          "capability_id": "CAP-TCH-012-001",
+          "intent_id": "INTENT-POST-API-V1-RAG-SESSIONS",
+          "method": "POST",
+          "path_template": "/api/v1/rag/sessions",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-012-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-010"
+          ],
+          "test_ids": [
+            "T-DOC-008"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-008"
+          ],
+          "semantic_case_sha256": "6b984295871cf1deeaf49dded23e4278e5447193f991a55c01898c795357188d"
+        },
+        {
+          "operation_id": "POST /api/v1/rag/sessions/{id}/messages",
+          "capability_id": "CAP-TCH-012-002",
+          "intent_id": "INTENT-POST-API-V1-RAG-SESSIONS-ID-MESSAGES",
+          "method": "POST",
+          "path_template": "/api/v1/rag/sessions/{id}/messages",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-012-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-010"
+          ],
+          "test_ids": [
+            "T-DOC-008"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-008"
+          ],
+          "semantic_case_sha256": "ddce0b3dd3a0125193e01c3d996c1659e212ebf2f48968ea15e6853a98b1cba9"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-013",
+      "route": "/workspace/citations/:citationId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_CURRENT_RIGHTS",
+      "api_operations": [
+        "GET /api/v1/citations/{id}"
+      ],
+      "events": [
+        "citation.opened"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVOKED",
+        "STALE",
+        "LOCATOR_UNRESOLVABLE"
+      ],
+      "requirement_ids": [
+        "SYS-F-011",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-004",
+        "T-DOC-010",
+        "T-A11Y-002",
+        "T-DOC-009"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/citations/{id}",
+          "capability_id": "CAP-TCH-013-001",
+          "intent_id": "INTENT-GET-API-V1-CITATIONS-ID",
+          "method": "GET",
+          "path_template": "/api/v1/citations/{id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-013-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-011"
+          ],
+          "test_ids": [
+            "T-DOC-009"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-009"
+          ],
+          "semantic_case_sha256": "76a581130acf7ad474eee9f0612c104b7adb950290b0548ae553afe69242cb79"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-014",
+      "route": "/workspace/drafts/new",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/draft-templates",
+        "POST /api/v1/drafts"
+      ],
+      "events": [
+        "draft.generated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "RIGHTS_BLOCKED",
+        "JOB_RUNNING"
+      ],
+      "requirement_ids": [
+        "SYS-F-012",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-005",
+        "T-DOC-012",
+        "T-A11Y-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/draft-templates",
+          "capability_id": "CAP-TCH-014-001",
+          "intent_id": "INTENT-GET-API-V1-DRAFT-TEMPLATES",
+          "method": "GET",
+          "path_template": "/api/v1/draft-templates",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-014-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "1de6bf4d23f726cf91886e1d5a716455112f1875d0dde3255aa132584ff4d5bf"
+        },
+        {
+          "operation_id": "POST /api/v1/drafts",
+          "capability_id": "CAP-TCH-014-002",
+          "intent_id": "INTENT-POST-API-V1-DRAFTS",
+          "method": "POST",
+          "path_template": "/api/v1/drafts",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-014-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "1b8b11c232c8cfe521a523c64ca0fef449506ba9ddd5a67ea6c4bba17c047c03"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-015",
+      "route": "/workspace/drafts/:draftId",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER",
+        "CONTENT_REVIEWER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/drafts/{id}",
+        "PATCH /api/v1/drafts/{id}",
+        "POST /api/v1/drafts/{id}/review",
+        "POST /api/v1/drafts/{id}/export"
+      ],
+      "events": [
+        "draft.reviewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVIEW_REQUIRED",
+        "APPROVED",
+        "EXPORTING"
+      ],
+      "requirement_ids": [
+        "SYS-F-012",
+        "SYS-F-014"
+      ],
+      "e2e_test_ids": [
+        "T-UX-005",
+        "T-DOC-012",
+        "T-A11Y-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/drafts/{id}",
+          "capability_id": "CAP-TCH-015-001",
+          "intent_id": "INTENT-GET-API-V1-DRAFTS-ID",
+          "method": "GET",
+          "path_template": "/api/v1/drafts/{id}",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-015-DRAFT-READ-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "42ad705c822c7a36fd578ed6741452e6eca29ccd6f23290c532aaa6c07358a3e"
+        },
+        {
+          "operation_id": "PATCH /api/v1/drafts/{id}",
+          "capability_id": "CAP-TCH-015-002",
+          "intent_id": "INTENT-PATCH-API-V1-DRAFTS-ID",
+          "method": "PATCH",
+          "path_template": "/api/v1/drafts/{id}",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-TCH-015-DRAFT-EDIT-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "e6e027e70a2d0714d7d6d0d465fc14aeeff8a7dbb65400f95fd5587bbb3c82f7"
+        },
+        {
+          "operation_id": "POST /api/v1/drafts/{id}/review",
+          "capability_id": "CAP-TCH-015-003",
+          "intent_id": "INTENT-POST-API-V1-DRAFTS-ID-REVIEW",
+          "method": "POST",
+          "path_template": "/api/v1/drafts/{id}/review",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-015-DRAFT-REVIEW-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "8c965a12a0d2b26ccfd4b5b9d1f8be1c1c79b00bfdac32fce4943d277d2a3cff"
+        },
+        {
+          "operation_id": "POST /api/v1/drafts/{id}/export",
+          "capability_id": "CAP-TCH-015-004",
+          "intent_id": "INTENT-POST-API-V1-DRAFTS-ID-EXPORT",
+          "method": "POST",
+          "path_template": "/api/v1/drafts/{id}/export",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-015-DRAFT-EXPORT-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-012"
+          ],
+          "test_ids": [
+            "T-DOC-012"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-012"
+          ],
+          "semantic_case_sha256": "eaeb967c765c90c4e0d2c087b34e0ace6dc199f562f15b9bfbdd503659aec572"
+        }
+      ]
+    },
+    {
+      "screen_id": "TCH-016",
+      "route": "/workspace/activity",
+      "route_aliases": [],
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+      "api_operations": [
+        "GET /api/v1/me/activity",
+        "GET /api/v1/me/notifications",
+        "POST /api/v1/me/export-requests",
+        "POST /api/v1/me/deletion-requests",
+        "POST /api/v1/inquiries"
+      ],
+      "events": [
+        "data_subject.requested"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REQUEST_PENDING",
+        "REQUEST_COMPLETE"
+      ],
+      "requirement_ids": [
+        "SYS-F-014",
+        "SYS-F-018",
+        "SYS-NF-002"
+      ],
+      "e2e_test_ids": [
+        "T-UX-006",
+        "T-PRIV-003",
+        "T-A11Y-002",
+        "T-PRIV-001",
+        "T-ARCH-005"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/me/activity",
+          "capability_id": "CAP-TCH-016-001",
+          "intent_id": "INTENT-GET-API-V1-ME-ACTIVITY",
+          "method": "GET",
+          "path_template": "/api/v1/me/activity",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-002"
+          ],
+          "test_ids": [
+            "T-PRIV-001"
+          ],
+          "evidence_ids": [
+            "EVD-PRIV-001"
+          ],
+          "semantic_case_sha256": "76901fe263e6521c2c8f78c8bf28f9e951a71ad0b84944a87c3b5a900383cf52"
+        },
+        {
+          "operation_id": "GET /api/v1/me/notifications",
+          "capability_id": "CAP-TCH-016-002",
+          "intent_id": "INTENT-GET-API-V1-ME-NOTIFICATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/me/notifications",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-TCH-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA",
+            "OWN-ARCH"
+          ],
+          "requirement_ids": [
+            "SYS-F-018"
+          ],
+          "test_ids": [
+            "T-ARCH-005"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-005"
+          ],
+          "semantic_case_sha256": "095e02d9541cf028703383c1a74855458a68fba739aa8cca4dce6e5ef3d33af2"
+        },
+        {
+          "operation_id": "POST /api/v1/me/export-requests",
+          "capability_id": "CAP-TCH-016-003",
+          "intent_id": "INTENT-POST-API-V1-ME-EXPORT-REQUESTS",
+          "method": "POST",
+          "path_template": "/api/v1/me/export-requests",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-016-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-002"
+          ],
+          "test_ids": [
+            "T-PRIV-001"
+          ],
+          "evidence_ids": [
+            "EVD-PRIV-001"
+          ],
+          "semantic_case_sha256": "12eb5b706dad60414031166f2cabae4debe4378bdbe7f8019a78429352c2406e"
+        },
+        {
+          "operation_id": "POST /api/v1/me/deletion-requests",
+          "capability_id": "CAP-TCH-016-004",
+          "intent_id": "INTENT-POST-API-V1-ME-DELETION-REQUESTS",
+          "method": "POST",
+          "path_template": "/api/v1/me/deletion-requests",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-016-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-002"
+          ],
+          "test_ids": [
+            "T-PRIV-001"
+          ],
+          "evidence_ids": [
+            "EVD-PRIV-001"
+          ],
+          "semantic_case_sha256": "54d9052c886770d5294a427682e750138f0b20d564046f854a35923d0f9807bc"
+        },
+        {
+          "operation_id": "POST /api/v1/inquiries",
+          "capability_id": "CAP-TCH-016-005",
+          "intent_id": "INTENT-POST-API-V1-INQUIRIES",
+          "method": "POST",
+          "path_template": "/api/v1/inquiries",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-TCH-016-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA",
+            "OWN-ARCH"
+          ],
+          "requirement_ids": [
+            "SYS-F-018"
+          ],
+          "test_ids": [
+            "T-ARCH-005"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-005"
+          ],
+          "semantic_case_sha256": "8d778ed3ff604e06ad0ca344478dcbf62d8d64f2680e4d59e22499906953eef7"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-001",
+      "route": "/admin",
+      "route_aliases": [],
+      "allowed_roles": [
+        "INSTITUTION_ADMIN",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "GET /api/v1/admin/metrics-summary"
+      ],
+      "events": [
+        "admin.dashboard.viewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-015",
+        "SYS-NF-003"
+      ],
+      "e2e_test_ids": [
+        "T-API-001",
+        "T-A11Y-001",
+        "T-SEC-005"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/metrics-summary",
+          "capability_id": "CAP-ADM-001-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-METRICS-SUMMARY",
+          "method": "GET",
+          "path_template": "/api/v1/admin/metrics-summary",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-001-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-015"
+          ],
+          "test_ids": [
+            "T-SEC-005"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-005"
+          ],
+          "semantic_case_sha256": "5d9573aedf295d14c0840d59c1ebf3c4ba0bf9eb43616f898a59e8e84dfa2d1f"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-002",
+      "route": "/admin/competencies",
+      "route_aliases": [],
+      "allowed_roles": [
+        "EXPERT_REVIEWER",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/frameworks",
+        "POST /api/v1/admin/frameworks",
+        "GET /api/v1/admin/rubrics",
+        "POST /api/v1/admin/rubrics"
+      ],
+      "events": [
+        "rubric.published"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-003",
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-005",
+        "T-AI-002",
+        "T-A11Y-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/frameworks",
+          "capability_id": "CAP-ADM-002-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-FRAMEWORKS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/frameworks",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-002-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "c1f58f0f6827250f438cc3e2a97cd1c04a9c92b44ba30305441986ed91f9bd6f"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/frameworks",
+          "capability_id": "CAP-ADM-002-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-FRAMEWORKS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/frameworks",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-002-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "465a5e0bc68147e97ededea4adf804382755f9a0c25b7a196c4f8773e3408e69"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/rubrics",
+          "capability_id": "CAP-ADM-002-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-RUBRICS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/rubrics",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-002-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "57bd4bfe6e74f66ca9e792513a14d263de11055705f9fc6b6dd6f14b22e7f1c1"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/rubrics",
+          "capability_id": "CAP-ADM-002-004",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-RUBRICS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/rubrics",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-002-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-003"
+          ],
+          "test_ids": [
+            "T-AI-002"
+          ],
+          "evidence_ids": [
+            "EVD-AI-002"
+          ],
+          "semantic_case_sha256": "e235327f5f0caac87053a34ef63c2635f3e2a24995d9334e303cc0570fe6916a"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-003",
+      "route": "/admin/personas",
+      "route_aliases": [],
+      "allowed_roles": [
+        "EXPERT_REVIEWER",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/personas",
+        "POST /api/v1/admin/personas/{id}/activate"
+      ],
+      "events": [
+        "persona_policy.activated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-002",
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-005",
+        "T-AI-007",
+        "T-A11Y-002",
+        "T-AI-005"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/personas",
+          "capability_id": "CAP-ADM-003-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-PERSONAS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/personas",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-003-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "4945319d50a7705ae6054fee6985955cfed4b430c2c0f6eb9efaf4aec55a74c5"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/personas/{id}/activate",
+          "capability_id": "CAP-ADM-003-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-PERSONAS-ID-ACTIVATE",
+          "method": "POST",
+          "path_template": "/api/v1/admin/personas/{id}/activate",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-003-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-002"
+          ],
+          "test_ids": [
+            "T-AI-005"
+          ],
+          "evidence_ids": [
+            "EVD-AI-005"
+          ],
+          "semantic_case_sha256": "d780eeefb67620fce1bf94c4c3a0fb8c48638220a3444f62c7e0262c60fd40f3"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-004",
+      "route": "/admin/catalog",
+      "route_aliases": [],
+      "allowed_roles": [
+        "CONTENT_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/catalog",
+        "POST /api/v1/admin/catalog",
+        "PATCH /api/v1/admin/catalog/{id}"
+      ],
+      "events": [
+        "catalog_item.published"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-006",
+        "T-A11Y-002",
+        "T-SEC-005"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/catalog",
+          "capability_id": "CAP-ADM-004-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-CATALOG",
+          "method": "GET",
+          "path_template": "/api/v1/admin/catalog",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-004-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-015"
+          ],
+          "test_ids": [
+            "T-SEC-005"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-005"
+          ],
+          "semantic_case_sha256": "9195688cef03514b8d4c8e5633dcf5de52b8a82f6aab08be9465c4ee14d15305"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/catalog",
+          "capability_id": "CAP-ADM-004-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-CATALOG",
+          "method": "POST",
+          "path_template": "/api/v1/admin/catalog",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-015"
+          ],
+          "test_ids": [
+            "T-SEC-005"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-005"
+          ],
+          "semantic_case_sha256": "614c91b44e0962b4e0486a4652930a7a6088ce87dfe6effa8eaffbeb53e8dfb6"
+        },
+        {
+          "operation_id": "PATCH /api/v1/admin/catalog/{id}",
+          "capability_id": "CAP-ADM-004-003",
+          "intent_id": "INTENT-PATCH-API-V1-ADMIN-CATALOG-ID",
+          "method": "PATCH",
+          "path_template": "/api/v1/admin/catalog/{id}",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-ADM-004-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-UX",
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-015"
+          ],
+          "test_ids": [
+            "T-SEC-005"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-005"
+          ],
+          "semantic_case_sha256": "09d630d274c13ea8d38444ac98c9497b8f5fac03c6d7f25641006630649eaa3e"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-005",
+      "route": "/admin/recommendation-policies",
+      "route_aliases": [],
+      "allowed_roles": [
+        "EXPERT_REVIEWER",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/recommendation-policies",
+        "POST /api/v1/admin/recommendation-policies/{id}/activate"
+      ],
+      "events": [
+        "recommendation_policy.activated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-004",
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-006",
+        "T-REC-006",
+        "T-A11Y-002",
+        "T-REC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/recommendation-policies",
+          "capability_id": "CAP-ADM-005-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-RECOMMENDATION-POLICIES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/recommendation-policies",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-005-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-004"
+          ],
+          "test_ids": [
+            "T-REC-001"
+          ],
+          "evidence_ids": [
+            "EVD-REC-001"
+          ],
+          "semantic_case_sha256": "14f569c9d17541bd41cb7fdad8b12f285ea6344bffcf0293164c2152927a9777"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/recommendation-policies/{id}/activate",
+          "capability_id": "CAP-ADM-005-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-RECOMMENDATION-POLICIES-ID-ACTIVATE",
+          "method": "POST",
+          "path_template": "/api/v1/admin/recommendation-policies/{id}/activate",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-005-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-004"
+          ],
+          "test_ids": [
+            "T-REC-001"
+          ],
+          "evidence_ids": [
+            "EVD-REC-001"
+          ],
+          "semantic_case_sha256": "1551fcee6540eb5f4e53b648b777b40f753697a75bd165adf8751ae679485dc3"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-006",
+      "route": "/admin/documents/intake",
+      "route_aliases": [],
+      "allowed_roles": [
+        "CONTENT_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "POST /api/v1/documents/uploads",
+        "POST /api/v1/documents",
+        "GET /api/v1/admin/documents"
+      ],
+      "events": [
+        "document.intake.created"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "QUARANTINED"
+      ],
+      "requirement_ids": [
+        "SYS-F-007",
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-007",
+        "T-DOC-005",
+        "T-A11Y-002",
+        "T-DOC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "POST /api/v1/documents/uploads",
+          "capability_id": "CAP-ADM-006-001",
+          "intent_id": "INTENT-POST-API-V1-DOCUMENTS-UPLOADS",
+          "method": "POST",
+          "path_template": "/api/v1/documents/uploads",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-006-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "d3c1b85f43a0a66e5d0a732b7f12e86c2a5de6c63f54dffbcf3ac7837229c97d"
+        },
+        {
+          "operation_id": "POST /api/v1/documents",
+          "capability_id": "CAP-ADM-006-002",
+          "intent_id": "INTENT-POST-API-V1-DOCUMENTS",
+          "method": "POST",
+          "path_template": "/api/v1/documents",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-006-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "43801ae57bd2b50a0825292b982733d33e165e16478dba8e244ffa25fa40bdda"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/documents",
+          "capability_id": "CAP-ADM-006-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-DOCUMENTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/documents",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-006-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "78849d590f21b49ba5f39973636d46c93c16ec336b6af3b7cfd3491c6ee7af30"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-007",
+      "route": "/admin/documents/:documentId/review",
+      "route_aliases": [],
+      "allowed_roles": [
+        "CONTENT_REVIEWER"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/documents/{id}/graph",
+        "PATCH /api/v1/admin/document-nodes/{id}",
+        "POST /api/v1/admin/documents/{id}/reprocess",
+        "POST /api/v1/admin/documents/{id}/review-decisions"
+      ],
+      "events": [
+        "document.reviewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVIEW_REQUIRED",
+        "LOCATOR_UNRESOLVABLE"
+      ],
+      "requirement_ids": [
+        "SYS-F-008",
+        "SYS-F-009",
+        "SYS-F-015",
+        "SYS-NF-011"
+      ],
+      "e2e_test_ids": [
+        "T-API-007",
+        "T-DOC-006",
+        "T-A11Y-002",
+        "T-DOC-001",
+        "T-DOC-003"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/documents/{id}/graph",
+          "capability_id": "CAP-ADM-007-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-DOCUMENTS-ID-GRAPH",
+          "method": "GET",
+          "path_template": "/api/v1/admin/documents/{id}/graph",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-007-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-008"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "72827cf62e79e2226b64b810233dc8aec447e43bc6f618c7115431398515cb52"
+        },
+        {
+          "operation_id": "PATCH /api/v1/admin/document-nodes/{id}",
+          "capability_id": "CAP-ADM-007-002",
+          "intent_id": "INTENT-PATCH-API-V1-ADMIN-DOCUMENT-NODES-ID",
+          "method": "PATCH",
+          "path_template": "/api/v1/admin/document-nodes/{id}",
+          "request_contract_id": "HTTP-REQUEST-PATCH-V1",
+          "response_contract_id": "HTTP-RESPONSE-PATCH-V1",
+          "authorization_contract_id": "AUTHZ-ADM-007-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-008"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "69871b9b5a00f478a706a2d9ced5a678505c01fea61bd2241acfd2a56903a128"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/documents/{id}/reprocess",
+          "capability_id": "CAP-ADM-007-003",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-DOCUMENTS-ID-REPROCESS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/documents/{id}/reprocess",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-007-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-009"
+          ],
+          "test_ids": [
+            "T-DOC-003"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-003"
+          ],
+          "semantic_case_sha256": "71046ab70f34027c9f59dcd4dd57d9cd101bd4a29d65f257b21adcd783fbc670"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/documents/{id}/review-decisions",
+          "capability_id": "CAP-ADM-007-004",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-DOCUMENTS-ID-REVIEW-DECISIONS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/documents/{id}/review-decisions",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-007-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-009"
+          ],
+          "test_ids": [
+            "T-DOC-003"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-003"
+          ],
+          "semantic_case_sha256": "172cc874221a75a4e6ccb1e7090965b4d8436cd35adbb949918b09948e298bc1"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-008",
+      "route": "/admin/documents/publication",
+      "route_aliases": [],
+      "allowed_roles": [
+        "CONTENT_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/document-publications",
+        "POST /api/v1/admin/documents/{id}/publish",
+        "POST /api/v1/admin/documents/{id}/withdraw",
+        "POST /api/v1/admin/index-snapshots/{id}/rollback"
+      ],
+      "events": [
+        "document.index.published.v1"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-007",
+        "SYS-F-015",
+        "SYS-NF-011"
+      ],
+      "e2e_test_ids": [
+        "T-API-007",
+        "T-DOC-007",
+        "T-A11Y-002",
+        "T-DOC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/document-publications",
+          "capability_id": "CAP-ADM-008-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-DOCUMENT-PUBLICATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/document-publications",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-008-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "776ba6079cc159decf912a293b085b65ee4356b70aa60759f28ea414eb765f1e"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/documents/{id}/publish",
+          "capability_id": "CAP-ADM-008-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-DOCUMENTS-ID-PUBLISH",
+          "method": "POST",
+          "path_template": "/api/v1/admin/documents/{id}/publish",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-008-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "34d2c399f01abfcaf78fd7d8940481975ce812f8e2457e1d7413df61435878ba"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/documents/{id}/withdraw",
+          "capability_id": "CAP-ADM-008-003",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-DOCUMENTS-ID-WITHDRAW",
+          "method": "POST",
+          "path_template": "/api/v1/admin/documents/{id}/withdraw",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-008-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "d84b5cc60d199d6943564e4505c89f78057195414f791d16969ae5ffbaaf4807"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/index-snapshots/{id}/rollback",
+          "capability_id": "CAP-ADM-008-004",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-INDEX-SNAPSHOTS-ID-ROLLBACK",
+          "method": "POST",
+          "path_template": "/api/v1/admin/index-snapshots/{id}/rollback",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-008-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-DOC",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-007"
+          ],
+          "test_ids": [
+            "T-DOC-001"
+          ],
+          "evidence_ids": [
+            "EVD-DOC-001"
+          ],
+          "semantic_case_sha256": "77801071456470b5ddcab9a92f50b40040338411b065322a2bed9c6a782b8618"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-009",
+      "route": "/admin/ai/registry",
+      "route_aliases": [],
+      "allowed_roles": [
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/models",
+        "POST /api/v1/admin/models",
+        "GET /api/v1/admin/prompts",
+        "GET /api/v1/admin/schemas",
+        "GET /api/v1/admin/routing-policies"
+      ],
+      "events": [
+        "model_registry.changed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-013",
+        "SYS-F-015"
+      ],
+      "e2e_test_ids": [
+        "T-API-008",
+        "T-ARCH-001",
+        "T-A11Y-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/models",
+          "capability_id": "CAP-ADM-009-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-MODELS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/models",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-009-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "7bde4abc02c87f63ea576ee1f019b2198bed4d63a6377c42406a7c5c3565aa13"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/models",
+          "capability_id": "CAP-ADM-009-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-MODELS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/models",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-009-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "64a180a09269cb9d793cf02fe7d7f939bd189763eb052fc1189c6940a7d6d8cf"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/prompts",
+          "capability_id": "CAP-ADM-009-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-PROMPTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/prompts",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-009-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "f17b902a40e3abefc6e7214406e89b0cc554f1705f14be86e89cdfa7c2f5b05e"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/schemas",
+          "capability_id": "CAP-ADM-009-004",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-SCHEMAS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/schemas",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-009-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "7d9ac9747806610ababc31f001f2c9a0272a2e16a8090f1526e84cac8832d78b"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/routing-policies",
+          "capability_id": "CAP-ADM-009-005",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-ROUTING-POLICIES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/routing-policies",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-009-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "b1e7fa71ffa7ad40b14a048d463d52c920018e284b19d7f88f19930e23fad419"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-010",
+      "route": "/admin/ai/evaluations",
+      "route_aliases": [],
+      "allowed_roles": [
+        "EXPERT_REVIEWER",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/evaluations",
+        "POST /api/v1/admin/evaluations",
+        "GET /api/v1/admin/evaluation-datasets"
+      ],
+      "events": [
+        "model.evaluation.completed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "GATE_FAILED"
+      ],
+      "requirement_ids": [
+        "SYS-F-013",
+        "SYS-F-015",
+        "SYS-NF-009"
+      ],
+      "e2e_test_ids": [
+        "T-API-008",
+        "T-KPI-005",
+        "T-A11Y-002",
+        "T-ARCH-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/evaluations",
+          "capability_id": "CAP-ADM-010-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-EVALUATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/evaluations",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-010-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "eefd38cf2f44feba957854ec24056f45c4f1a99c42414fab6eb38f6e1a710320"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/evaluations",
+          "capability_id": "CAP-ADM-010-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-EVALUATIONS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/evaluations",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-010-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "09b0b5e2004b132f41b96295eceba196c426e65da0ea0daf31c55f6ffe2f5566"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/evaluation-datasets",
+          "capability_id": "CAP-ADM-010-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-EVALUATION-DATASETS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/evaluation-datasets",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-010-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "0bbeb33881c6bffe8e76e2a6555aabb263873937559ccc3c2abc68d1dfc1546b"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-011",
+      "route": "/admin/ai/operations",
+      "route_aliases": [],
+      "allowed_roles": [
+        "SYSTEM_ADMIN",
+        "OPERATIONS_OPERATOR"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "GET /api/v1/admin/ai-runs",
+        "GET /api/v1/admin/ai-costs",
+        "GET /api/v1/admin/ai-fallbacks"
+      ],
+      "events": [
+        "ai.operation.viewed"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-013",
+        "SYS-F-015",
+        "SYS-NF-006",
+        "SYS-NF-007"
+      ],
+      "e2e_test_ids": [
+        "T-API-008",
+        "T-OPS-004",
+        "T-A11Y-002",
+        "T-ARCH-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/ai-runs",
+          "capability_id": "CAP-ADM-011-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-AI-RUNS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/ai-runs",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-011-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "4c31289277a660a35c9ae491e09d746027abbd83d1a7d95d4926f06405ea1700"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/ai-costs",
+          "capability_id": "CAP-ADM-011-002",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-AI-COSTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/ai-costs",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-011-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "01ad8882fee49c1f103f19c90a32a141636ddf527cae8e819c6342810a846d78"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/ai-fallbacks",
+          "capability_id": "CAP-ADM-011-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-AI-FALLBACKS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/ai-fallbacks",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-011-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-AI",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-013"
+          ],
+          "test_ids": [
+            "T-ARCH-001"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-001"
+          ],
+          "semantic_case_sha256": "c4613faa2a8277f9bdbdfdbe5e210bd0d5795fcff953c15af0b55c5868198869"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-012",
+      "route": "/admin/access",
+      "route_aliases": [
+        "/admin/access/mfa-enrollment",
+        "/admin/access/mfa-recovery"
+      ],
+      "allowed_roles": [
+        "INSTITUTION_ADMIN",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/users",
+        "GET /api/v1/admin/organizations",
+        "GET /api/v1/admin/memberships",
+        "GET /api/v1/admin/roles",
+        "GET /api/v1/admin/consents",
+        "POST /api/v1/auth/mfa/enrollments",
+        "POST /api/v1/auth/mfa/enrollments/{id}/verify",
+        "POST /api/v1/auth/mfa/recovery-codes/rotate"
+      ],
+      "events": [
+        "membership.changed",
+        "identity.mfa.enrolled"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED",
+        "MFA_ENROLLMENT"
+      ],
+      "requirement_ids": [
+        "SYS-F-015",
+        "SYS-NF-001"
+      ],
+      "e2e_test_ids": [
+        "T-API-009",
+        "T-SEC-003",
+        "T-A11Y-002",
+        "T-SEC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/users",
+          "capability_id": "CAP-ADM-012-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-USERS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/users",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "2a892847bafc2d6d40b5b04ca4192aaac4069c2dd0c19a2a4234aa9ed60d5a58"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/organizations",
+          "capability_id": "CAP-ADM-012-002",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-ORGANIZATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/organizations",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "c658d952ea6cb510aa3342b84dc5f5dbed5db84364873f2157a43784f3caf5d6"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/memberships",
+          "capability_id": "CAP-ADM-012-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-MEMBERSHIPS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/memberships",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "8b5fcdf8c5cf43ac0c8ac0894b68f46722120946507779b4533eebd83b21e0f0"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/roles",
+          "capability_id": "CAP-ADM-012-004",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-ROLES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/roles",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "c6244a3dba1f7a513e38d977405a0b274677f863754fbc2c4b4d1f5252df377d"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/consents",
+          "capability_id": "CAP-ADM-012-005",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-CONSENTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/consents",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "aadda77dd82c332ccf3a064ee8250239a36b87be2bb3d07dfddc12459568386d"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/enrollments",
+          "capability_id": "CAP-ADM-012-006",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-ENROLLMENTS",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/enrollments",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "1484f2b9665a7ae9c3e57a84642594b9fdd024c2b190b6c0994bf24659a12c81"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/enrollments/{id}/verify",
+          "capability_id": "CAP-ADM-012-007",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-ENROLLMENTS-ID-VERIFY",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/enrollments/{id}/verify",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "c5cbd39e4e97dbc39f87f30654cd18cd88392637c7e29e39ea82db5c36fcce6a"
+        },
+        {
+          "operation_id": "POST /api/v1/auth/mfa/recovery-codes/rotate",
+          "capability_id": "CAP-ADM-012-008",
+          "intent_id": "INTENT-POST-API-V1-AUTH-MFA-RECOVERY-CODES-ROTATE",
+          "method": "POST",
+          "path_template": "/api/v1/auth/mfa/recovery-codes/rotate",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-012-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "9510a6722de99987664f68a086e013f383ae7f4ccf16c0688bda6dc35c399852"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-013",
+      "route": "/admin/pilots",
+      "route_aliases": [],
+      "allowed_roles": [
+        "INSTITUTION_ADMIN",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "GET /api/v1/admin/pilot-cohorts",
+        "POST /api/v1/admin/pilot-cohorts",
+        "GET /api/v1/admin/fgi-sessions",
+        "GET /api/v1/admin/improvement-issues"
+      ],
+      "events": [
+        "pilot.issue.updated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-015",
+        "SYS-F-016"
+      ],
+      "e2e_test_ids": [
+        "T-API-009",
+        "T-PILOT-003",
+        "T-A11Y-002",
+        "T-PILOT-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/pilot-cohorts",
+          "capability_id": "CAP-ADM-013-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-PILOT-COHORTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/pilot-cohorts",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-013-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-016"
+          ],
+          "test_ids": [
+            "T-PILOT-001"
+          ],
+          "evidence_ids": [
+            "EVD-PILOT-001"
+          ],
+          "semantic_case_sha256": "c966cf9be64258586d02e409631ea2bccc74748f6df6c9f270546e68d135999e"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/pilot-cohorts",
+          "capability_id": "CAP-ADM-013-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-PILOT-COHORTS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/pilot-cohorts",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-013-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-016"
+          ],
+          "test_ids": [
+            "T-PILOT-001"
+          ],
+          "evidence_ids": [
+            "EVD-PILOT-001"
+          ],
+          "semantic_case_sha256": "b3bd561750ad153f15b8aa89e0de2ea1852a70ee0dc54cd95e010fd7d4b62f4c"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/fgi-sessions",
+          "capability_id": "CAP-ADM-013-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-FGI-SESSIONS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/fgi-sessions",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-013-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-016"
+          ],
+          "test_ids": [
+            "T-PILOT-001"
+          ],
+          "evidence_ids": [
+            "EVD-PILOT-001"
+          ],
+          "semantic_case_sha256": "d8911211e76e32a1e42f2f1bde793c9357bd8978cee5fa0ffb58b5c7c6921d0d"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/improvement-issues",
+          "capability_id": "CAP-ADM-013-004",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-IMPROVEMENT-ISSUES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/improvement-issues",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-013-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-016"
+          ],
+          "test_ids": [
+            "T-PILOT-001"
+          ],
+          "evidence_ids": [
+            "EVD-PILOT-001"
+          ],
+          "semantic_case_sha256": "d2fb007a00b4b71bb45df850cd7266ef231faa6f3c05d0f5086e1253fb79b4cc"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-014",
+      "route": "/admin/analytics",
+      "route_aliases": [],
+      "allowed_roles": [
+        "INSTITUTION_ADMIN",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "GET /api/v1/admin/analytics/outcomes",
+        "GET /api/v1/admin/analytics/course-effects",
+        "POST /api/v1/admin/reports"
+      ],
+      "events": [
+        "analytics.report.generated"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PRIVACY_SUPPRESSED"
+      ],
+      "requirement_ids": [
+        "SYS-F-006",
+        "SYS-F-015",
+        "SYS-F-016"
+      ],
+      "e2e_test_ids": [
+        "T-API-009",
+        "T-RPT-003",
+        "T-A11Y-007",
+        "T-RPT-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/analytics/outcomes",
+          "capability_id": "CAP-ADM-014-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-ANALYTICS-OUTCOMES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/analytics/outcomes",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-014-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "1a3b13e47881ef6d4a5b24f57bb8a3f8401f2ce7de49f1565f6d8733536f792a"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/analytics/course-effects",
+          "capability_id": "CAP-ADM-014-002",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-ANALYTICS-COURSE-EFFECTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/analytics/course-effects",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-014-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "9f983d8a60a554a751978f4a6b399a305bb7a77d993235c29f62cbaeb6e72d61"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/reports",
+          "capability_id": "CAP-ADM-014-003",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-REPORTS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/reports",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-014-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-PROD",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-006"
+          ],
+          "test_ids": [
+            "T-RPT-001"
+          ],
+          "evidence_ids": [
+            "EVD-RPT-001"
+          ],
+          "semantic_case_sha256": "3198563aee21206567f3345ff51c7aced0ad771ec15694327eb2a6cc8beb5cb2"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-015",
+      "route": "/admin/audit",
+      "route_aliases": [],
+      "allowed_roles": [
+        "SECURITY_AUDITOR",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+      "api_operations": [
+        "GET /api/v1/admin/audit-events",
+        "POST /api/v1/admin/audit-exports",
+        "GET /api/v1/admin/security-events"
+      ],
+      "events": [
+        "audit.export.requested"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "requirement_ids": [
+        "SYS-F-015",
+        "SYS-F-018",
+        "SYS-NF-001",
+        "SYS-NF-002",
+        "SYS-NF-014"
+      ],
+      "e2e_test_ids": [
+        "T-API-010",
+        "T-SEC-005",
+        "T-A11Y-002",
+        "T-ARCH-005",
+        "T-SEC-001"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/audit-events",
+          "capability_id": "CAP-ADM-015-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-AUDIT-EVENTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/audit-events",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-015-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA",
+            "OWN-ARCH"
+          ],
+          "requirement_ids": [
+            "SYS-F-018",
+            "SYS-NF-014"
+          ],
+          "test_ids": [
+            "T-ARCH-005"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-005"
+          ],
+          "semantic_case_sha256": "92588e47503c499609242cbd962b05747ce3efd07649fdcbd8ea2611a9a9d017"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/audit-exports",
+          "capability_id": "CAP-ADM-015-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-AUDIT-EXPORTS",
+          "method": "POST",
+          "path_template": "/api/v1/admin/audit-exports",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-015-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA",
+            "OWN-ARCH"
+          ],
+          "requirement_ids": [
+            "SYS-F-018"
+          ],
+          "test_ids": [
+            "T-ARCH-005"
+          ],
+          "evidence_ids": [
+            "EVD-ARCH-005"
+          ],
+          "semantic_case_sha256": "b08e3ad60cc35fe35c874f0bb5c1612406691804f8f91f77bb142e6815906135"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/security-events",
+          "capability_id": "CAP-ADM-015-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-SECURITY-EVENTS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/security-events",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-015-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-SEC",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-001"
+          ],
+          "test_ids": [
+            "T-SEC-001"
+          ],
+          "evidence_ids": [
+            "EVD-SEC-001"
+          ],
+          "semantic_case_sha256": "53b5ec8faba3885a0128643e19361e187055f0f380f39cd057403717dc082bf3"
+        }
+      ]
+    },
+    {
+      "screen_id": "ADM-016",
+      "route": "/admin/operations",
+      "route_aliases": [],
+      "allowed_roles": [
+        "OPERATIONS_OPERATOR",
+        "SYSTEM_ADMIN"
+      ],
+      "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+      "api_operations": [
+        "GET /api/v1/admin/jobs",
+        "POST /api/v1/admin/jobs/{id}/retry",
+        "GET /api/v1/admin/indexes",
+        "GET /api/v1/admin/storage",
+        "GET /api/v1/admin/backups",
+        "GET /api/v1/admin/integrations",
+        "GET /health/ready"
+      ],
+      "events": [
+        "operation.retry.requested"
+      ],
+      "state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "requirement_ids": [
+        "SYS-F-015",
+        "SYS-F-017",
+        "SYS-NF-004",
+        "SYS-NF-005",
+        "SYS-NF-006",
+        "SYS-NF-007",
+        "SYS-NF-008",
+        "SYS-NF-012"
+      ],
+      "e2e_test_ids": [
+        "T-API-010",
+        "T-OPS-001",
+        "T-A11Y-002",
+        "T-INT-001",
+        "T-DEP-002"
+      ],
+      "operation_contracts": [
+        {
+          "operation_id": "GET /api/v1/admin/jobs",
+          "capability_id": "CAP-ADM-016-001",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-JOBS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/jobs",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "bbc996da20eb2edf21a952f873881b8d9509ac151bc42694f3add66d1b754691"
+        },
+        {
+          "operation_id": "POST /api/v1/admin/jobs/{id}/retry",
+          "capability_id": "CAP-ADM-016-002",
+          "intent_id": "INTENT-POST-API-V1-ADMIN-JOBS-ID-RETRY",
+          "method": "POST",
+          "path_template": "/api/v1/admin/jobs/{id}/retry",
+          "request_contract_id": "HTTP-REQUEST-POST-V1",
+          "response_contract_id": "HTTP-RESPONSE-POST-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-MUTATION-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "bfe369c3b983be53dbdae75b63ee7a06714d7c94e3705f179e6fde2b52aded00"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/indexes",
+          "capability_id": "CAP-ADM-016-003",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-INDEXES",
+          "method": "GET",
+          "path_template": "/api/v1/admin/indexes",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "56aca2286f3a50bfbb6f40fb7b4229ceb99df154c1e8ad9aaff818123c1882ca"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/storage",
+          "capability_id": "CAP-ADM-016-004",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-STORAGE",
+          "method": "GET",
+          "path_template": "/api/v1/admin/storage",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "9519e66b79c27dccf02a1343b3ff67d6b6b129678f0381f6385060b2f0bce7a3"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/backups",
+          "capability_id": "CAP-ADM-016-005",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-BACKUPS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/backups",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "fb4297bf77bbb5e62957fb006ce9f9868de534acd3bd55a330a464e57681499f"
+        },
+        {
+          "operation_id": "GET /api/v1/admin/integrations",
+          "capability_id": "CAP-ADM-016-006",
+          "intent_id": "INTENT-GET-API-V1-ADMIN-INTEGRATIONS",
+          "method": "GET",
+          "path_template": "/api/v1/admin/integrations",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-READ-V1",
+          "owner_ids": [
+            "OWN-ARCH",
+            "OWN-OPS",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-F-017"
+          ],
+          "test_ids": [
+            "T-INT-001"
+          ],
+          "evidence_ids": [
+            "EVD-INT-001"
+          ],
+          "semantic_case_sha256": "82ee7813e51175f3af44b8ef097a303286a9cf967346d576673d3819ccbd47cc"
+        },
+        {
+          "operation_id": "GET /health/ready",
+          "capability_id": "CAP-ADM-016-007",
+          "intent_id": "INTENT-GET-HEALTH-READY",
+          "method": "GET",
+          "path_template": "/health/ready",
+          "request_contract_id": "HTTP-REQUEST-GET-V1",
+          "response_contract_id": "HTTP-RESPONSE-GET-V1",
+          "authorization_contract_id": "AUTHZ-ADM-016-V1",
+          "error_contract_id": "HTTP-ERROR-HEALTH-V1",
+          "owner_ids": [
+            "OWN-OPS",
+            "OWN-ARCH",
+            "OWN-QA"
+          ],
+          "requirement_ids": [
+            "SYS-NF-004"
+          ],
+          "test_ids": [
+            "T-DEP-002"
+          ],
+          "evidence_ids": [
+            "EVD-DEP-002"
+          ],
+          "semantic_case_sha256": "ee4eded575dfad92b0cfaa4cc27704b3ffa3ec497c572fdb106c2b4c7e97b151"
+        }
+      ]
+    }
+  ],
+  "operation_semantic_contract": {
+    "hash_algorithm": "SHA-256",
+    "canonicalization": "RFC8785-compatible integer/string subset",
+    "operation_projection": "screen_id plus each ordered operation_contract with semantic_case_sha256 omitted",
+    "binding_fields": [
+      "operation_id",
+      "capability_id",
+      "intent_id",
+      "method",
+      "path_template",
+      "request_contract_id",
+      "response_contract_id",
+      "authorization_contract_id",
+      "error_contract_id",
+      "owner_ids",
+      "requirement_ids",
+      "test_ids",
+      "evidence_ids"
+    ],
+    "aggregate_projection": "Screen order then operation order, exactly 113 rows",
+    "aggregate_sha256": "cc9be193778d07e64c64786526506b2efa0900f845aecbe7b0e2b673811e47ff"
+  },
+  "operation_shared_catalogs": {
+    "request": {
+      "GET": {
+        "contract_id": "HTTP-REQUEST-GET-V1",
+        "body": "FORBIDDEN",
+        "idempotency_key": "NOT_REQUIRED"
+      },
+      "POST": {
+        "contract_id": "HTTP-REQUEST-POST-V1",
+        "body": "CLOSED_JSON_SCHEMA_REQUIRED",
+        "idempotency_key": "REQUIRED"
+      },
+      "PUT": {
+        "contract_id": "HTTP-REQUEST-PUT-V1",
+        "body": "CLOSED_JSON_SCHEMA_REQUIRED",
+        "idempotency_key": "REQUIRED"
+      },
+      "PATCH": {
+        "contract_id": "HTTP-REQUEST-PATCH-V1",
+        "body": "CLOSED_JSON_SCHEMA_REQUIRED",
+        "idempotency_key": "REQUIRED"
+      },
+      "DELETE": {
+        "contract_id": "HTTP-REQUEST-DELETE-V1",
+        "body": "FORBIDDEN",
+        "idempotency_key": "REQUIRED"
+      }
+    },
+    "response": {
+      "GET": {
+        "contract_id": "HTTP-RESPONSE-GET-V1",
+        "success_status": [
+          200
+        ],
+        "content_type": "application/json"
+      },
+      "POST": {
+        "contract_id": "HTTP-RESPONSE-POST-V1",
+        "success_status": [
+          200,
+          201,
+          202
+        ],
+        "content_type": "application/json"
+      },
+      "PUT": {
+        "contract_id": "HTTP-RESPONSE-PUT-V1",
+        "success_status": [
+          200
+        ],
+        "content_type": "application/json"
+      },
+      "PATCH": {
+        "contract_id": "HTTP-RESPONSE-PATCH-V1",
+        "success_status": [
+          200
+        ],
+        "content_type": "application/json"
+      },
+      "DELETE": {
+        "contract_id": "HTTP-RESPONSE-DELETE-V1",
+        "success_status": [
+          204
+        ],
+        "content_type": "NONE"
+      }
+    },
+    "error": {
+      "READ": {
+        "contract_id": "HTTP-ERROR-READ-V1",
+        "codes": [
+          "AUTHENTICATION_REQUIRED",
+          "AUTHORIZATION_DENIED",
+          "TENANT_SCOPE_VIOLATION",
+          "NOT_FOUND"
+        ]
+      },
+      "MUTATION": {
+        "contract_id": "HTTP-ERROR-MUTATION-V1",
+        "codes": [
+          "AUTHENTICATION_REQUIRED",
+          "AUTHORIZATION_DENIED",
+          "TENANT_SCOPE_VIOLATION",
+          "VALIDATION_FAILED",
+          "CONFLICT",
+          "IDEMPOTENCY_REPLAY"
+        ]
+      },
+      "HEALTH": {
+        "contract_id": "HTTP-ERROR-HEALTH-V1",
+        "codes": [
+          "DEPENDENCY_UNAVAILABLE"
+        ]
+      }
+    },
+    "authorization": [
+      {
+        "contract_id": "AUTHZ-PUB-001-V1",
+        "screen_id": "PUB-001",
+        "allowed_roles": [
+          "ANONYMOUS",
+          "AUTHENTICATED"
+        ],
+        "tenant_guard": "PUBLIC_REGISTRY_READ",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-PUB-002-V1",
+        "screen_id": "PUB-002",
+        "allowed_roles": [
+          "ANONYMOUS",
+          "AUTHENTICATED"
+        ],
+        "tenant_guard": "PUBLIC_REGISTRY_READ",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-PUB-003-V1",
+        "screen_id": "PUB-003",
+        "allowed_roles": [
+          "ANONYMOUS",
+          "AUTHENTICATED"
+        ],
+        "tenant_guard": "PUBLIC_OR_ACTIVE_TENANT_RIGHTS",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-PUB-004-V1",
+        "screen_id": "PUB-004",
+        "allowed_roles": [
+          "ANONYMOUS",
+          "AUTHENTICATED"
+        ],
+        "tenant_guard": "NO_TENANT_PREAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-001-V1",
+        "screen_id": "TCH-001",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-002-V1",
+        "screen_id": "TCH-002",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-003-V1",
+        "screen_id": "TCH-003",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-004-V1",
+        "screen_id": "TCH-004",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-005-V1",
+        "screen_id": "TCH-005",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-006-V1",
+        "screen_id": "TCH-006",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-007-V1",
+        "screen_id": "TCH-007",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-008-V1",
+        "screen_id": "TCH-008",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-009-V1",
+        "screen_id": "TCH-009",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-010-V1",
+        "screen_id": "TCH-010",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-011-V1",
+        "screen_id": "TCH-011",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-012-V1",
+        "screen_id": "TCH-012",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-013-V1",
+        "screen_id": "TCH-013",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_CURRENT_RIGHTS",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-014-V1",
+        "screen_id": "TCH-014",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-015-DRAFT-READ-V1",
+        "screen_id": "TCH-015",
+        "allowed_roles": [
+          "TEACHER",
+          "CONTENT_REVIEWER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-015-DRAFT-EDIT-V1",
+        "screen_id": "TCH-015",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-015-DRAFT-REVIEW-V1",
+        "screen_id": "TCH-015",
+        "allowed_roles": [
+          "TEACHER",
+          "CONTENT_REVIEWER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-015-DRAFT-EXPORT-V1",
+        "screen_id": "TCH-015",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_OWNERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-TCH-016-V1",
+        "screen_id": "TCH-016",
+        "allowed_roles": [
+          "TEACHER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_MEMBERSHIP",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-001-V1",
+        "screen_id": "ADM-001",
+        "allowed_roles": [
+          "INSTITUTION_ADMIN",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-002-V1",
+        "screen_id": "ADM-002",
+        "allowed_roles": [
+          "EXPERT_REVIEWER",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-003-V1",
+        "screen_id": "ADM-003",
+        "allowed_roles": [
+          "EXPERT_REVIEWER",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-004-V1",
+        "screen_id": "ADM-004",
+        "allowed_roles": [
+          "CONTENT_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-005-V1",
+        "screen_id": "ADM-005",
+        "allowed_roles": [
+          "EXPERT_REVIEWER",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-006-V1",
+        "screen_id": "ADM-006",
+        "allowed_roles": [
+          "CONTENT_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-007-V1",
+        "screen_id": "ADM-007",
+        "allowed_roles": [
+          "CONTENT_REVIEWER"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-008-V1",
+        "screen_id": "ADM-008",
+        "allowed_roles": [
+          "CONTENT_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-009-V1",
+        "screen_id": "ADM-009",
+        "allowed_roles": [
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-010-V1",
+        "screen_id": "ADM-010",
+        "allowed_roles": [
+          "EXPERT_REVIEWER",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-011-V1",
+        "screen_id": "ADM-011",
+        "allowed_roles": [
+          "SYSTEM_ADMIN",
+          "OPERATIONS_OPERATOR"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-012-V1",
+        "screen_id": "ADM-012",
+        "allowed_roles": [
+          "INSTITUTION_ADMIN",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-013-V1",
+        "screen_id": "ADM-013",
+        "allowed_roles": [
+          "INSTITUTION_ADMIN",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-014-V1",
+        "screen_id": "ADM-014",
+        "allowed_roles": [
+          "INSTITUTION_ADMIN",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-015-V1",
+        "screen_id": "ADM-015",
+        "allowed_roles": [
+          "SECURITY_AUDITOR",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA_REAUTH",
+        "unknown_role_or_guard": "DENY"
+      },
+      {
+        "contract_id": "AUTHZ-ADM-016-V1",
+        "screen_id": "ADM-016",
+        "allowed_roles": [
+          "OPERATIONS_OPERATOR",
+          "SYSTEM_ADMIN"
+        ],
+        "tenant_guard": "ACTIVE_TENANT_ROLE_MFA",
+        "unknown_role_or_guard": "DENY"
+      }
+    ]
+  }
+}

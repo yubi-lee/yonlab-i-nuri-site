@@ -1,0 +1,2655 @@
+{
+  "schema_version": "data-use-policy-registry.v1",
+  "policy_version": "data-use-policy.v1.0.0",
+  "unknown_category_policy": "DENY",
+  "classification_vocabulary": [
+    "PUBLIC",
+    "INTERNAL",
+    "CONFIDENTIAL",
+    "RESTRICTED"
+  ],
+  "category_enum": [
+    "PUBLIC_CONTENT",
+    "IDENTITY_CREDENTIAL",
+    "TEACHER_CONTEXT",
+    "DIAGNOSIS_DIALOGUE",
+    "DIAGNOSIS_EVIDENCE",
+    "RECOMMENDATION_FEATURE",
+    "LEARNING_ACTIVITY",
+    "DOCUMENT_QUERY",
+    "DOCUMENT_EVIDENCE",
+    "DRAFT_FIELD",
+    "OPERATIONAL_METADATA"
+  ],
+  "field_code_enum": [
+    "PUBLIC_CONTENT_ID",
+    "PUBLIC_CONTENT_TEXT",
+    "PUBLIC_RIGHTS_CODE",
+    "SUBJECT_PSEUDONYM",
+    "TENANT_PSEUDONYM",
+    "AUTH_FACTOR_RESULT",
+    "CAREER_BAND",
+    "REGION_CATEGORY",
+    "WORK_CONSTRAINT_CODES",
+    "DIALOGUE_TURN_TEXT",
+    "DIALOGUE_TURN_SEQUENCE",
+    "DIAGNOSIS_SESSION_PSEUDONYM",
+    "INDICATOR_CODE",
+    "EVIDENCE_ANCHOR",
+    "EVIDENCE_SCORE",
+    "COMPETENCY_SCORE",
+    "CONTENT_FEATURE_CODE",
+    "LEARNING_CONSTRAINT_CODE",
+    "LEARNING_ACTIVITY_CODE",
+    "LEARNING_PROGRESS",
+    "PRACTICE_OUTCOME_CODE",
+    "DOCUMENT_QUERY_TEXT",
+    "DOCUMENT_FILTER_CODE",
+    "QUERY_TENANT_SCOPE",
+    "DOCUMENT_VERSION_PSEUDONYM",
+    "DOCUMENT_CHUNK_TEXT",
+    "DOCUMENT_SOURCE_LOCATOR",
+    "DRAFT_TEMPLATE_FIELD",
+    "DRAFT_EVIDENCE_REFERENCE",
+    "DRAFT_SUBJECT_PSEUDONYM",
+    "TRACE_PSEUDONYM",
+    "OPERATION_METRIC_CODE",
+    "OPERATION_DURATION_MS"
+  ],
+  "categories": [
+    {
+      "category_id": "PUBLIC_CONTENT",
+      "classification_floor": "PUBLIC",
+      "purpose_codes": [
+        "PURPOSE_PUBLIC_CONTENT"
+      ],
+      "field_codes": [
+        "PUBLIC_CONTENT_ID",
+        "PUBLIC_CONTENT_TEXT",
+        "PUBLIC_RIGHTS_CODE"
+      ],
+      "redaction_profile_id": "REDACT-PUBLIC_CONTENT-V1",
+      "external_provider_allowed": true,
+      "consent_required": false
+    },
+    {
+      "category_id": "IDENTITY_CREDENTIAL",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM",
+        "AUTH_FACTOR_RESULT"
+      ],
+      "redaction_profile_id": "REDACT-IDENTITY_CREDENTIAL-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "TEACHER_CONTEXT",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "redaction_profile_id": "REDACT-TEACHER_CONTEXT-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "DIAGNOSIS_DIALOGUE",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_DIAGNOSIS_DIALOGUE"
+      ],
+      "field_codes": [
+        "DIALOGUE_TURN_TEXT",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIAGNOSIS_SESSION_PSEUDONYM"
+      ],
+      "redaction_profile_id": "REDACT-DIAGNOSIS_DIALOGUE-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "DIAGNOSIS_EVIDENCE",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_DIAGNOSIS_EVIDENCE"
+      ],
+      "field_codes": [
+        "INDICATOR_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE"
+      ],
+      "redaction_profile_id": "REDACT-DIAGNOSIS_EVIDENCE-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "RECOMMENDATION_FEATURE",
+      "classification_floor": "CONFIDENTIAL",
+      "purpose_codes": [
+        "PURPOSE_RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "redaction_profile_id": "REDACT-RECOMMENDATION_FEATURE-V1",
+      "external_provider_allowed": true,
+      "consent_required": true
+    },
+    {
+      "category_id": "LEARNING_ACTIVITY",
+      "classification_floor": "CONFIDENTIAL",
+      "purpose_codes": [
+        "PURPOSE_LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "redaction_profile_id": "REDACT-LEARNING_ACTIVITY-V1",
+      "external_provider_allowed": true,
+      "consent_required": true
+    },
+    {
+      "category_id": "DOCUMENT_QUERY",
+      "classification_floor": "CONFIDENTIAL",
+      "purpose_codes": [
+        "PURPOSE_DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "redaction_profile_id": "REDACT-DOCUMENT_QUERY-V1",
+      "external_provider_allowed": true,
+      "consent_required": true
+    },
+    {
+      "category_id": "DOCUMENT_EVIDENCE",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_DOCUMENT_EVIDENCE"
+      ],
+      "field_codes": [
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR"
+      ],
+      "redaction_profile_id": "REDACT-DOCUMENT_EVIDENCE-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "DRAFT_FIELD",
+      "classification_floor": "RESTRICTED",
+      "purpose_codes": [
+        "PURPOSE_DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DRAFT_TEMPLATE_FIELD",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM"
+      ],
+      "redaction_profile_id": "REDACT-DRAFT_FIELD-V1",
+      "external_provider_allowed": false,
+      "consent_required": true
+    },
+    {
+      "category_id": "OPERATIONAL_METADATA",
+      "classification_floor": "INTERNAL",
+      "purpose_codes": [
+        "PURPOSE_OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "TRACE_PSEUDONYM",
+        "OPERATION_METRIC_CODE",
+        "OPERATION_DURATION_MS"
+      ],
+      "redaction_profile_id": "REDACT-OPERATIONAL_METADATA-V1",
+      "external_provider_allowed": false,
+      "consent_required": false
+    }
+  ],
+  "fields": [
+    {
+      "field_code": "PUBLIC_CONTENT_ID",
+      "category_id": "PUBLIC_CONTENT",
+      "classification": "PUBLIC",
+      "source_contract": "ContentItem.id",
+      "provider_transform": "TOKENIZE",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "PUBLIC_CONTENT_TEXT",
+      "category_id": "PUBLIC_CONTENT",
+      "classification": "PUBLIC",
+      "source_contract": "ContentItem.public_text",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "PUBLIC_RIGHTS_CODE",
+      "category_id": "PUBLIC_CONTENT",
+      "classification": "PUBLIC",
+      "source_contract": "RightsGrant.rights_code",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "SUBJECT_PSEUDONYM",
+      "category_id": "IDENTITY_CREDENTIAL",
+      "classification": "RESTRICTED",
+      "source_contract": "User.id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "TENANT_PSEUDONYM",
+      "category_id": "IDENTITY_CREDENTIAL",
+      "classification": "RESTRICTED",
+      "source_contract": "Tenant.id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "AUTH_FACTOR_RESULT",
+      "category_id": "IDENTITY_CREDENTIAL",
+      "classification": "RESTRICTED",
+      "source_contract": "MfaChallenge.result",
+      "provider_transform": "ENUM_ONLY",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "CAREER_BAND",
+      "category_id": "TEACHER_CONTEXT",
+      "classification": "RESTRICTED",
+      "source_contract": "TeacherContext.career_band",
+      "provider_transform": "ENUM_ONLY",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "REGION_CATEGORY",
+      "category_id": "TEACHER_CONTEXT",
+      "classification": "RESTRICTED",
+      "source_contract": "Organization.region_category",
+      "provider_transform": "COARSE_ENUM",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "WORK_CONSTRAINT_CODES",
+      "category_id": "TEACHER_CONTEXT",
+      "classification": "RESTRICTED",
+      "source_contract": "TeacherContext.work_constraints",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DIALOGUE_TURN_TEXT",
+      "category_id": "DIAGNOSIS_DIALOGUE",
+      "classification": "RESTRICTED",
+      "source_contract": "DialogueTurn.content",
+      "provider_transform": "PII_REDACT",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DIALOGUE_TURN_SEQUENCE",
+      "category_id": "DIAGNOSIS_DIALOGUE",
+      "classification": "RESTRICTED",
+      "source_contract": "DialogueTurn.sequence",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DIAGNOSIS_SESSION_PSEUDONYM",
+      "category_id": "DIAGNOSIS_DIALOGUE",
+      "classification": "RESTRICTED",
+      "source_contract": "DiagnosisSession.id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "INDICATOR_CODE",
+      "category_id": "DIAGNOSIS_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "EvidenceSpan.indicator_id",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "EVIDENCE_ANCHOR",
+      "category_id": "DIAGNOSIS_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "EvidenceSpan.anchor_id",
+      "provider_transform": "TOKENIZE",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "EVIDENCE_SCORE",
+      "category_id": "DIAGNOSIS_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "EvidenceSpan.evidence_strength_microunit",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "COMPETENCY_SCORE",
+      "category_id": "RECOMMENDATION_FEATURE",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "CompetencyScore.score_microunit",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "CONTENT_FEATURE_CODE",
+      "category_id": "RECOMMENDATION_FEATURE",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "ContentItem.recommendation_feature_codes",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "LEARNING_CONSTRAINT_CODE",
+      "category_id": "RECOMMENDATION_FEATURE",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "LearningPath.constraint_codes",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "LEARNING_ACTIVITY_CODE",
+      "category_id": "LEARNING_ACTIVITY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "LearningActivity.activity_type",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "LEARNING_PROGRESS",
+      "category_id": "LEARNING_ACTIVITY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "Enrollment.progress_microunit",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "PRACTICE_OUTCOME_CODE",
+      "category_id": "LEARNING_ACTIVITY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "PracticeTask.outcome_code",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DOCUMENT_QUERY_TEXT",
+      "category_id": "DOCUMENT_QUERY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "RagSession.query",
+      "provider_transform": "PII_REDACT",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DOCUMENT_FILTER_CODE",
+      "category_id": "DOCUMENT_QUERY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "RagSession.filter_codes",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "QUERY_TENANT_SCOPE",
+      "category_id": "DOCUMENT_QUERY",
+      "classification": "CONFIDENTIAL",
+      "source_contract": "RagSession.tenant_id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DOCUMENT_VERSION_PSEUDONYM",
+      "category_id": "DOCUMENT_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "DocumentVersion.id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DOCUMENT_CHUNK_TEXT",
+      "category_id": "DOCUMENT_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "Chunk.normalized_text",
+      "provider_transform": "PII_REDACT",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DOCUMENT_SOURCE_LOCATOR",
+      "category_id": "DOCUMENT_EVIDENCE",
+      "classification": "RESTRICTED",
+      "source_contract": "DocumentNode.source_locator",
+      "provider_transform": "TOKENIZE",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DRAFT_TEMPLATE_FIELD",
+      "category_id": "DRAFT_FIELD",
+      "classification": "RESTRICTED",
+      "source_contract": "TemplateVersion.field_values",
+      "provider_transform": "SCHEMA_ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DRAFT_EVIDENCE_REFERENCE",
+      "category_id": "DRAFT_FIELD",
+      "classification": "RESTRICTED",
+      "source_contract": "GeneratedDraft.evidence_ids",
+      "provider_transform": "TOKENIZE",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "DRAFT_SUBJECT_PSEUDONYM",
+      "category_id": "DRAFT_FIELD",
+      "classification": "RESTRICTED",
+      "source_contract": "GeneratedDraft.user_id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "TRACE_PSEUDONYM",
+      "category_id": "OPERATIONAL_METADATA",
+      "classification": "INTERNAL",
+      "source_contract": "TelemetrySignal.trace_id",
+      "provider_transform": "HMAC_SHA256",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "OPERATION_METRIC_CODE",
+      "category_id": "OPERATIONAL_METADATA",
+      "classification": "INTERNAL",
+      "source_contract": "TelemetrySignal.metric_code",
+      "provider_transform": "ALLOWLIST",
+      "log_policy": "HASH_ONLY"
+    },
+    {
+      "field_code": "OPERATION_DURATION_MS",
+      "category_id": "OPERATIONAL_METADATA",
+      "classification": "INTERNAL",
+      "source_contract": "TelemetrySignal.duration_ms",
+      "provider_transform": "PASS",
+      "log_policy": "HASH_ONLY"
+    }
+  ],
+  "operation_bindings": [
+    {
+      "method": "GET",
+      "path": "/api/v1/portal/home",
+      "purpose_code": "PURPOSE_OPERATION_PUBLIC_PORTAL",
+      "category_ids": [
+        "PUBLIC_CONTENT"
+      ],
+      "field_codes": [
+        "PUBLIC_CONTENT_ID",
+        "PUBLIC_CONTENT_TEXT",
+        "PUBLIC_RIGHTS_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/public/catalog",
+      "purpose_code": "PURPOSE_OPERATION_PUBLIC_PORTAL",
+      "category_ids": [
+        "PUBLIC_CONTENT"
+      ],
+      "field_codes": [
+        "PUBLIC_CONTENT_ID",
+        "PUBLIC_CONTENT_TEXT",
+        "PUBLIC_RIGHTS_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/public/search",
+      "purpose_code": "PURPOSE_OPERATION_PUBLIC_PORTAL",
+      "category_ids": [
+        "PUBLIC_CONTENT"
+      ],
+      "field_codes": [
+        "PUBLIC_CONTENT_ID",
+        "PUBLIC_CONTENT_TEXT",
+        "PUBLIC_RIGHTS_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/public/resources/{resource_id}",
+      "purpose_code": "PURPOSE_OPERATION_PUBLIC_PORTAL",
+      "category_ids": [
+        "PUBLIC_CONTENT"
+      ],
+      "field_codes": [
+        "PUBLIC_CONTENT_ID",
+        "PUBLIC_CONTENT_TEXT",
+        "PUBLIC_RIGHTS_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/files/{file_id}/download-authorizations",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/password-resets",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/challenges",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/challenges/{challenge_id}/verify",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/recovery",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/dashboard",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/me",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/consents",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/me/consents",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenant_id}/activate",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/diagnoses",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/diagnoses/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/diagnoses/{id}/turns",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/diagnoses/{id}/pause",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/diagnoses/{id}/resume",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/diagnoses/{id}/results",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/diagnoses/{id}/evidence",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/evidence/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/diagnoses/{id}/rescore",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/diagnoses/{id}/personas",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/diagnoses/{id}/persona-context",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/recommendations",
+      "purpose_code": "PURPOSE_OPERATION_RECOMMENDATION",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/recommendations/{id}/feedback",
+      "purpose_code": "PURPOSE_OPERATION_RECOMMENDATION",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/learning-paths",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning-paths/{id}",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/learning-paths/{id}",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/steps/{id}/start",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/steps/{id}/complete",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/practice-submissions",
+      "purpose_code": "PURPOSE_OPERATION_LEARNING",
+      "category_ids": [
+        "LEARNING_ACTIVITY",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_CONSTRAINT_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/{id}",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/{id}/artifact",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/search",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/sessions",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rag/sessions/{id}/messages",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/citations/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/draft-templates",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/drafts",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/drafts/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/drafts/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/drafts/{id}/review",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/drafts/{id}/export",
+      "purpose_code": "PURPOSE_OPERATION_DRAFT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/activity",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/notifications",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/me/export-requests",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/me/deletion-requests",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/inquiries",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/metrics-summary",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/frameworks",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/frameworks",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/rubrics",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rubrics",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/personas",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/personas/{id}/activate",
+      "purpose_code": "PURPOSE_OPERATION_DIAGNOSIS",
+      "category_ids": [
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE",
+        "TEACHER_CONTEXT"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/catalog",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/catalog",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/catalog/{id}",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/recommendation-policies",
+      "purpose_code": "PURPOSE_OPERATION_RECOMMENDATION",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/recommendation-policies/{id}/activate",
+      "purpose_code": "PURPOSE_OPERATION_RECOMMENDATION",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents/uploads",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/documents",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/documents/{id}/graph",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/document-nodes/{id}",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/documents/{id}/reprocess",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/documents/{id}/review-decisions",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/document-publications",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/documents/{id}/publish",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/documents/{id}/withdraw",
+      "purpose_code": "PURPOSE_OPERATION_DOCUMENT",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/index-snapshots/{id}/rollback",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/models",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/models",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/prompts",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/schemas",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/routing-policies",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/evaluations",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/evaluations",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/evaluation-datasets",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai-runs",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai-costs",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ai-fallbacks",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/organizations",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/memberships",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/roles",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/consents",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/enrollments",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/enrollments/{id}/verify",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/recovery-codes/rotate",
+      "purpose_code": "PURPOSE_OPERATION_IDENTITY",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/pilot-cohorts",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/pilot-cohorts",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/fgi-sessions",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/improvement-issues",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/analytics/outcomes",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/analytics/course-effects",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/reports",
+      "purpose_code": "PURPOSE_OPERATION_REPORTING",
+      "category_ids": [
+        "LEARNING_ACTIVITY"
+      ],
+      "field_codes": [
+        "LEARNING_ACTIVITY_CODE",
+        "LEARNING_PROGRESS",
+        "PRACTICE_OUTCOME_CODE"
+      ],
+      "provider_call_allowed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/audit-events",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/audit-exports",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/security-events",
+      "purpose_code": "PURPOSE_OPERATION_ADMINISTRATION",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/jobs",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/jobs/{id}/retry",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/indexes",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/storage",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/backups",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/integrations",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    },
+    {
+      "method": "GET",
+      "path": "/health/ready",
+      "purpose_code": "PURPOSE_OPERATION_OPERATIONS",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "provider_call_allowed": false
+    }
+  ],
+  "privileged_operation_bindings": [
+    {
+      "privileged_operation_id": "OP-DIAGNOSIS-OVERRIDE",
+      "canonical_http_operation_id": "POST /internal/operations/v1/diagnosis-evidence-overrides",
+      "method": "POST",
+      "path": "/internal/operations/v1/diagnosis-evidence-overrides",
+      "task": "diagnosis.evidence.override",
+      "purpose_code": "PURPOSE_DIAGNOSIS_OVERRIDE",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE"
+      ],
+      "field_codes": [
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE"
+      ],
+      "destination": "INTERNAL_DIAGNOSIS_SERVICE",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-RUBRIC-PUBLISH",
+      "canonical_http_operation_id": "POST /internal/operations/v1/rubric-publications",
+      "method": "POST",
+      "path": "/internal/operations/v1/rubric-publications",
+      "task": "rubric.version.publish",
+      "purpose_code": "PURPOSE_RUBRIC_PUBLISH",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "destination": "INTERNAL_POLICY_REGISTRY",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-EVAL-EXPORT",
+      "canonical_http_operation_id": "POST /internal/operations/v1/evaluation-exports",
+      "method": "POST",
+      "path": "/internal/operations/v1/evaluation-exports",
+      "task": "evaluation.export",
+      "purpose_code": "PURPOSE_EVALUATION_EXPORT",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ],
+      "destination": "APPROVED_EXPORT_VAULT",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-HWP-PUBLISH",
+      "canonical_http_operation_id": "POST /internal/operations/v1/hwp-publications",
+      "method": "POST",
+      "path": "/internal/operations/v1/hwp-publications",
+      "task": "hwp.template.publish",
+      "purpose_code": "PURPOSE_HWP_PUBLISH",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ],
+      "destination": "INTERNAL_DOCUMENT_SERVICE",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-PROVIDER-ACTIVATE",
+      "canonical_http_operation_id": "POST /internal/operations/v1/provider-activations",
+      "method": "POST",
+      "path": "/internal/operations/v1/provider-activations",
+      "task": "provider.deployment.activate",
+      "purpose_code": "PURPOSE_PROVIDER_ACTIVATE",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "destination": "INTERNAL_AI_CONTROL_PLANE",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-LINEAGE-DELETE",
+      "canonical_http_operation_id": "POST /internal/operations/v1/lineage-deletions",
+      "method": "POST",
+      "path": "/internal/operations/v1/lineage-deletions",
+      "task": "privacy.lineage.delete",
+      "purpose_code": "PURPOSE_LINEAGE_DELETE",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL",
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM",
+        "TRACE_PSEUDONYM"
+      ],
+      "destination": "INTERNAL_PRIVACY_SERVICE",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-BACKUP-RESTORE",
+      "canonical_http_operation_id": "POST /internal/operations/v1/backup-restores",
+      "method": "POST",
+      "path": "/internal/operations/v1/backup-restores",
+      "task": "backup.restore",
+      "purpose_code": "PURPOSE_BACKUP_RESTORE",
+      "category_ids": [
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "TRACE_PSEUDONYM"
+      ],
+      "destination": "INTERNAL_RECOVERY_SERVICE",
+      "provider_call_allowed": false
+    },
+    {
+      "privileged_operation_id": "OP-ADMIN-GRANT",
+      "canonical_http_operation_id": "POST /internal/operations/v1/admin-role-grants",
+      "method": "POST",
+      "path": "/internal/operations/v1/admin-role-grants",
+      "task": "identity.admin.grant",
+      "purpose_code": "PURPOSE_ADMIN_GRANT",
+      "category_ids": [
+        "IDENTITY_CREDENTIAL",
+        "OPERATIONAL_METADATA"
+      ],
+      "field_codes": [
+        "AUTH_FACTOR_RESULT",
+        "OPERATION_DURATION_MS",
+        "OPERATION_METRIC_CODE",
+        "SUBJECT_PSEUDONYM",
+        "TENANT_PSEUDONYM",
+        "TRACE_PSEUDONYM"
+      ],
+      "destination": "INTERNAL_IDENTITY_SERVICE",
+      "provider_call_allowed": false
+    }
+  ],
+  "ai_task_bindings": [
+    {
+      "task": "diagnosis.evidence.extract",
+      "purpose_code": "PURPOSE_AI_DIAGNOSIS_EVIDENCE_EXTRACT",
+      "category_ids": [
+        "TEACHER_CONTEXT",
+        "DIAGNOSIS_DIALOGUE",
+        "DIAGNOSIS_EVIDENCE"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "DIAGNOSIS_SESSION_PSEUDONYM",
+        "DIALOGUE_TURN_SEQUENCE",
+        "DIALOGUE_TURN_TEXT",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ]
+    },
+    {
+      "task": "diagnosis.next_question.compose",
+      "purpose_code": "PURPOSE_AI_DIAGNOSIS_NEXT_QUESTION_COMPOSE",
+      "category_ids": [
+        "TEACHER_CONTEXT",
+        "DIAGNOSIS_EVIDENCE"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ]
+    },
+    {
+      "task": "persona.explanation.compose",
+      "purpose_code": "PURPOSE_AI_PERSONA_EXPLANATION_COMPOSE",
+      "category_ids": [
+        "TEACHER_CONTEXT",
+        "DIAGNOSIS_EVIDENCE"
+      ],
+      "field_codes": [
+        "CAREER_BAND",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "REGION_CATEGORY",
+        "WORK_CONSTRAINT_CODES"
+      ]
+    },
+    {
+      "task": "recommendation.explanation.compose",
+      "purpose_code": "PURPOSE_AI_RECOMMENDATION_EXPLANATION_COMPOSE",
+      "category_ids": [
+        "DIAGNOSIS_EVIDENCE",
+        "RECOMMENDATION_FEATURE"
+      ],
+      "field_codes": [
+        "COMPETENCY_SCORE",
+        "CONTENT_FEATURE_CODE",
+        "EVIDENCE_ANCHOR",
+        "EVIDENCE_SCORE",
+        "INDICATOR_CODE",
+        "LEARNING_CONSTRAINT_CODE"
+      ]
+    },
+    {
+      "task": "document.query.rewrite",
+      "purpose_code": "PURPOSE_AI_DOCUMENT_QUERY_REWRITE",
+      "category_ids": [
+        "DOCUMENT_QUERY"
+      ],
+      "field_codes": [
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "QUERY_TENANT_SCOPE"
+      ]
+    },
+    {
+      "task": "document.rerank",
+      "purpose_code": "PURPOSE_AI_DOCUMENT_RERANK",
+      "category_ids": [
+        "DOCUMENT_QUERY",
+        "DOCUMENT_EVIDENCE"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ]
+    },
+    {
+      "task": "document.grounded_answer",
+      "purpose_code": "PURPOSE_AI_DOCUMENT_GROUNDED_ANSWER",
+      "category_ids": [
+        "DOCUMENT_QUERY",
+        "DOCUMENT_EVIDENCE"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_FILTER_CODE",
+        "DOCUMENT_QUERY_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "QUERY_TENANT_SCOPE"
+      ]
+    },
+    {
+      "task": "draft.hwpx.section.compose",
+      "purpose_code": "PURPOSE_AI_DRAFT_HWPX_SECTION_COMPOSE",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE",
+        "DRAFT_FIELD"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM",
+        "DRAFT_EVIDENCE_REFERENCE",
+        "DRAFT_SUBJECT_PSEUDONYM",
+        "DRAFT_TEMPLATE_FIELD"
+      ]
+    },
+    {
+      "task": "document.metadata.tag",
+      "purpose_code": "PURPOSE_AI_DOCUMENT_METADATA_TAG",
+      "category_ids": [
+        "DOCUMENT_EVIDENCE"
+      ],
+      "field_codes": [
+        "DOCUMENT_CHUNK_TEXT",
+        "DOCUMENT_SOURCE_LOCATOR",
+        "DOCUMENT_VERSION_PSEUDONYM"
+      ]
+    }
+  ],
+  "redaction_receipt_contract": {
+    "hash_algorithm": "SHA-256",
+    "required_fields": [
+      "receipt_id",
+      "policy_version",
+      "input_hash",
+      "output_hash",
+      "removed_field_codes",
+      "decision",
+      "provider_call_count"
+    ],
+    "decision_enum": [
+      "ALLOW",
+      "REDACT_AND_ALLOW",
+      "DENY"
+    ],
+    "provider_call_count_on_denial": 0,
+    "receipt_write_stage": "BEFORE_PROVIDER_CALL"
+  }
+}

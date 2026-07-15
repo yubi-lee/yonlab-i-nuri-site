@@ -1,0 +1,705 @@
+{
+  "manifest_version": "overlay.v2",
+  "policy_id": "OVERLAY_POLICY_V2_RECURSIVE_EXACT",
+  "baseline_id": "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1",
+  "target_root": "D:\\Views\\yonlab-inuri-site",
+  "target_branch": "feat/ai-training-platform-v1",
+  "target_remote": "https://github.com/yubi-lee/yonlab-i-nuri-site.git",
+  "mapping_policy": {
+    "package_directory": "yonlab-ai-training-platform-design",
+    "package_destination": "docs/planning/ai-training-platform-v1",
+    "recursive": true,
+    "package_only_exclusions": [
+      "test-verify-design-package.sh",
+      "verify-design-package.ps1",
+      "verify-design-package.sh"
+    ],
+    "private_sources_allowed": false,
+    "install_mode": "100644",
+    "repo_overlay_directory": "repo-overlay",
+    "repo_overlay_destination": ".",
+    "repo_overlay_recursive": true
+  },
+  "file_count": 97,
+  "files": [
+    {
+      "source": "AI-Gateway-UniClaudeProxy-Reuse-Design.md",
+      "destination": "docs/planning/AI-Gateway-UniClaudeProxy-Reuse-Design.md",
+      "sha256": "bf4c88b3353b58706caa4bb7777aa938bfe23e4bb86ad916cdfddba60c5ce110",
+      "bytes": 24225,
+      "mode": "100644"
+    },
+    {
+      "source": "generate-overlay-manifest.py",
+      "destination": "docs/planning/ai-training-platform-v1/tools/generate-overlay-manifest.py",
+      "sha256": "8db3b036dad5dac4174d4705339b0fa32609038869720d56741124f44eea1a24",
+      "bytes": 13191,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/invoke-ai-training-platform-v1.ps1",
+      "destination": "scripts/invoke-ai-training-platform-v1.ps1",
+      "sha256": "95788c8daa80f5e9fb69a7614941963cf10276ace89c576982f4d9f827027ecf",
+      "bytes": 233379,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-codex-final-result-schema-ajv.sh",
+      "destination": "scripts/tests/test-codex-final-result-schema-ajv.sh",
+      "sha256": "5485c29d2f81e8e8eb96e535151d1583337e6ab595a05d5fc4473e60ec9e9719",
+      "bytes": 5737,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-invoke-ai-training-platform-v1.sh",
+      "destination": "scripts/tests/test-invoke-ai-training-platform-v1.sh",
+      "sha256": "37d0501d837a8fbdc614b133a3e03d17b947d9c7c352c778e1374abf06d94786",
+      "bytes": 20059,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-invoke-utf8-process.ps1",
+      "destination": "scripts/tests/test-invoke-utf8-process.ps1",
+      "sha256": "017c4c84f0fd2a426d78a3dae2ea7db2e8811d06be8932b0a9bf129a8e51b4a7",
+      "bytes": 27654,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-overlay-bootstrap.ps1",
+      "destination": "scripts/tests/test-overlay-bootstrap.ps1",
+      "sha256": "0d2e6ad659eaabe2befdf94bb1e30a1aba325e9e44272262e4c24cc04f569639",
+      "bytes": 3298,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-runner-policy-fixtures.ps1",
+      "destination": "scripts/tests/test-runner-policy-fixtures.ps1",
+      "sha256": "8cadd35838a005a7f12519c61e875a5daf0029d64a1c2967a9a20403e8b4fd1e",
+      "bytes": 14433,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/tests/test-validate-codex-final-result.ps1",
+      "destination": "scripts/tests/test-validate-codex-final-result.ps1",
+      "sha256": "b2a5ca2a40c3bf2c4906dfbd4c30c3de2401e1ea195f32191c881a0e986db572",
+      "bytes": 10204,
+      "mode": "100644"
+    },
+    {
+      "source": "repo-overlay/scripts/validate-codex-final-result.ps1",
+      "destination": "scripts/validate-codex-final-result.ps1",
+      "sha256": "67b13aba85c0a6622957a45a283d934893901cb3168152025145e1326d366187",
+      "bytes": 35883,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/00-source-decision-baseline.md",
+      "destination": "docs/planning/ai-training-platform-v1/00-source-decision-baseline.md",
+      "sha256": "91efb3248218cbc705c20df265d10b0129e7887ce76b74531bad26885bb6def3",
+      "bytes": 7945,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/01-requirements-traceability.md",
+      "destination": "docs/planning/ai-training-platform-v1/01-requirements-traceability.md",
+      "sha256": "499fb762c99af517542370113d28a54d2cde86c273ca7075dbf969d228f485b5",
+      "bytes": 10074,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/02-functional-screen-design.md",
+      "destination": "docs/planning/ai-training-platform-v1/02-functional-screen-design.md",
+      "sha256": "c1bc7b6cc74fa61204350cd8469cdaee5a2bfc73ef5d885f136b0b51f3ecc8a9",
+      "bytes": 15581,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/03-system-architecture-cdd-cdr.md",
+      "destination": "docs/planning/ai-training-platform-v1/03-system-architecture-cdd-cdr.md",
+      "sha256": "c656000f03dac8b25c10b8e68063f8fae8a05d4e4011b1cf87709d33fcf79f63",
+      "bytes": 13442,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/04-ai-diagnosis-persona-recommendation.md",
+      "destination": "docs/planning/ai-training-platform-v1/04-ai-diagnosis-persona-recommendation.md",
+      "sha256": "64e989f5a14f0fd7927a5d67ed9a33c1b0bd66055f5c0b9529d18478d25626be",
+      "bytes": 16873,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/05-document-ai-hwp-rag.md",
+      "destination": "docs/planning/ai-training-platform-v1/05-document-ai-hwp-rag.md",
+      "sha256": "b173b0aca640e3f6084c4820ff645783632a6b8cbaeacfead6bcb2b88931e6c3",
+      "bytes": 14005,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/06-ai-gateway-model-selection.md",
+      "destination": "docs/planning/ai-training-platform-v1/06-ai-gateway-model-selection.md",
+      "sha256": "54a7d75a435eb14cc51fd027bf2ecfdae7e3bcdd5ffc6a069e708ea37ebc30a9",
+      "bytes": 17550,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/07-data-api-interface-design.md",
+      "destination": "docs/planning/ai-training-platform-v1/07-data-api-interface-design.md",
+      "sha256": "04a74b28e8b601d37beb0e20e70555b9277bc6828b29e1617092680d3f954d8d",
+      "bytes": 21233,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/08-security-privacy-operations.md",
+      "destination": "docs/planning/ai-training-platform-v1/08-security-privacy-operations.md",
+      "sha256": "878b64be4c4cd29f42fc4fe47137afc682ecd38d33ca038cdc21e6dcee2705e1",
+      "bytes": 13716,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/09-test-procedure-acceptance.md",
+      "destination": "docs/planning/ai-training-platform-v1/09-test-procedure-acceptance.md",
+      "sha256": "f177500d20c274e4f4337ecc225e77c4d04802807e81c268e9f01186b7700d37",
+      "bytes": 19741,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/10-delivery-implementation-plan.md",
+      "destination": "docs/planning/ai-training-platform-v1/10-delivery-implementation-plan.md",
+      "sha256": "f68bbe56350feecfa7c3388e19901a25ed068cd6f17efd5b8147cf430191711a",
+      "bytes": 17342,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/11-codex-one-shot-implementation-prompt.md",
+      "destination": "docs/planning/ai-training-platform-v1/11-codex-one-shot-implementation-prompt.md",
+      "sha256": "d2b190da315067e8561f2980bc03d146a205cc3975c4970b82c45a6bccf7d37c",
+      "bytes": 27875,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/12-ui-ux-visual-system.md",
+      "destination": "docs/planning/ai-training-platform-v1/12-ui-ux-visual-system.md",
+      "sha256": "bfc75a10f035cc991b88c795ebc3b25f0e6e5455127af7ac64797135c99b23f7",
+      "bytes": 25065,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/13-one-command-execution.md",
+      "destination": "docs/planning/ai-training-platform-v1/13-one-command-execution.md",
+      "sha256": "38a6b94c643999f97c4335ece196a71b500e68b1e6646e749bf8456e9eeab0d0",
+      "bytes": 32341,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/14-final-document-deliverables.md",
+      "destination": "docs/planning/ai-training-platform-v1/14-final-document-deliverables.md",
+      "sha256": "0adb9dc6b6fd5f6526bad1f2369049dde8cca7574d50d0ae63aaedc57109b390",
+      "bytes": 45048,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/15-normative-policy-and-interface-contracts.md",
+      "destination": "docs/planning/ai-training-platform-v1/15-normative-policy-and-interface-contracts.md",
+      "sha256": "94c4ab93bf10f3807fe5136f51f205b8963ed123ba7e79f5c355c812a267a3af",
+      "bytes": 44355,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/README.md",
+      "destination": "docs/planning/ai-training-platform-v1/README.md",
+      "sha256": "4fc50f56fedf0e3523f088904e423f53efc46417cfadc6c1d8aa3dbddec7628c",
+      "bytes": 12111,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/REVIEW-CHANGELOG-v1.1.md",
+      "destination": "docs/planning/ai-training-platform-v1/REVIEW-CHANGELOG-v1.1.md",
+      "sha256": "edf1c221a8ea2a2fe6949e00f5fcfe58f2c27be2a357feaaad8a180e649ce089",
+      "bytes": 4393,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/acceptance-threshold-registry.json",
+      "destination": "docs/planning/ai-training-platform-v1/acceptance-threshold-registry.json",
+      "sha256": "d425209b05f86d9f0607c6e83ddee6dee59bbb0e13fdb99099014b03cbb81840",
+      "bytes": 6070,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/ai-gateway-request.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/ai-gateway-request.schema.json",
+      "sha256": "0e9529321517d1e2f3e630da0619adce268a7557c43cbb20453add1e1f70112b",
+      "bytes": 7755,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/ai-service-contracts.json",
+      "destination": "docs/planning/ai-training-platform-v1/ai-service-contracts.json",
+      "sha256": "93fc3950ff1cec96ea04bd5d38fd394211af2d882cf4110f4c0ad517ae5863f8",
+      "bytes": 47753,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/artifact-manifest.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/artifact-manifest.schema.json",
+      "sha256": "0a516ca90074f830d4b3aeed8137ddbe7d0607fd36ebbf61e418b2784bd6e35d",
+      "bytes": 8656,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/codex-final-result.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/codex-final-result.schema.json",
+      "sha256": "b752a6d12415e13de3590feb7eddf46d96b8410825ba000db3d8d6155e197325",
+      "bytes": 39909,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/codex-output.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/codex-output.schema.json",
+      "sha256": "2655ce70dc3921f6863858182e0858337b440ae3894dab4d6b12fcc0b912b34e",
+      "bytes": 16774,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/data-use-policy-registry.json",
+      "destination": "docs/planning/ai-training-platform-v1/data-use-policy-registry.json",
+      "sha256": "3a7e1295bac686265a723929f2e38c179b9a61913bd456262bfaee03401d1392",
+      "bytes": 72372,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/design-baseline.json",
+      "destination": "docs/planning/ai-training-platform-v1/design-baseline.json",
+      "sha256": "955755cd64faec664ac0b67e3e1233e85316c31f70da20add768b08651067fbe",
+      "bytes": 14846,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/diagnosis-scoring-golden-vectors.json",
+      "destination": "docs/planning/ai-training-platform-v1/diagnosis-scoring-golden-vectors.json",
+      "sha256": "074ce0ee7a9a07ad4250e4d32a7ca96a7c2bb48926b39d9058257455a23c0a75",
+      "bytes": 15850,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/document-graph.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/document-graph.schema.json",
+      "sha256": "65f738786257fa7473ca849246c268fdb13a7ca330a0e40c986b663f36798bf3",
+      "bytes": 20313,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/entity-catalog.json",
+      "destination": "docs/planning/ai-training-platform-v1/entity-catalog.json",
+      "sha256": "e1863d8a2c9e0ae9ea46b9974ffc473c627b6258cb0e147041f975a9c18fe815",
+      "bytes": 27224,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/evaluation-policy-contract.json",
+      "destination": "docs/planning/ai-training-platform-v1/evaluation-policy-contract.json",
+      "sha256": "7508f87d6b025c960c59dbcd0f3afd1eeafc3e2a7501377b8f68a16d3a960a43",
+      "bytes": 13288,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/evidence-index.schema.json",
+      "destination": "docs/planning/ai-training-platform-v1/evidence-index.schema.json",
+      "sha256": "b39a0e58f7768242dfb2ae852d051a9e763907375b5f77ec3bb251ed7dd1a9e3",
+      "bytes": 2842,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/final-document-inventory.json",
+      "destination": "docs/planning/ai-training-platform-v1/final-document-inventory.json",
+      "sha256": "d3ec5415ad5895077187dc94f35ea514669f7dbdb10a8d9cfb43c1333d97f287",
+      "bytes": 69675,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/ai-gateway-request.invalid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/ai-gateway-request.invalid.json",
+      "sha256": "cee17e63f492d7d3c39426aba668089d1f65401f956aeb3e7ab2759489a6819d",
+      "bytes": 1034,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/ai-gateway-request.valid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/ai-gateway-request.valid.json",
+      "sha256": "8a2b0020b4593fbc5a98f3bcf3440b6173121ea86f32919576606831b0ad7b53",
+      "bytes": 2363,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/ai-gateway-safeguarding-decision-vectors.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/ai-gateway-safeguarding-decision-vectors.json",
+      "sha256": "f7351a817248dda173d2114dab320738af42167b9d6dd55e0453b6b040fcc94c",
+      "bytes": 1392,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-manifest.invalid-duplicate-path.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-manifest.invalid-duplicate-path.json",
+      "sha256": "481c6ed5580881ce7e90b61e519f091138be704e7204bf5fef64477f151fd674",
+      "bytes": 2104,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-manifest.invalid-source-path.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-manifest.invalid-source-path.json",
+      "sha256": "c88a244a8b5e8250ef197cd7bf007de0a76b76afe49f33c567a9231495a03898",
+      "bytes": 1697,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-manifest.invalid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-manifest.invalid.json",
+      "sha256": "e84e92cbc0eb00ba8a147171edc14cced2022dc591da1c911138121314497633",
+      "bytes": 119,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-manifest.valid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-manifest.valid.json",
+      "sha256": "07b5fce53f0d083f057936d188451081207ac14ad456f8c473c02e5541d051cc",
+      "bytes": 1730,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-root/release/final-system-design.pdf",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-root/release/final-system-design.pdf",
+      "sha256": "dc4aa67b6d3e49d8774affd52c095efa7f67f8caedba0b9cc427672e524bec03",
+      "bytes": 55,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/artifact-root/source/docs/design/ai-training-platform/README.md",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/artifact-root/source/docs/design/ai-training-platform/README.md",
+      "sha256": "4b393d125a0652e69d6d9cb95d9864246ce8876fbc76374975439bb61e33debe",
+      "bytes": 122,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-cell-gap.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-cell-gap.json",
+      "sha256": "c119f45e9459c218e2b08c1e84f5fcb0b5e786c9ea3f1bf9cbc14bc2157e2f9e",
+      "bytes": 9390,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-cell-overlap.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-cell-overlap.json",
+      "sha256": "a42b426058224ea97d1f63137995ec4bad46ecc2401f271600bdf886344baacf",
+      "bytes": 10777,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-nested-cycle.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-nested-cycle.json",
+      "sha256": "6b33d95c4d0b46c0daec54d997f8b49ddc86d0817f9e2932255b2c928bf8d8fb",
+      "bytes": 10835,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-nested-dangling.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-nested-dangling.json",
+      "sha256": "cf68d023d4f45f457a864650480a692d6ef96f79d23e352a4f4626dbfdbd9b9c",
+      "bytes": 10777,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-range.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-range.json",
+      "sha256": "83d1177a7f0e44e0a1cf27df03b816e1add7ac004decc8979c0da835f0fa47f3",
+      "bytes": 4024,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-topology.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-topology.json",
+      "sha256": "fd1af05b91dd5666b42a93dcaa0da9b8950add1c16b357cc0ce3639767f8c1d1",
+      "bytes": 4024,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.invalid-uuid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.invalid-uuid.json",
+      "sha256": "3fbf698293223041c1b930ad9352f1db371527dd967d8b534428ece7b6d0a1a8",
+      "bytes": 4024,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/document-graph.valid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/document-graph.valid.json",
+      "sha256": "289d3619479d23b6b6387afb03811e1b49f5f7415c5bab858796f77d5e293475",
+      "bytes": 10777,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/evidence-index.invalid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/evidence-index.invalid.json",
+      "sha256": "7e6f37d859bfa3556d7fb5784ee3c28f51a37db47b0afe4cf5341d276478e4d7",
+      "bytes": 822,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/fixtures/evidence-index.valid.json",
+      "destination": "docs/planning/ai-training-platform-v1/fixtures/evidence-index.valid.json",
+      "sha256": "abc9bc22b5768f0c11a654e62b629230766d17a073cc0b54531421ee43a00c40",
+      "bytes": 841,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/generate-completeness-contracts.py",
+      "destination": "docs/planning/ai-training-platform-v1/generate-completeness-contracts.py",
+      "sha256": "0db5cf31b561f449d99b0450f63a24d1d9987231a75ebd5d99b0cb5f3292ea6e",
+      "bytes": 185374,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/generate-semantic-depth-contracts.py",
+      "destination": "docs/planning/ai-training-platform-v1/generate-semantic-depth-contracts.py",
+      "sha256": "d14efd51707439a3ee6d1013413899bd91252ff025545cceedcbe22bf3b02f59",
+      "bytes": 48426,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/hwp-conversion-boundary-contract.json",
+      "destination": "docs/planning/ai-training-platform-v1/hwp-conversion-boundary-contract.json",
+      "sha256": "19128dc7f2f1648bc1ee776275492e24b97ebf5841555f952e6ddfbbe2a980ec",
+      "bytes": 6399,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/kpi-005-structured-output-matrix.json",
+      "destination": "docs/planning/ai-training-platform-v1/kpi-005-structured-output-matrix.json",
+      "sha256": "328d79788647484ed1a5806af979d87e4b046ceeab776f5334742539b82a709d",
+      "bytes": 7516,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/legacy-reuse-decision-matrix.json",
+      "destination": "docs/planning/ai-training-platform-v1/legacy-reuse-decision-matrix.json",
+      "sha256": "6098a6b3276ff43c2f882435a4f9a4e64b8e91894e51e7649e853b7081d24305",
+      "bytes": 22176,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/normative-test-semantics.json",
+      "destination": "docs/planning/ai-training-platform-v1/normative-test-semantics.json",
+      "sha256": "dc2310b7420b5152889f6d5c79f2920dcb9b2263816b9e9d4db063ba966799da",
+      "bytes": 115952,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/operation-authorization-contracts.json",
+      "destination": "docs/planning/ai-training-platform-v1/operation-authorization-contracts.json",
+      "sha256": "0efeab537c690d59b9dde079292bb8bd88354918262a9012749a8c31d2233c3e",
+      "bytes": 23841,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/persistent-domain-catalog.json",
+      "destination": "docs/planning/ai-training-platform-v1/persistent-domain-catalog.json",
+      "sha256": "e54cda29c1d785cdd28f08aea362123d57f541bed2dec69df1039294b90d80d5",
+      "bytes": 320965,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/persona-inference-policy.json",
+      "destination": "docs/planning/ai-training-platform-v1/persona-inference-policy.json",
+      "sha256": "ee094d799fb2fffc70738518a2420383d7c3ce8546cda6845992010b13320379",
+      "bytes": 33428,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/platform-asyncapi.json",
+      "destination": "docs/planning/ai-training-platform-v1/platform-asyncapi.json",
+      "sha256": "94e2e6a10e8f1ff6ad24758225a1d36488d62b50c74a766200d4dedb9029bbf9",
+      "bytes": 16556,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/platform-openapi.json",
+      "destination": "docs/planning/ai-training-platform-v1/platform-openapi.json",
+      "sha256": "e35b43752e2ade964b6335e373069d1a770a49fc0a73fa91b10fc65f0b4d2be7",
+      "bytes": 826757,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/provider-decision-registry.json",
+      "destination": "docs/planning/ai-training-platform-v1/provider-decision-registry.json",
+      "sha256": "0e26731afd0500b594cef7bf672e2321828a8df93f654245723e5b8af669747d",
+      "bytes": 13488,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/rag-policy-golden-vectors.json",
+      "destination": "docs/planning/ai-training-platform-v1/rag-policy-golden-vectors.json",
+      "sha256": "9e4a81b97c7dbc0cadf7d1cb8bcd168f4bac995ee7e8eda652df2117cd7ab1c2",
+      "bytes": 4266,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/release-trust.example.json",
+      "destination": "docs/planning/ai-training-platform-v1/release-trust.example.json",
+      "sha256": "6e9a00402fb3b876256ad7a97dcabd9e9e141e8145d199e02b66292d487dba53",
+      "bytes": 3696,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/requirements-test-registry.json",
+      "destination": "docs/planning/ai-training-platform-v1/requirements-test-registry.json",
+      "sha256": "8f437ff3298f26db016f0ec7ce8e5fa572498810e61bfce6840ddf0281306197",
+      "bytes": 493890,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/rubric-question-contract.json",
+      "destination": "docs/planning/ai-training-platform-v1/rubric-question-contract.json",
+      "sha256": "bce9da31bb4ffa8dc8ba58bf899b5b71344d1ae2763287af73ec18a1eed3f0e0",
+      "bytes": 73071,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/screen-route-contracts.json",
+      "destination": "docs/planning/ai-training-platform-v1/screen-route-contracts.json",
+      "sha256": "fdf87b9e3b11197f3aeba895df30b739f0b858f9ddd1bf482c353f7fe40fcc2f",
+      "bytes": 147756,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/source-traceability-manifest.json",
+      "destination": "docs/planning/ai-training-platform-v1/source-traceability-manifest.json",
+      "sha256": "ffea4cc14114a8900ce54fef52ee1b7ef6b2ff0d1d4610349cef501a3f04ee40",
+      "bytes": 54022,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/source-traceability.md",
+      "destination": "docs/planning/ai-training-platform-v1/source-traceability.md",
+      "sha256": "2157748709c9083386137d9e1275351d44496456a5ff89f16b18eb3431c55d46",
+      "bytes": 5934,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/source-tree-hash-golden-vector.json",
+      "destination": "docs/planning/ai-training-platform-v1/source-tree-hash-golden-vector.json",
+      "sha256": "e3ad2ebf2ebcf77c40ea27bc3bc07bf83409287c3eb135151bd8989c9a55e2c7",
+      "bytes": 1502,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/tch-015-authorization-contract.json",
+      "destination": "docs/planning/ai-training-platform-v1/tch-015-authorization-contract.json",
+      "sha256": "27a4c06a7689614171b41f09beb3285bc8824b35fc20eed30460ba68e16b8780",
+      "bytes": 9431,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/test-completeness-contracts.sh",
+      "destination": "docs/planning/ai-training-platform-v1/test-completeness-contracts.sh",
+      "sha256": "d586eaf4023d3f0bd37b9aeba00c58b913c6319ed3594c57b7c6c8b2dd278080",
+      "bytes": 27331,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/test-machine-contracts.sh",
+      "destination": "docs/planning/ai-training-platform-v1/test-machine-contracts.sh",
+      "sha256": "820b9b67123a0fc1ef51dd24fac1918f8abde4521ddc95848cc00940ccc94f5a",
+      "bytes": 12841,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/test-semantic-depth-contracts.sh",
+      "destination": "docs/planning/ai-training-platform-v1/test-semantic-depth-contracts.sh",
+      "sha256": "0278c3faf834fbffe7de7836a4637671bf3d5b627ea08df151de1240271f0652",
+      "bytes": 6092,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/test-source-traceability.sh",
+      "destination": "docs/planning/ai-training-platform-v1/test-source-traceability.sh",
+      "sha256": "ca77662fd7616d095d1b0f0ad5859e35cad962f54cb72bbe9732228ee5df411f",
+      "bytes": 2760,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/tests/test-ai-gateway-safeguarding-enum.sh",
+      "destination": "docs/planning/ai-training-platform-v1/tests/test-ai-gateway-safeguarding-enum.sh",
+      "sha256": "51debf912749c071939b38ec92974cf52bb0cf824666a12c6eb94423a634b502",
+      "bytes": 1357,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/tests/test-normative-test-semantics.sh",
+      "destination": "docs/planning/ai-training-platform-v1/tests/test-normative-test-semantics.sh",
+      "sha256": "fd154bc25ec51bc1b302f1c87b068c301fd750148bea3ab908153ba92ccc4989",
+      "bytes": 2433,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/tests/test-tch-015-authorization.sh",
+      "destination": "docs/planning/ai-training-platform-v1/tests/test-tch-015-authorization.sh",
+      "sha256": "9e081950d42a51e34cc990a65024805c202b4d22a47b428eb89eccea6198bf0b",
+      "bytes": 2255,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/ui-journey-contracts.json",
+      "destination": "docs/planning/ai-training-platform-v1/ui-journey-contracts.json",
+      "sha256": "4dca4ea393be29b174bc74212e28735b4adc7452d137066e99f37673a4915418",
+      "bytes": 40213,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-ai-gateway-safeguarding.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-ai-gateway-safeguarding.py",
+      "sha256": "a7d4efe035074b7454a6592f10757bea1d91c5fe9e503a8475abe542d8ec0950",
+      "bytes": 5568,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-completeness-contracts.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-completeness-contracts.py",
+      "sha256": "7815e49b2f6212cecae6c63995add6b1d14749dfc05f734b9f7e689ee3567bf2",
+      "bytes": 90749,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-machine-contracts.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-machine-contracts.py",
+      "sha256": "1da70b36a36205e6cc93f5d904e70e4e5cfe01a986f8d6b1037256c3b5658e38",
+      "bytes": 150725,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-normative-test-semantics.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-normative-test-semantics.py",
+      "sha256": "857aedc4d309b48ce1777334e01751ce9be9821c50569abfbd3fa34f0f5a387b",
+      "bytes": 16586,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-semantic-depth-contracts.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-semantic-depth-contracts.py",
+      "sha256": "14282650c6859002a441e5fde807d983689c92f3ce85bfad9301b7ecd8b3cc78",
+      "bytes": 39231,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-source-traceability.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-source-traceability.py",
+      "sha256": "92318ffb622ce95ab6ef48a19b1060c39ceaeb19c66dbccc71a6c290880850d8",
+      "bytes": 24621,
+      "mode": "100644"
+    },
+    {
+      "source": "yonlab-ai-training-platform-design/verify-tch-015-authorization.py",
+      "destination": "docs/planning/ai-training-platform-v1/verify-tch-015-authorization.py",
+      "sha256": "06c783d07922c57c24fda793cb0ba7ad635e1c5b281ddf96a28b451f1971690f",
+      "bytes": 14116,
+      "mode": "100644"
+    }
+  ]
+}

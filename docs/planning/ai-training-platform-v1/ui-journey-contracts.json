@@ -1,0 +1,1649 @@
+{
+  "schema_version": "ui-journey-contracts.v1",
+  "key_journey_count": 12,
+  "key_journeys": [
+    {
+      "journey_id": "UJ-001",
+      "title": "공개 자료 발견",
+      "screen_ids": [
+        "PUB-001",
+        "PUB-002",
+        "PUB-003"
+      ],
+      "component_hierarchy": [
+        "PublicShell",
+        "SearchHero",
+        "FilterBar",
+        "ResultGrid",
+        "RightsAndVersionPanel"
+      ],
+      "primary_action": "자료 검색",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "query",
+          "label_ko": "찾고 싶은 자료",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "검증된 교육자료를 주제와 현장 상황에 맞게 찾아보세요.",
+      "responsive_order": {
+        "1440": [
+          "PublicShell",
+          "SearchHero",
+          "FilterBar",
+          "ResultGrid",
+          "RightsAndVersionPanel"
+        ],
+        "768": [
+          "PublicShell",
+          "SearchHero",
+          "FilterBar",
+          "ResultGrid",
+          "RightsAndVersionPanel"
+        ],
+        "390": [
+          "PublicShell",
+          "자료 검색",
+          "SearchHero",
+          "FilterBar",
+          "ResultGrid",
+          "RightsAndVersionPanel"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE",
+        "FORBIDDEN"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-002",
+      "title": "가입·로그인·MFA 복구",
+      "screen_ids": [
+        "PUB-004"
+      ],
+      "component_hierarchy": [
+        "AuthShell",
+        "IdentityForm",
+        "PasswordGuidance",
+        "MfaChallenge",
+        "RecoveryNotice"
+      ],
+      "primary_action": "안전하게 계속",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "email",
+          "label_ko": "이메일",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "password",
+          "label_ko": "비밀번호",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "계정 존재 여부는 표시하지 않습니다. 입력을 확인하고 다시 시도해 주세요.",
+      "responsive_order": {
+        "1440": [
+          "AuthShell",
+          "IdentityForm",
+          "PasswordGuidance",
+          "MfaChallenge",
+          "RecoveryNotice"
+        ],
+        "768": [
+          "AuthShell",
+          "IdentityForm",
+          "PasswordGuidance",
+          "MfaChallenge",
+          "RecoveryNotice"
+        ],
+        "390": [
+          "AuthShell",
+          "안전하게 계속",
+          "IdentityForm",
+          "PasswordGuidance",
+          "MfaChallenge",
+          "RecoveryNotice"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "MFA_REQUIRED",
+        "MFA_RECOVERY"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-003",
+      "title": "프로필·동의·기관 전환",
+      "screen_ids": [
+        "TCH-001",
+        "TCH-002"
+      ],
+      "component_hierarchy": [
+        "TeacherShell",
+        "NextActionCard",
+        "ConsentPurposeList",
+        "OptionalContextForm",
+        "TenantSelector"
+      ],
+      "primary_action": "변경사항 저장",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "career_band",
+          "label_ko": "경력 범주",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "consent",
+          "label_ko": "목적별 동의",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "선택 정보는 맞춤 지원에만 사용하며 언제든 철회할 수 있습니다.",
+      "responsive_order": {
+        "1440": [
+          "TeacherShell",
+          "NextActionCard",
+          "ConsentPurposeList",
+          "OptionalContextForm",
+          "TenantSelector"
+        ],
+        "768": [
+          "TeacherShell",
+          "NextActionCard",
+          "ConsentPurposeList",
+          "OptionalContextForm",
+          "TenantSelector"
+        ],
+        "390": [
+          "TeacherShell",
+          "변경사항 저장",
+          "NextActionCard",
+          "ConsentPurposeList",
+          "OptionalContextForm",
+          "TenantSelector"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "CONSENT_WITHDRAWN"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-004",
+      "title": "대화형 역량진단",
+      "screen_ids": [
+        "TCH-003",
+        "TCH-004"
+      ],
+      "component_hierarchy": [
+        "PurposeAndSafetyNotice",
+        "ProgressStepper",
+        "ConversationTranscript",
+        "ResponseComposer",
+        "PauseResumeControls"
+      ],
+      "primary_action": "응답 보내기",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "teacher_response",
+          "label_ko": "나의 경험",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "정답을 평가하지 않습니다. 실제 경험을 편안하게 이야기해 주세요.",
+      "responsive_order": {
+        "1440": [
+          "PurposeAndSafetyNotice",
+          "ProgressStepper",
+          "ConversationTranscript",
+          "ResponseComposer",
+          "PauseResumeControls"
+        ],
+        "768": [
+          "PurposeAndSafetyNotice",
+          "ProgressStepper",
+          "ConversationTranscript",
+          "ResponseComposer",
+          "PauseResumeControls"
+        ],
+        "390": [
+          "PurposeAndSafetyNotice",
+          "응답 보내기",
+          "ProgressStepper",
+          "ConversationTranscript",
+          "ResponseComposer",
+          "PauseResumeControls"
+        ]
+      },
+      "required_states": [
+        "QUEUED",
+        "STREAMING",
+        "COMPLETED",
+        "PARTIAL",
+        "ERROR",
+        "OFFLINE",
+        "POLICY_BLOCKED"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-005",
+      "title": "진단결과·근거·페르소나 정정",
+      "screen_ids": [
+        "TCH-005",
+        "TCH-006"
+      ],
+      "component_hierarchy": [
+        "ResultSummary",
+        "CompetencyEvidenceAccordion",
+        "UncertaintyPanel",
+        "PersonaDistribution",
+        "CorrectionDialog"
+      ],
+      "primary_action": "근거 확인",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "correction_reason",
+          "label_ko": "정정 사유",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "이 결과는 학습 지원용이며 인사평가나 심리진단에 사용되지 않습니다.",
+      "responsive_order": {
+        "1440": [
+          "ResultSummary",
+          "CompetencyEvidenceAccordion",
+          "UncertaintyPanel",
+          "PersonaDistribution",
+          "CorrectionDialog"
+        ],
+        "768": [
+          "ResultSummary",
+          "CompetencyEvidenceAccordion",
+          "UncertaintyPanel",
+          "PersonaDistribution",
+          "CorrectionDialog"
+        ],
+        "390": [
+          "ResultSummary",
+          "근거 확인",
+          "CompetencyEvidenceAccordion",
+          "UncertaintyPanel",
+          "PersonaDistribution",
+          "CorrectionDialog"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "INSUFFICIENT_EVIDENCE",
+        "DISPUTED",
+        "MIXED_OR_UNDETERMINED",
+        "ERROR"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-006",
+      "title": "추천·학습경로·성과",
+      "screen_ids": [
+        "TCH-007",
+        "TCH-008",
+        "TCH-009",
+        "TCH-010"
+      ],
+      "component_hierarchy": [
+        "RecommendationReasonCard",
+        "AlternativeList",
+        "LearningDag",
+        "PracticeEditor",
+        "AccessibleOutcomeChart"
+      ],
+      "primary_action": "학습경로 시작",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "reflection",
+          "label_ko": "현장 적용 기록",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "추천 이유와 대안을 함께 확인한 뒤 나에게 맞는 순서로 시작하세요.",
+      "responsive_order": {
+        "1440": [
+          "RecommendationReasonCard",
+          "AlternativeList",
+          "LearningDag",
+          "PracticeEditor",
+          "AccessibleOutcomeChart"
+        ],
+        "768": [
+          "RecommendationReasonCard",
+          "AlternativeList",
+          "LearningDag",
+          "PracticeEditor",
+          "AccessibleOutcomeChart"
+        ],
+        "390": [
+          "RecommendationReasonCard",
+          "학습경로 시작",
+          "AlternativeList",
+          "LearningDag",
+          "PracticeEditor",
+          "AccessibleOutcomeChart"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "EMPTY",
+        "POLICY_CONFLICT",
+        "AUTOSAVING",
+        "SUBMITTED",
+        "STALE"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-007",
+      "title": "문서검색·RAG·근거",
+      "screen_ids": [
+        "TCH-011",
+        "TCH-012",
+        "TCH-013"
+      ],
+      "component_hierarchy": [
+        "DocumentSearch",
+        "StructurePreview",
+        "GroundedConversation",
+        "ClaimCitationList",
+        "CurrentRightsEvidenceViewer"
+      ],
+      "primary_action": "근거와 함께 질문",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "query",
+          "label_ko": "자료에 묻기",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "근거가 확인되지 않은 내용은 답변하지 않습니다.",
+      "responsive_order": {
+        "1440": [
+          "DocumentSearch",
+          "StructurePreview",
+          "GroundedConversation",
+          "ClaimCitationList",
+          "CurrentRightsEvidenceViewer"
+        ],
+        "768": [
+          "DocumentSearch",
+          "StructurePreview",
+          "GroundedConversation",
+          "ClaimCitationList",
+          "CurrentRightsEvidenceViewer"
+        ],
+        "390": [
+          "DocumentSearch",
+          "근거와 함께 질문",
+          "StructurePreview",
+          "GroundedConversation",
+          "ClaimCitationList",
+          "CurrentRightsEvidenceViewer"
+        ]
+      },
+      "required_states": [
+        "QUEUED",
+        "STREAMING",
+        "GROUNDED",
+        "NO_ANSWER",
+        "PARTIAL",
+        "REVOKED",
+        "LOCATOR_UNRESOLVABLE"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-008",
+      "title": "HWPX 초안·검수·내보내기",
+      "screen_ids": [
+        "TCH-014",
+        "TCH-015"
+      ],
+      "component_hierarchy": [
+        "TemplatePicker",
+        "EvidencePicker",
+        "RequiredFieldStepper",
+        "StructuredDraftEditor",
+        "ReviewAndExportPanel"
+      ],
+      "primary_action": "검수 요청",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "template",
+          "label_ko": "승인 템플릿",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "evidence",
+          "label_ko": "사용 근거",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "AI 초안은 검수 전 문서입니다. 개인정보와 근거를 확인해 주세요.",
+      "responsive_order": {
+        "1440": [
+          "TemplatePicker",
+          "EvidencePicker",
+          "RequiredFieldStepper",
+          "StructuredDraftEditor",
+          "ReviewAndExportPanel"
+        ],
+        "768": [
+          "TemplatePicker",
+          "EvidencePicker",
+          "RequiredFieldStepper",
+          "StructuredDraftEditor",
+          "ReviewAndExportPanel"
+        ],
+        "390": [
+          "TemplatePicker",
+          "검수 요청",
+          "EvidencePicker",
+          "RequiredFieldStepper",
+          "StructuredDraftEditor",
+          "ReviewAndExportPanel"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "RIGHTS_BLOCKED",
+        "JOB_RUNNING",
+        "REVIEW_REQUIRED",
+        "APPROVED",
+        "EXPORTING"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-009",
+      "title": "역량·페르소나·추천정책 운영",
+      "screen_ids": [
+        "ADM-002",
+        "ADM-003",
+        "ADM-005"
+      ],
+      "component_hierarchy": [
+        "AdminShell",
+        "VersionList",
+        "PolicyDiff",
+        "OfflineEvaluationSummary",
+        "DualApprovalBar"
+      ],
+      "primary_action": "새 버전 검수 요청",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "change_reason",
+          "label_ko": "변경 사유",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "게시된 버전은 수정하지 않고 새 버전으로 검증합니다.",
+      "responsive_order": {
+        "1440": [
+          "AdminShell",
+          "VersionList",
+          "PolicyDiff",
+          "OfflineEvaluationSummary",
+          "DualApprovalBar"
+        ],
+        "768": [
+          "AdminShell",
+          "VersionList",
+          "PolicyDiff",
+          "OfflineEvaluationSummary",
+          "DualApprovalBar"
+        ],
+        "390": [
+          "AdminShell",
+          "새 버전 검수 요청",
+          "VersionList",
+          "PolicyDiff",
+          "OfflineEvaluationSummary",
+          "DualApprovalBar"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-010",
+      "title": "문서 수집·OCR 검수·게시",
+      "screen_ids": [
+        "ADM-006",
+        "ADM-007",
+        "ADM-008"
+      ],
+      "component_hierarchy": [
+        "UploadQuarantinePanel",
+        "PipelineTimeline",
+        "SourceGraphSplitView",
+        "TableCellEditor",
+        "PublicationSnapshot"
+      ],
+      "primary_action": "검수 완료",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "rights",
+          "label_ko": "이용 권리",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "review_reason",
+          "label_ko": "검수 의견",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "원문과 구조를 비교하고 낮은 신뢰도 항목을 확인하세요.",
+      "responsive_order": {
+        "1440": [
+          "UploadQuarantinePanel",
+          "PipelineTimeline",
+          "SourceGraphSplitView",
+          "TableCellEditor",
+          "PublicationSnapshot"
+        ],
+        "768": [
+          "UploadQuarantinePanel",
+          "PipelineTimeline",
+          "SourceGraphSplitView",
+          "TableCellEditor",
+          "PublicationSnapshot"
+        ],
+        "390": [
+          "UploadQuarantinePanel",
+          "검수 완료",
+          "PipelineTimeline",
+          "SourceGraphSplitView",
+          "TableCellEditor",
+          "PublicationSnapshot"
+        ]
+      },
+      "required_states": [
+        "QUARANTINED",
+        "REVIEW_REQUIRED",
+        "LOCATOR_UNRESOLVABLE",
+        "REAUTH_REQUIRED",
+        "ERROR"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-011",
+      "title": "AI 모델·평가·비용 관제",
+      "screen_ids": [
+        "ADM-009",
+        "ADM-010",
+        "ADM-011"
+      ],
+      "component_hierarchy": [
+        "DeploymentRegistry",
+        "RoutingPolicyDiff",
+        "EvaluationGateTable",
+        "CostLatencyChart",
+        "FallbackTimeline"
+      ],
+      "primary_action": "평가 실행",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "candidate",
+          "label_ko": "후보 배포",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "suite",
+          "label_ko": "평가셋",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "Hard gate를 통과하지 않은 모델은 활성화할 수 없습니다.",
+      "responsive_order": {
+        "1440": [
+          "DeploymentRegistry",
+          "RoutingPolicyDiff",
+          "EvaluationGateTable",
+          "CostLatencyChart",
+          "FallbackTimeline"
+        ],
+        "768": [
+          "DeploymentRegistry",
+          "RoutingPolicyDiff",
+          "EvaluationGateTable",
+          "CostLatencyChart",
+          "FallbackTimeline"
+        ],
+        "390": [
+          "DeploymentRegistry",
+          "평가 실행",
+          "RoutingPolicyDiff",
+          "EvaluationGateTable",
+          "CostLatencyChart",
+          "FallbackTimeline"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "GATE_FAILED",
+        "PARTIAL",
+        "STALE",
+        "REAUTH_REQUIRED"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    },
+    {
+      "journey_id": "UJ-012",
+      "title": "운영·시범·감사",
+      "screen_ids": [
+        "ADM-001",
+        "ADM-004",
+        "ADM-012",
+        "ADM-013",
+        "ADM-014",
+        "ADM-015",
+        "ADM-016",
+        "TCH-016"
+      ],
+      "component_hierarchy": [
+        "OperationalOverview",
+        "AccessAndMfa",
+        "PilotCohortProgress",
+        "PrivacySuppressedAnalytics",
+        "ImmutableAuditSearch",
+        "RunbookActions"
+      ],
+      "primary_action": "상세 상태 확인",
+      "secondary_actions": [
+        "도움말",
+        "안전하게 중단",
+        "이전 단계"
+      ],
+      "fields": [
+        {
+          "field_id": "period",
+          "label_ko": "집계 기간",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        },
+        {
+          "field_id": "reason",
+          "label_ko": "작업 사유",
+          "required": true,
+          "validation": "inline+summary; invalid focus; no data existence disclosure"
+        }
+      ],
+      "sample_copy_ko": "최신 시각과 집계 범위를 확인한 뒤 승인된 작업만 실행하세요.",
+      "responsive_order": {
+        "1440": [
+          "OperationalOverview",
+          "AccessAndMfa",
+          "PilotCohortProgress",
+          "PrivacySuppressedAnalytics",
+          "ImmutableAuditSearch",
+          "RunbookActions"
+        ],
+        "768": [
+          "OperationalOverview",
+          "AccessAndMfa",
+          "PilotCohortProgress",
+          "PrivacySuppressedAnalytics",
+          "ImmutableAuditSearch",
+          "RunbookActions"
+        ],
+        "390": [
+          "OperationalOverview",
+          "상세 상태 확인",
+          "AccessAndMfa",
+          "PilotCohortProgress",
+          "PrivacySuppressedAnalytics",
+          "ImmutableAuditSearch",
+          "RunbookActions"
+        ]
+      },
+      "required_states": [
+        "DEFAULT",
+        "EMPTY",
+        "PARTIAL",
+        "STALE",
+        "PRIVACY_SUPPRESSED",
+        "REAUTH_REQUIRED",
+        "REQUEST_PENDING"
+      ],
+      "acceptance": [
+        "keyboard complete",
+        "390/768/1440 no page overflow",
+        "200% reflow",
+        "loading/empty/error/degraded recovery",
+        "Korean long-copy snapshot"
+      ]
+    }
+  ],
+  "screen_count": 36,
+  "screen_closure": [
+    {
+      "screen_id": "PUB-001",
+      "route": "/",
+      "journey_ids": [
+        "UJ-001"
+      ],
+      "component_contract_id": "COMP-PUB-001-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "PUB-002",
+      "route": "/search",
+      "journey_ids": [
+        "UJ-001"
+      ],
+      "component_contract_id": "COMP-PUB-002-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "PUB-003",
+      "route": "/resources/:resourceId",
+      "journey_ids": [
+        "UJ-001"
+      ],
+      "component_contract_id": "COMP-PUB-003-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "FORBIDDEN",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "PUB-004",
+      "route": "/auth/login",
+      "journey_ids": [
+        "UJ-002"
+      ],
+      "component_contract_id": "COMP-PUB-004-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "MFA_REQUIRED",
+        "MFA_RECOVERY"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-001",
+      "route": "/workspace",
+      "journey_ids": [
+        "UJ-003"
+      ],
+      "component_contract_id": "COMP-TCH-001-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-002",
+      "route": "/workspace/profile",
+      "journey_ids": [
+        "UJ-003"
+      ],
+      "component_contract_id": "COMP-TCH-002-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "CONSENT_WITHDRAWN"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-003",
+      "route": "/workspace/diagnosis/start",
+      "journey_ids": [
+        "UJ-004"
+      ],
+      "component_contract_id": "COMP-TCH-003-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "POLICY_BLOCKED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-004",
+      "route": "/workspace/diagnoses/:diagnosisId/chat",
+      "journey_ids": [
+        "UJ-004"
+      ],
+      "component_contract_id": "COMP-TCH-004-V1",
+      "required_state_ids": [
+        "QUEUED",
+        "STREAMING",
+        "COMPLETED",
+        "PARTIAL",
+        "ERROR",
+        "OFFLINE",
+        "POLICY_BLOCKED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-005",
+      "route": "/workspace/diagnoses/:diagnosisId/result",
+      "journey_ids": [
+        "UJ-005"
+      ],
+      "component_contract_id": "COMP-TCH-005-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "INSUFFICIENT_EVIDENCE",
+        "DISPUTED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-006",
+      "route": "/workspace/diagnoses/:diagnosisId/persona",
+      "journey_ids": [
+        "UJ-005"
+      ],
+      "component_contract_id": "COMP-TCH-006-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "MIXED_OR_UNDETERMINED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-007",
+      "route": "/workspace/recommendations",
+      "journey_ids": [
+        "UJ-006"
+      ],
+      "component_contract_id": "COMP-TCH-007-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-008",
+      "route": "/workspace/learning-paths/:pathId",
+      "journey_ids": [
+        "UJ-006"
+      ],
+      "component_contract_id": "COMP-TCH-008-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "POLICY_CONFLICT"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-009",
+      "route": "/workspace/learning-paths/:pathId/practice/:stepId",
+      "journey_ids": [
+        "UJ-006"
+      ],
+      "component_contract_id": "COMP-TCH-009-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "AUTOSAVING",
+        "SUBMITTED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-010",
+      "route": "/workspace/reports/:reportId",
+      "journey_ids": [
+        "UJ-006"
+      ],
+      "component_contract_id": "COMP-TCH-010-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-011",
+      "route": "/workspace/documents/search",
+      "journey_ids": [
+        "UJ-007"
+      ],
+      "component_contract_id": "COMP-TCH-011-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "FORBIDDEN",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-012",
+      "route": "/workspace/rag/:sessionId",
+      "journey_ids": [
+        "UJ-007"
+      ],
+      "component_contract_id": "COMP-TCH-012-V1",
+      "required_state_ids": [
+        "QUEUED",
+        "STREAMING",
+        "GROUNDED",
+        "NO_ANSWER",
+        "PARTIAL",
+        "ERROR",
+        "POLICY_BLOCKED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-013",
+      "route": "/workspace/citations/:citationId",
+      "journey_ids": [
+        "UJ-007"
+      ],
+      "component_contract_id": "COMP-TCH-013-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVOKED",
+        "STALE",
+        "LOCATOR_UNRESOLVABLE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-014",
+      "route": "/workspace/drafts/new",
+      "journey_ids": [
+        "UJ-008"
+      ],
+      "component_contract_id": "COMP-TCH-014-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "RIGHTS_BLOCKED",
+        "JOB_RUNNING"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-015",
+      "route": "/workspace/drafts/:draftId",
+      "journey_ids": [
+        "UJ-008"
+      ],
+      "component_contract_id": "COMP-TCH-015-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVIEW_REQUIRED",
+        "APPROVED",
+        "EXPORTING"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "TCH-016",
+      "route": "/workspace/activity",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-TCH-016-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REQUEST_PENDING",
+        "REQUEST_COMPLETE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-001",
+      "route": "/admin",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-001-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-002",
+      "route": "/admin/competencies",
+      "journey_ids": [
+        "UJ-009"
+      ],
+      "component_contract_id": "COMP-ADM-002-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-003",
+      "route": "/admin/personas",
+      "journey_ids": [
+        "UJ-009"
+      ],
+      "component_contract_id": "COMP-ADM-003-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-004",
+      "route": "/admin/catalog",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-004-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-005",
+      "route": "/admin/recommendation-policies",
+      "journey_ids": [
+        "UJ-009"
+      ],
+      "component_contract_id": "COMP-ADM-005-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-006",
+      "route": "/admin/documents/intake",
+      "journey_ids": [
+        "UJ-010"
+      ],
+      "component_contract_id": "COMP-ADM-006-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "QUARANTINED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-007",
+      "route": "/admin/documents/:documentId/review",
+      "journey_ids": [
+        "UJ-010"
+      ],
+      "component_contract_id": "COMP-ADM-007-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "ERROR",
+        "REVIEW_REQUIRED",
+        "LOCATOR_UNRESOLVABLE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-008",
+      "route": "/admin/documents/publication",
+      "journey_ids": [
+        "UJ-010"
+      ],
+      "component_contract_id": "COMP-ADM-008-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-009",
+      "route": "/admin/ai/registry",
+      "journey_ids": [
+        "UJ-011"
+      ],
+      "component_contract_id": "COMP-ADM-009-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-010",
+      "route": "/admin/ai/evaluations",
+      "journey_ids": [
+        "UJ-011"
+      ],
+      "component_contract_id": "COMP-ADM-010-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "GATE_FAILED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-011",
+      "route": "/admin/ai/operations",
+      "journey_ids": [
+        "UJ-011"
+      ],
+      "component_contract_id": "COMP-ADM-011-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-012",
+      "route": "/admin/access",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-012-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED",
+        "MFA_ENROLLMENT"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-013",
+      "route": "/admin/pilots",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-013-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-014",
+      "route": "/admin/analytics",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-014-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PRIVACY_SUPPRESSED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-015",
+      "route": "/admin/audit",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-015-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "REAUTH_REQUIRED"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    },
+    {
+      "screen_id": "ADM-016",
+      "route": "/admin/operations",
+      "journey_ids": [
+        "UJ-012"
+      ],
+      "component_contract_id": "COMP-ADM-016-V1",
+      "required_state_ids": [
+        "DEFAULT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "PARTIAL",
+        "STALE"
+      ],
+      "responsive_viewports": [
+        "1440x900",
+        "768x1024",
+        "390x844"
+      ],
+      "visual_evidence_required": true
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "schema_version": "acceptance-threshold-registry.v1",
+  "registry_version": "acceptance-thresholds.v1.0.0",
+  "unknown_symbol_policy": "DENY",
+  "thresholds": [
+    {
+      "threshold_id": "THR-AI-SPAN-F1",
+      "test_ids": [
+        "T-AI-001"
+      ],
+      "value": 850000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-AI-SPAN-F1",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-AI-001"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-AI-FAIRNESS-MAX-GAP",
+      "test_ids": [
+        "T-AI-007"
+      ],
+      "value": 100000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MAXIMUM",
+      "decision_id": "DEC-THR-AI-FAIRNESS-MAX-GAP",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-AI-007"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-DEP-ROLLBACK-MAX-MS",
+      "test_ids": [
+        "T-DEP-003"
+      ],
+      "value": 300000,
+      "unit": "milliseconds",
+      "comparison_role": "MAXIMUM",
+      "decision_id": "DEC-THR-DEP-ROLLBACK-MAX-MS",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-DEP-003"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-CODE-STATEMENT-COVERAGE",
+      "test_ids": [
+        "T-GATE-001"
+      ],
+      "value": 850000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-CODE-STATEMENT-COVERAGE",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-GATE-001"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-CODE-BRANCH-COVERAGE",
+      "test_ids": [
+        "T-GATE-001"
+      ],
+      "value": 800000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-CODE-BRANCH-COVERAGE",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-GATE-001"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-REC-CONTENT-COVERAGE",
+      "test_ids": [
+        "T-REC-004"
+      ],
+      "value": 950000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-REC-CONTENT-COVERAGE",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-REC-004"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-REC-DIVERSITY",
+      "test_ids": [
+        "T-REC-004"
+      ],
+      "value": 800000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-REC-DIVERSITY",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-REC-004"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-UX-TASK-COMPLETION",
+      "test_ids": [
+        "T-UX-008"
+      ],
+      "value": 900000,
+      "unit": "microunit_ratio",
+      "comparison_role": "MINIMUM",
+      "decision_id": "DEC-THR-UX-TASK-COMPLETION",
+      "owner_ids": [
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-UX-008"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    },
+    {
+      "threshold_id": "THR-UX-MEDIAN-TIME-MS",
+      "test_ids": [
+        "T-UX-008"
+      ],
+      "value": 180000,
+      "unit": "milliseconds",
+      "comparison_role": "MAXIMUM",
+      "decision_id": "DEC-THR-UX-MEDIAN-TIME-MS",
+      "owner_ids": [
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "status": "APPROVED_BASELINE",
+      "effective_at": "2026-07-14T00:00:00Z",
+      "due_at": "2027-07-14T00:00:00Z",
+      "source_contract_ids": [
+        "VER-ATP-009",
+        "T-UX-008"
+      ],
+      "candidate_binding": "DESIGN_BASELINE_AND_TEST_FIXTURE",
+      "change_control_gate_id": "GATE-DESIGN-INTEGRITY"
+    }
+  ],
+  "failure_release_transition": {
+    "test_id": "T-AI-007",
+    "on_failure": "NOT_READY",
+    "test_result": "FAIL",
+    "release_blocked_is_not_pass": true
+  }
+}

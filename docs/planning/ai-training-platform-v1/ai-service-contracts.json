@@ -1,0 +1,1702 @@
+{
+  "schema_version": "ai-service-contracts.v1",
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/internal/ai/v1/responses",
+      "contract": "CanonicalResponsesRequest.v1/CanonicalResponsesResponse.v1"
+    },
+    {
+      "method": "POST",
+      "path": "/internal/ai/v1/embeddings",
+      "contract": "CanonicalEmbeddingsRequest.v1/CanonicalEmbeddingsResponse.v1"
+    },
+    {
+      "method": "POST",
+      "path": "/internal/ai/v1/rerank",
+      "contract": "CanonicalRerankRequest.v1/CanonicalRerankResponse.v1"
+    }
+  ],
+  "classification_vocabulary": [
+    "PUBLIC",
+    "INTERNAL",
+    "CONFIDENTIAL",
+    "RESTRICTED"
+  ],
+  "safeguarding_decisions": [
+    "STANDARD",
+    "CHILD_SAFEGUARDING",
+    "IMMINENT_DANGER",
+    "SECURITY_EXFILTRATION",
+    "POLICY_BLOCK"
+  ],
+  "data_use_policy_registry_ref": "data-use-policy-registry.json",
+  "task_contracts": [
+    {
+      "task": "diagnosis.evidence.extract",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "messages",
+          "rubric_version",
+          "indicator_ids"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DIAGNOSIS_EVIDENCE_EXTRACT"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "TEACHER_CONTEXT",
+                    "DIAGNOSIS_DIALOGUE",
+                    "DIAGNOSIS_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "CAREER_BAND",
+                    "DIAGNOSIS_SESSION_PSEUDONYM",
+                    "DIALOGUE_TURN_SEQUENCE",
+                    "DIALOGUE_TURN_TEXT",
+                    "EVIDENCE_ANCHOR",
+                    "EVIDENCE_SCORE",
+                    "INDICATOR_CODE",
+                    "REGION_CATEGORY",
+                    "WORK_CONSTRAINT_CODES"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "messages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rubric_version": {
+            "type": "string"
+          },
+          "indicator_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence",
+          "needs_clarification"
+        ],
+        "properties": {
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "evidence_id",
+                "dialogue_turn_id",
+                "indicator_id",
+                "anchor_id",
+                "start_offset",
+                "end_offset",
+                "quoted_span_sha256",
+                "entailment_microunit",
+                "relevance_microunit",
+                "specificity_microunit",
+                "contradiction_risk_microunit",
+                "evidence_strength_microunit",
+                "scoring_policy_version",
+                "eligibility_decision"
+              ],
+              "properties": {
+                "evidence_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "dialogue_turn_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "indicator_id": {
+                  "type": "string"
+                },
+                "anchor_id": {
+                  "type": "string"
+                },
+                "start_offset": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end_offset": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "quoted_span_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "entailment_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "relevance_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "specificity_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "contradiction_risk_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "evidence_strength_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "scoring_policy_version": {
+                  "const": "evidence-scoring.v1.0.0"
+                },
+                "eligibility_decision": {
+                  "enum": [
+                    "ELIGIBLE",
+                    "INSUFFICIENT",
+                    "CONTRADICTED",
+                    "INVALID"
+                  ]
+                }
+              }
+            }
+          },
+          "needs_clarification": {
+            "type": "boolean"
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "diagnosis.evidence.extract",
+        "category_ids": [
+          "TEACHER_CONTEXT",
+          "DIAGNOSIS_DIALOGUE",
+          "DIAGNOSIS_EVIDENCE"
+        ],
+        "field_codes": [
+          "CAREER_BAND",
+          "DIAGNOSIS_SESSION_PSEUDONYM",
+          "DIALOGUE_TURN_SEQUENCE",
+          "DIALOGUE_TURN_TEXT",
+          "EVIDENCE_ANCHOR",
+          "EVIDENCE_SCORE",
+          "INDICATOR_CODE",
+          "REGION_CATEGORY",
+          "WORK_CONSTRAINT_CODES"
+        ]
+      }
+    },
+    {
+      "task": "diagnosis.next_question.compose",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "unmet_indicator_ids",
+          "context_summary"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DIAGNOSIS_NEXT_QUESTION_COMPOSE"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "TEACHER_CONTEXT",
+                    "DIAGNOSIS_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "CAREER_BAND",
+                    "EVIDENCE_ANCHOR",
+                    "EVIDENCE_SCORE",
+                    "INDICATOR_CODE",
+                    "REGION_CATEGORY",
+                    "WORK_CONSTRAINT_CODES"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "unmet_indicator_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "context_summary": {
+            "type": "string"
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "target_indicator_id",
+          "safety_flags"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "target_indicator_id": {
+            "type": "string"
+          },
+          "safety_flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "diagnosis.next_question.compose",
+        "category_ids": [
+          "TEACHER_CONTEXT",
+          "DIAGNOSIS_EVIDENCE"
+        ],
+        "field_codes": [
+          "CAREER_BAND",
+          "EVIDENCE_ANCHOR",
+          "EVIDENCE_SCORE",
+          "INDICATOR_CODE",
+          "REGION_CATEGORY",
+          "WORK_CONSTRAINT_CODES"
+        ]
+      }
+    },
+    {
+      "task": "persona.explanation.compose",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "profile_probabilities_microunit",
+          "supporting_factors"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_PERSONA_EXPLANATION_COMPOSE"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "TEACHER_CONTEXT",
+                    "DIAGNOSIS_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "CAREER_BAND",
+                    "EVIDENCE_ANCHOR",
+                    "EVIDENCE_SCORE",
+                    "INDICATOR_CODE",
+                    "REGION_CATEGORY",
+                    "WORK_CONSTRAINT_CODES"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "profile_probabilities_microunit": {
+            "type": "array",
+            "minItems": 12,
+            "maxItems": 12,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            }
+          },
+          "supporting_factors": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "summary",
+          "top_profile_ids",
+          "limitations"
+        ],
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "top_profile_ids": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "persona.explanation.compose",
+        "category_ids": [
+          "TEACHER_CONTEXT",
+          "DIAGNOSIS_EVIDENCE"
+        ],
+        "field_codes": [
+          "CAREER_BAND",
+          "EVIDENCE_ANCHOR",
+          "EVIDENCE_SCORE",
+          "INDICATOR_CODE",
+          "REGION_CATEGORY",
+          "WORK_CONSTRAINT_CODES"
+        ]
+      }
+    },
+    {
+      "task": "recommendation.explanation.compose",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "content_id",
+          "feature_codes",
+          "evidence_ids"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_RECOMMENDATION_EXPLANATION_COMPOSE"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DIAGNOSIS_EVIDENCE",
+                    "RECOMMENDATION_FEATURE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "COMPETENCY_SCORE",
+                    "CONTENT_FEATURE_CODE",
+                    "EVIDENCE_ANCHOR",
+                    "EVIDENCE_SCORE",
+                    "INDICATOR_CODE",
+                    "LEARNING_CONSTRAINT_CODE"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "content_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "feature_codes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason",
+          "expected_outcome",
+          "alternative_ids"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "expected_outcome": {
+            "type": "string"
+          },
+          "alternative_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "recommendation.explanation.compose",
+        "category_ids": [
+          "DIAGNOSIS_EVIDENCE",
+          "RECOMMENDATION_FEATURE"
+        ],
+        "field_codes": [
+          "COMPETENCY_SCORE",
+          "CONTENT_FEATURE_CODE",
+          "EVIDENCE_ANCHOR",
+          "EVIDENCE_SCORE",
+          "INDICATOR_CODE",
+          "LEARNING_CONSTRAINT_CODE"
+        ]
+      }
+    },
+    {
+      "task": "document.query.rewrite",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "query",
+          "filters"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DOCUMENT_QUERY_REWRITE"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_QUERY"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_FILTER_CODE",
+                    "DOCUMENT_QUERY_TEXT",
+                    "QUERY_TENANT_SCOPE"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "document_types"
+            ],
+            "properties": {
+              "document_types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "queries",
+          "preserved_constraints"
+        ],
+        "properties": {
+          "queries": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "string"
+            }
+          },
+          "preserved_constraints": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "document.query.rewrite",
+        "category_ids": [
+          "DOCUMENT_QUERY"
+        ],
+        "field_codes": [
+          "DOCUMENT_FILTER_CODE",
+          "DOCUMENT_QUERY_TEXT",
+          "QUERY_TENANT_SCOPE"
+        ]
+      }
+    },
+    {
+      "task": "document.rerank",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "query",
+          "candidate_ids"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DOCUMENT_RERANK"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_QUERY",
+                    "DOCUMENT_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_CHUNK_TEXT",
+                    "DOCUMENT_FILTER_CODE",
+                    "DOCUMENT_QUERY_TEXT",
+                    "DOCUMENT_SOURCE_LOCATOR",
+                    "DOCUMENT_VERSION_PSEUDONYM",
+                    "QUERY_TENANT_SCOPE"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "query": {
+            "type": "string"
+          },
+          "candidate_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ranked"
+        ],
+        "properties": {
+          "ranked": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "candidate_id",
+                "relevance_microunit"
+              ],
+              "properties": {
+                "candidate_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "relevance_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                }
+              }
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "document.rerank",
+        "category_ids": [
+          "DOCUMENT_QUERY",
+          "DOCUMENT_EVIDENCE"
+        ],
+        "field_codes": [
+          "DOCUMENT_CHUNK_TEXT",
+          "DOCUMENT_FILTER_CODE",
+          "DOCUMENT_QUERY_TEXT",
+          "DOCUMENT_SOURCE_LOCATOR",
+          "DOCUMENT_VERSION_PSEUDONYM",
+          "QUERY_TENANT_SCOPE"
+        ]
+      }
+    },
+    {
+      "task": "document.grounded_answer",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "query",
+          "evidence_ids"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DOCUMENT_GROUNDED_ANSWER"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_QUERY",
+                    "DOCUMENT_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_CHUNK_TEXT",
+                    "DOCUMENT_FILTER_CODE",
+                    "DOCUMENT_QUERY_TEXT",
+                    "DOCUMENT_SOURCE_LOCATOR",
+                    "DOCUMENT_VERSION_PSEUDONYM",
+                    "QUERY_TENANT_SCOPE"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "query": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "answer",
+          "claims",
+          "citations",
+          "claim_citation_bindings",
+          "answerability_microunit",
+          "important_claim_coverage_microunit",
+          "invalid_citation_count",
+          "limitations"
+        ],
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "claim_id",
+                "claim_text",
+                "importance"
+              ],
+              "properties": {
+                "claim_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "claim_text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "importance": {
+                  "enum": [
+                    "IMPORTANT",
+                    "SUPPORTING"
+                  ]
+                }
+              }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "citation_id",
+                "evidence_id",
+                "document_version_id",
+                "source_locator",
+                "source_sha256",
+                "rights_snapshot_hash"
+              ],
+              "properties": {
+                "citation_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "evidence_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "document_version_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "source_locator": {
+                  "type": "string"
+                },
+                "source_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "rights_snapshot_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          },
+          "claim_citation_bindings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "claim_id",
+                "citation_id",
+                "evidence_id",
+                "relation",
+                "entailment_microunit",
+                "rights_snapshot_hash"
+              ],
+              "properties": {
+                "claim_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "citation_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "evidence_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "relation": {
+                  "enum": [
+                    "ENTAILS",
+                    "QUALIFIES",
+                    "CONTRADICTS"
+                  ]
+                },
+                "entailment_microunit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "rights_snapshot_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          },
+          "answerability_microunit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "important_claim_coverage_microunit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "invalid_citation_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 0
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "document.grounded_answer",
+        "category_ids": [
+          "DOCUMENT_QUERY",
+          "DOCUMENT_EVIDENCE"
+        ],
+        "field_codes": [
+          "DOCUMENT_CHUNK_TEXT",
+          "DOCUMENT_FILTER_CODE",
+          "DOCUMENT_QUERY_TEXT",
+          "DOCUMENT_SOURCE_LOCATOR",
+          "DOCUMENT_VERSION_PSEUDONYM",
+          "QUERY_TENANT_SCOPE"
+        ]
+      }
+    },
+    {
+      "task": "draft.hwpx.section.compose",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "template_version_id",
+          "section_id",
+          "evidence_ids",
+          "field_values"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DRAFT_HWPX_SECTION_COMPOSE"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_EVIDENCE",
+                    "DRAFT_FIELD"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_CHUNK_TEXT",
+                    "DOCUMENT_SOURCE_LOCATOR",
+                    "DOCUMENT_VERSION_PSEUDONYM",
+                    "DRAFT_EVIDENCE_REFERENCE",
+                    "DRAFT_SUBJECT_PSEUDONYM",
+                    "DRAFT_TEMPLATE_FIELD"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "template_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "section_id": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "field_values": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field_values",
+          "citation_ids",
+          "review_required"
+        ],
+        "properties": {
+          "field_values": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          },
+          "citation_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "review_required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "draft.hwpx.section.compose",
+        "category_ids": [
+          "DOCUMENT_EVIDENCE",
+          "DRAFT_FIELD"
+        ],
+        "field_codes": [
+          "DOCUMENT_CHUNK_TEXT",
+          "DOCUMENT_SOURCE_LOCATOR",
+          "DOCUMENT_VERSION_PSEUDONYM",
+          "DRAFT_EVIDENCE_REFERENCE",
+          "DRAFT_SUBJECT_PSEUDONYM",
+          "DRAFT_TEMPLATE_FIELD"
+        ]
+      }
+    },
+    {
+      "task": "document.metadata.tag",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_use_context",
+          "normalized_text",
+          "allowed_tag_codes"
+        ],
+        "properties": {
+          "data_use_context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policy_version",
+              "purpose_code",
+              "category_ids",
+              "field_codes",
+              "classification",
+              "subject_pseudonym",
+              "tenant_pseudonym",
+              "consent_epoch",
+              "redaction_receipt_hash"
+            ],
+            "properties": {
+              "policy_version": {
+                "const": "data-use-policy.v1.0.0"
+              },
+              "purpose_code": {
+                "const": "PURPOSE_AI_DOCUMENT_METADATA_TAG"
+              },
+              "category_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_EVIDENCE"
+                  ]
+                }
+              },
+              "field_codes": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "DOCUMENT_CHUNK_TEXT",
+                    "DOCUMENT_SOURCE_LOCATOR",
+                    "DOCUMENT_VERSION_PSEUDONYM"
+                  ]
+                }
+              },
+              "classification": {
+                "enum": [
+                  "PUBLIC",
+                  "INTERNAL",
+                  "CONFIDENTIAL",
+                  "RESTRICTED"
+                ]
+              },
+              "subject_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "tenant_pseudonym": {
+                "type": "string",
+                "minLength": 32,
+                "maxLength": 128
+              },
+              "consent_epoch": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redaction_receipt_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "normalized_text": {
+            "type": "string"
+          },
+          "allowed_tag_codes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tag_codes",
+          "summary"
+        ],
+        "properties": {
+          "tag_codes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "summary": {
+            "type": "string"
+          }
+        }
+      },
+      "repair_budget": 1,
+      "fallback_requires_new_data_use_context": true,
+      "data_use_contract": {
+        "registry_ref": "data-use-policy-registry.json",
+        "task": "document.metadata.tag",
+        "category_ids": [
+          "DOCUMENT_EVIDENCE"
+        ],
+        "field_codes": [
+          "DOCUMENT_CHUNK_TEXT",
+          "DOCUMENT_SOURCE_LOCATOR",
+          "DOCUMENT_VERSION_PSEUDONYM"
+        ]
+      }
+    }
+  ],
+  "embedding_contract": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "data_use_receipt_hash",
+      "texts",
+      "embedding_deployment_id",
+      "normalization"
+    ],
+    "properties": {
+      "data_use_receipt_hash": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "texts": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 128,
+        "items": {
+          "type": "string"
+        }
+      },
+      "embedding_deployment_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "normalization": {
+        "enum": [
+          "L2",
+          "NONE"
+        ]
+      }
+    }
+  },
+  "rerank_contract": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "data_use_receipt_hash",
+      "query",
+      "candidate_ids",
+      "reranker_deployment_id"
+    ],
+    "properties": {
+      "data_use_receipt_hash": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "query": {
+        "type": "string"
+      },
+      "candidate_ids": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 200,
+        "items": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "reranker_deployment_id": {
+        "type": "string",
+        "format": "uuid"
+      }
+    }
+  },
+  "evidence_scoring_contract": {
+    "policy_version": "evidence-scoring.v1.0.0",
+    "scale": 1000000,
+    "formula": "round_half_up((entailment*400000 + relevance*250000 + specificity*200000 + (1000000-contradiction_risk)*150000)/1000000)",
+    "offset_rule": "0 <= start_offset < end_offset <= normalized_turn_utf8_codepoint_length",
+    "invalid_precedence": true
+  },
+  "grounding_binding_contract": {
+    "cardinality": "CLAIM_M:N_CITATION_VIA_BINDING",
+    "unique_key": [
+      "claim_id",
+      "citation_id"
+    ],
+    "orphan_policy": "REJECT",
+    "important_claim_minimum_citations": 1,
+    "citation_reuse_across_claims": true
+  },
+  "response_invariants": {
+    "unknown_fields": "REJECT",
+    "provider_raw_response": "BOUNDARY_INTERNAL_ONLY",
+    "all_objects_closed": true
+  }
+}

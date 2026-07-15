@@ -1,0 +1,2514 @@
+{
+  "schema_version": "final-document-inventory.v1",
+  "baseline_id": "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1",
+  "canonical_contract": {
+    "algorithm": "SHA-256",
+    "serialization": "RFC8785-compatible integer/string subset: UTF-8, lexicographically sorted object keys, no insignificant whitespace, unescaped Unicode",
+    "projection": "The entire JSON object with the top-level canonical_contract member omitted",
+    "digest_sha256": "a04cab366c41774b76b7ee3e3060b590f160659d01079ffcb9f7e172e8d1a8a4"
+  },
+  "release_id_pattern": "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-(alpha|beta|rc)(0|[1-9][0-9]*))?$",
+  "dynamic_segment_contract": {
+    "only_placeholder": "${release_id}",
+    "expansion_rule": "Expand only the exact literal ${release_id} after release-id.v1 validation. No other interpolation token, percent expansion, environment interpolation, path separator, dot segment, symlink, junction, mount redirect, or reparse point is allowed.",
+    "containment_rule": "Join the validated one-segment release_id to the canonical root, resolve the parent and candidate without following a newly created reparse target, and require the candidate to remain strictly below root."
+  },
+  "roots": {
+    "final_design": "docs/design/ai-training-platform/",
+    "operations": "docs/operations/ai-training-platform/",
+    "quality_assurance": "docs/qa/ai-training-platform/",
+    "manuals": "docs/manuals/ai-training-platform/",
+    "releases": "docs/releases/ai-training-platform/",
+    "distribution_docs": "dist/docs/"
+  },
+  "expected_counts": {
+    "design": 48,
+    "operations": 11,
+    "runbook": 23,
+    "qa": 18,
+    "manual_markdown": 8,
+    "manual_pdf": 8,
+    "release": 10,
+    "distribution": 21,
+    "total": 147
+  },
+  "manual_combination_contract": {
+    "pair_count": 8,
+    "administrator_guide_sources": [
+      "institution-admin-guide.pdf",
+      "content-reviewer-guide.pdf",
+      "system-admin-guide.pdf",
+      "security-auditor-guide.pdf",
+      "operations-operator-guide.pdf"
+    ],
+    "administrator_guide_source_count": 5,
+    "convenience_bundle_does_not_replace_pairs": true,
+    "distribution_manual_directory": "${release_id}/manuals/"
+  },
+  "artifacts": [
+    {
+      "artifact_id": "FDI-DES-001",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "README.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-002",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "00-system-design-baseline.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-003",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "01-requirements-traceability.md",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-004",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "02-functional-and-screen-design.md",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-005",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "03-system-architecture.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-006",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "04-component-design.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-007",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "05-ai-diagnosis-persona-recommendation.md",
+      "owner_ids": [
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-008",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "06-document-ai-hwp-rag.md",
+      "owner_ids": [
+        "OWN-DOC"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-009",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "07-ai-gateway-model-selection.md",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-010",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "08-data-model-and-erd.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-011",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "09-api-event-interface.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-012",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "10-security-privacy-threat-model.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-013",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "11-ui-ux-visual-system.md",
+      "owner_ids": [
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-014",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "12-deployment-topology.md",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-015",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "13-cdr-and-adr-index.md",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-016",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "14-validation-and-acceptance.md",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-017",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "design-baseline.json",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-018",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "openapi.json",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "generated_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-019",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "asyncapi.yaml",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "application/yaml",
+      "source_kind": "generated_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-020",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "document-graph.schema.json",
+      "owner_ids": [
+        "OWN-DOC"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "application/schema+json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-021",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "data-use-context.schema.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/schema+json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-022",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "threat-model.json",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-023",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "requirements-test-registry.json",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-024",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "screen-route-contracts.json",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX",
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-025",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "kpi-005-structured-output-matrix.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-026",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "diagnosis-scoring-golden-vectors.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "application/json",
+      "source_kind": "golden_vector",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-027",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "artifact-manifest.schema.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/schema+json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-028",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "evidence-index.schema.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/schema+json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-029",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "source-tree-hash-golden-vector.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "golden_vector",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-030",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "final-document-inventory.json",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-031",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "platform-openapi.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-032",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "platform-asyncapi.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-033",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "persistent-domain-catalog.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-034",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "ai-service-contracts.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-035",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "data-use-policy-registry.json",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-036",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "acceptance-threshold-registry.json",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-037",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "normative-test-semantics.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-038",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "rag-policy-golden-vectors.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-DOC"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-039",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "provider-decision-registry.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-040",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "legacy-reuse-decision-matrix.json",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-041",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "ui-journey-contracts.json",
+      "owner_ids": [
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-042",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "rubric-question-contract.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-043",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "persona-inference-policy.json",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-044",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "operation-authorization-contracts.json",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-045",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "evaluation-policy-contract.json",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-046",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "hwp-conversion-boundary-contract.json",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-047",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "tch-015-authorization-contract.json",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-DOC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DES-048",
+      "group": "design",
+      "root_id": "final_design",
+      "root_path": "docs/design/ai-training-platform/",
+      "relative_path_template": "source-traceability-manifest.json",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "verified_machine_contract",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-001",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "README.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-002",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "configuration-and-secrets.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-003",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "deployment.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-004",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "admin-bootstrap.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-005",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "backup-restore-policy.md",
+      "owner_ids": [
+        "OWN-DATA",
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-006",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "observability-slo-alerts.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-007",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "capacity-and-cost.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-008",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "security-operations.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-009",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "data-retention-and-deletion.md",
+      "owner_ids": [
+        "OWN-DATA",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-010",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "dependency-and-degraded-mode.md",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-OPS-011",
+      "group": "operations",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "service-catalog.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-001",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/deployment.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-002",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/rollback.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-003",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/database-migration.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-004",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/backup.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-005",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/restore.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-006",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/disaster-recovery.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-007",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/index-rebuild.md",
+      "owner_ids": [
+        "OWN-DOC"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-008",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/service-incident.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-009",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/privacy-incident.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-010",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/degraded-mode.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-011",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/ai-provider-outage.md",
+      "owner_ids": [
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-012",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/database-failover.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-013",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/queue-backlog.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-014",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/object-storage-outage.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-015",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/secret-rotation.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-016",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/certificate-renewal.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-017",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/access-review.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-018",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/retention-deletion.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-019",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/audit-export.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-020",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/observability-alerts.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-021",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/capacity-cost.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-022",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/vulnerability-patching.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-RB-023",
+      "group": "runbook",
+      "root_id": "operations",
+      "root_path": "docs/operations/ai-training-platform/",
+      "relative_path_template": "runbooks/ai-policy-model-rollback.md",
+      "owner_ids": [
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_runbook",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-001",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "README.md",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-002",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "test-strategy.md",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-003",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "requirements-test-traceability.csv",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/csv",
+      "source_kind": "generated_trace",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-004",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "test-environment.md",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-005",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "test-data-and-golden-set.md",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-006",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "unit-component-api-report.md",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-007",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "migration-seed-report.md",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-008",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "ai-diagnosis-recommendation-report.md",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-009",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "document-rag-citation-report.md",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-010",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "security-privacy-report.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-011",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "accessibility-report.md",
+      "owner_ids": [
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-012",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "visual-regression-report.md",
+      "owner_ids": [
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-013",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "performance-resilience-report.md",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-014",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "backup-restore-dr-report.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-DATA",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-015",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "deployment-rollback-report.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-016",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "pilot-and-fgi-report.md",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-017",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "final-acceptance-report.md",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-QA-018",
+      "group": "qa",
+      "root_id": "quality_assurance",
+      "root_path": "docs/qa/ai-training-platform/",
+      "relative_path_template": "evidence-index.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "application/json",
+      "source_kind": "generated_report",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-001",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "teacher-user-guide.md",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-001",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "teacher-user-guide.pdf",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-002",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "institution-admin-guide.md",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-002",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "institution-admin-guide.pdf",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-003",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "content-reviewer-guide.md",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-003",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "content-reviewer-guide.pdf",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-004",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "system-admin-guide.md",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-004",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "system-admin-guide.pdf",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-005",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "security-auditor-guide.md",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-005",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "security-auditor-guide.pdf",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-006",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "operations-operator-guide.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-006",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "operations-operator-guide.pdf",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-007",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "accessibility-and-support-guide.md",
+      "owner_ids": [
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-007",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "accessibility-and-support-guide.pdf",
+      "owner_ids": [
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MD-008",
+      "group": "manual_markdown",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "quick-start.md",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_manual",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-MP-008",
+      "group": "manual_pdf",
+      "root_id": "manuals",
+      "root_path": "docs/manuals/ai-training-platform/",
+      "relative_path_template": "quick-start.pdf",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-001",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/README.md",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-002",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/release-notes.md",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-CODE-QUALITY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-003",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/deployment-checklist.md",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-004",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/acceptance-decision.md",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ACC"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-005",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/known-risks-and-exceptions.md",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-006",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/third-party-and-model-inventory.md",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "text/markdown",
+      "source_kind": "authored_markdown",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-007",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/artifact-manifest.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "generated_manifest",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-008",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/artifact-manifest.json.sig",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/octet-stream",
+      "source_kind": "detached_signature",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-009",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/SHA256SUMS.txt",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/plain",
+      "source_kind": "checksum_catalog",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-REL-010",
+      "group": "release",
+      "root_id": "releases",
+      "root_path": "docs/releases/ai-training-platform/",
+      "relative_path_template": "${release_id}/SHA256SUMS.txt.sig",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/octet-stream",
+      "source_kind": "detached_signature",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-001",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/final-system-design.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-002",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/operations-guide.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-003",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/test-and-acceptance-plan.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-004",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/teacher-user-guide.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-005",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/administrator-guide.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-006",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/release-notes.pdf",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "generated_accessible_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-007",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/traceability.csv",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/csv",
+      "source_kind": "generated_trace",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-008",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/evidence-index.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "generated_evidence_index",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-009",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/artifact-manifest.json",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/json",
+      "source_kind": "generated_manifest",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-010",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/artifact-manifest.json.sig",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/octet-stream",
+      "source_kind": "detached_signature",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-011",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/SHA256SUMS.txt",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "text/plain",
+      "source_kind": "checksum_catalog",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-012",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/SHA256SUMS.txt.sig",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/octet-stream",
+      "source_kind": "detached_signature",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-013",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/source-docs.zip",
+      "owner_ids": [
+        "OWN-QA"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "media_type": "application/zip",
+      "source_kind": "source_snapshot",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-001",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/teacher-user-guide.pdf",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-002",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/institution-admin-guide.pdf",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-003",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/content-reviewer-guide.pdf",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-AI"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-004",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/system-admin-guide.pdf",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-005",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/security-auditor-guide.pdf",
+      "owner_ids": [
+        "OWN-SEC"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-006",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/operations-operator-guide.pdf",
+      "owner_ids": [
+        "OWN-OPS"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-007",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/accessibility-and-support-guide.pdf",
+      "owner_ids": [
+        "OWN-UX"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    },
+    {
+      "artifact_id": "FDI-DST-MAN-008",
+      "group": "distribution",
+      "root_id": "distribution_docs",
+      "root_path": "dist/docs/",
+      "relative_path_template": "${release_id}/manuals/quick-start.pdf",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "gate_ids": [
+        "GATE-UX-ACCESSIBILITY"
+      ],
+      "media_type": "application/pdf",
+      "source_kind": "copied_verified_manual_pdf",
+      "required": true
+    }
+  ]
+}

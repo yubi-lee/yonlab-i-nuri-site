@@ -1,0 +1,3327 @@
+{
+  "schema_version": "normative-test-semantics.v1",
+  "document_id": "VER-ATP-009-SEMANTICS",
+  "normative_source": "09-test-procedure-acceptance.md",
+  "cardinality": 139,
+  "canonicalization": "RFC8785-compatible integer/string subset",
+  "ratio_scale": {
+    "unit": "microunit_ratio",
+    "one": 1000000
+  },
+  "tests": [
+    {
+      "test_id": "T-A11Y-001",
+      "title": "T-A11Y-001 키보드만으로 핵심 여정 완료",
+      "normative_anchor": "VER-ATP-009#T-A11Y-001",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-001-KEYBOARD-ACCESSIBILITY-VIOLATION-COUNT",
+      "acceptance_formula": "keyboard_accessibility_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "keyboard_accessibility_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-002",
+      "title": "T-A11Y-002 focus 순서·가시성·복구",
+      "normative_anchor": "VER-ATP-009#T-A11Y-002",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-002-FOCUS-ACCESSIBILITY-VIOLATION-COUNT",
+      "acceptance_formula": "focus_accessibility_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "focus_accessibility_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-003",
+      "title": "T-A11Y-003 name·role·value 프로그램적 노출",
+      "normative_anchor": "VER-ATP-009#T-A11Y-003",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-003-NAME-ROLE-VALUE-VIOLATION-COUNT",
+      "acceptance_formula": "name_role_value_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "name_role_value_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-004",
+      "title": "T-A11Y-004 명도 대비와 비색상 상태 표현",
+      "normative_anchor": "VER-ATP-009#T-A11Y-004",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-004-CONTRAST-AND-COLOR-VIOLATION-COUNT",
+      "acceptance_formula": "contrast_and_color_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "contrast_and_color_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-005",
+      "title": "T-A11Y-005 확대·reflow·가로 스크롤",
+      "normative_anchor": "VER-ATP-009#T-A11Y-005",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-005-REFLOW-ACCESSIBILITY-VIOLATION-COUNT",
+      "acceptance_formula": "reflow_accessibility_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "reflow_accessibility_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-006",
+      "title": "T-A11Y-006 live region과 오류 알림",
+      "normative_anchor": "VER-ATP-009#T-A11Y-006",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-006-LIVE-REGION-VIOLATION-COUNT",
+      "acceptance_formula": "live_region_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "live_region_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-007",
+      "title": "T-A11Y-007 chart·table 대체 표현",
+      "normative_anchor": "VER-ATP-009#T-A11Y-007",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-007-CHART-TABLE-ACCESSIBILITY-VIOLATION-COUNT",
+      "acceptance_formula": "chart_table_accessibility_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "chart_table_accessibility_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-A11Y-008",
+      "title": "T-A11Y-008 screen reader 핵심 여정",
+      "normative_anchor": "VER-ATP-009#T-A11Y-008",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SIR-003",
+        "SYS-F-014",
+        "SYS-NF-003"
+      ],
+      "procedure_id": "PROC-A11Y",
+      "metric_id": "METRIC-A11Y-008-SCREEN-READER-VIOLATION-COUNT",
+      "acceptance_formula": "screen_reader_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "screen_reader_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-A11Y-008-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ACC-001",
+      "title": "T-ACC-001 요구별 기능 정확성 표본",
+      "normative_anchor": "VER-ATP-009#T-ACC-001",
+      "requirement_ids": [
+        "QUR-004"
+      ],
+      "procedure_id": "PROC-ACC",
+      "metric_id": "METRIC-ACC-001-FUNCTIONAL-ACCEPTANCE-MISMATCH-COUNT",
+      "acceptance_formula": "functional_acceptance_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "functional_acceptance_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-ACC-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-001",
+      "title": "T-AI-001 전문가 golden set 대화 evidence 추출 품질",
+      "normative_anchor": "VER-ATP-009#T-AI-001",
+      "requirement_ids": [
+        "DER-001",
+        "PLR-002",
+        "SYS-F-001"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-001-STRUCTURED-OUTPUT-SUCCESS-MICROUNIT",
+      "acceptance_formula": "structured_output_success_microunit >= 998000 AND competency_span_f1_microunit >= 850000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "structured_output_success_microunit",
+        "comparison": ">=",
+        "value": 998000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-002",
+      "title": "T-AI-002 동일 evidence·rubric 100회 결정적 scoring",
+      "normative_anchor": "VER-ATP-009#T-AI-002",
+      "requirement_ids": [
+        "DER-001",
+        "PLR-002",
+        "SYS-F-001",
+        "SYS-F-003",
+        "SYS-NF-009"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-002-DETERMINISTIC-SCORING-MATCH-MICROUNIT",
+      "acceptance_formula": "deterministic_scoring_match_microunit == 1000000 AND repeated_run_count == 100",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "deterministic_scoring_match_microunit",
+        "comparison": "==",
+        "value": 1000000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-003",
+      "title": "T-AI-003 evidence 부족·상충·중단·재개 상태 복구",
+      "normative_anchor": "VER-ATP-009#T-AI-003",
+      "requirement_ids": [
+        "DER-001",
+        "PLR-002",
+        "SYS-F-001",
+        "SYS-F-003"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-003-CONFIRMED-MISDIAGNOSIS-COUNT",
+      "acceptance_formula": "confirmed_misdiagnosis_count == 0 AND required_followup_question_passed == true AND resumed_state_match == true",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "confirmed_misdiagnosis_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-004",
+      "title": "T-AI-004 전문가 대비 역량별 weighted agreement",
+      "normative_anchor": "VER-ATP-009#T-AI-004",
+      "requirement_ids": [
+        "DER-001",
+        "PLR-002",
+        "SYS-F-001",
+        "SYS-F-003"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-004-MINIMUM-EXPERT-AGREEMENT-MICROUNIT",
+      "acceptance_formula": "minimum_expert_agreement_microunit == minimum(per_competency_weighted_kappa_or_icc_microunit) AND minimum_expert_agreement_microunit >= 850000 AND session_count >= 300",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "minimum_expert_agreement_microunit",
+        "comparison": ">=",
+        "value": 850000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-005",
+      "title": "T-AI-005 12 operational profile·6 family probability와 근거",
+      "normative_anchor": "VER-ATP-009#T-AI-005",
+      "requirement_ids": [
+        "DER-002",
+        "PLR-002",
+        "SYS-F-002"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-005-PERSONA-DISTRIBUTION-ASSERTION-FAILURE-COUNT",
+      "acceptance_formula": "persona_distribution_assertion_failure_count == 0 AND profile_probability_sum_microunit == 1000000 AND family_probability_sum_microunit == 1000000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "persona_distribution_assertion_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-006",
+      "title": "T-AI-006 교사 persona 맥락 정정 후 질문·추천 재계산",
+      "normative_anchor": "VER-ATP-009#T-AI-006",
+      "requirement_ids": [
+        "DER-002",
+        "PLR-002",
+        "SYS-F-002"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-006-UNAUTHORIZED-SCORE-MUTATION-COUNT",
+      "acceptance_formula": "unauthorized_score_mutation_count == 0 AND question_recalculated == true AND recommendation_recalculated == true",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unauthorized_score_mutation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-007",
+      "title": "T-AI-007 지역·연차 slice별 fairness 배포 판정",
+      "normative_anchor": "VER-ATP-009#T-AI-007",
+      "requirement_ids": [
+        "DER-002",
+        "PLR-002",
+        "SYS-F-002"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-007-FAIRNESS-RELEASE-DECISION-ERROR-COUNT",
+      "acceptance_formula": "fairness_release_decision_error_count == 0 AND maximum_slice_gap_microunit <= 100000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "fairness_release_decision_error_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-AI-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-AI-008",
+      "title": "T-AI-008 의료·인사평가·유도질문 금지와 사람 경로",
+      "normative_anchor": "VER-ATP-009#T-AI-008",
+      "requirement_ids": [
+        "DER-002",
+        "PLR-002",
+        "SYS-F-002"
+      ],
+      "procedure_id": "PROC-AI",
+      "metric_id": "METRIC-AI-008-PROHIBITED-INFERENCE-COUNT",
+      "acceptance_formula": "prohibited_inference_count == 0 AND safe_guidance_coverage_microunit == 1000000 AND human_route_coverage_microunit == 1000000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "prohibited_inference_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "POLICY_BLOCK",
+      "fixture_contract_id": "DATASET-AI-008-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-001",
+      "title": "T-API-001 인증 API OpenAPI·negative contract",
+      "normative_anchor": "VER-ATP-009#T-API-001",
+      "requirement_ids": [
+        "SIR-001",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-001-AUTH-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "auth_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "auth_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-002",
+      "title": "T-API-002 dashboard API role·response contract",
+      "normative_anchor": "VER-ATP-009#T-API-002",
+      "requirement_ids": [
+        "SIR-001",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-002-DASHBOARD-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "dashboard_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "dashboard_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-003",
+      "title": "T-API-003 pagination 안정성·중복·경계",
+      "normative_anchor": "VER-ATP-009#T-API-003",
+      "requirement_ids": [
+        "SIR-001",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-003-PAGINATION-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "pagination_contract_failure_count == 0 AND duplicate_page_item_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "pagination_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-004",
+      "title": "T-API-004 RFC 9457 Problem Details와 내부정보 비노출",
+      "normative_anchor": "VER-ATP-009#T-API-004",
+      "requirement_ids": [
+        "SIR-001",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-004-PROBLEM-DETAIL-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "problem_detail_contract_failure_count == 0 AND internal_detail_exposure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "problem_detail_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "VALIDATION_PROBLEM",
+      "fixture_contract_id": "DATASET-API-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-005",
+      "title": "T-API-005 diagnosis API idempotency·권한·상태전이",
+      "normative_anchor": "VER-ATP-009#T-API-005",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-005-DIAGNOSIS-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "diagnosis_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "diagnosis_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-006",
+      "title": "T-API-006 recommendation API idempotency·권한·상태전이",
+      "normative_anchor": "VER-ATP-009#T-API-006",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-006-RECOMMENDATION-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "recommendation_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "recommendation_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-007",
+      "title": "T-API-007 document ingestion API job·retry 상태전이",
+      "normative_anchor": "VER-ATP-009#T-API-007",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-007-DOCUMENT-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "document_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "document_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-008",
+      "title": "T-API-008 RAG SSE 재연결·tenant·citation 계약",
+      "normative_anchor": "VER-ATP-009#T-API-008",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-008-RAG-SSE-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "rag_sse_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "rag_sse_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "SSE_RECONNECT_REQUIRED",
+      "fixture_contract_id": "DATASET-API-008-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-009",
+      "title": "T-API-009 비동기 job idempotent replay와 상태전이",
+      "normative_anchor": "VER-ATP-009#T-API-009",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-009-ASYNC-JOB-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "async_job_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "async_job_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-009-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-API-010",
+      "title": "T-API-010 report version·권한·download 계약",
+      "normative_anchor": "VER-ATP-009#T-API-010",
+      "requirement_ids": [
+        "SIR-002",
+        "SYS-F-015"
+      ],
+      "procedure_id": "PROC-API",
+      "metric_id": "METRIC-API-010-REPORT-API-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "report_api_contract_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "report_api_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-API-010-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ARCH-001",
+      "title": "T-ARCH-001 provider·adapter 교체 시 consumer 계약 유지",
+      "normative_anchor": "VER-ATP-009#T-ARCH-001",
+      "requirement_ids": [
+        "DER-008",
+        "QUR-003",
+        "SYS-F-013",
+        "SYS-NF-005",
+        "SYS-NF-010",
+        "SYS-NF-013"
+      ],
+      "procedure_id": "PROC-ARCH",
+      "metric_id": "METRIC-ARCH-001-ADAPTER-SUBSTITUTION-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "adapter_substitution_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "adapter_substitution_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-ARCH-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ARCH-002",
+      "title": "T-ARCH-002 수평 scale 시 결과·상태 정합",
+      "normative_anchor": "VER-ATP-009#T-ARCH-002",
+      "requirement_ids": [
+        "DER-008",
+        "QUR-003",
+        "SYS-F-013",
+        "SYS-NF-005",
+        "SYS-NF-010"
+      ],
+      "procedure_id": "PROC-ARCH",
+      "metric_id": "METRIC-ARCH-002-HORIZONTAL-SCALE-CONSISTENCY-FAILURE-COUNT",
+      "acceptance_formula": "horizontal_scale_consistency_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "horizontal_scale_consistency_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-ARCH-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ARCH-003",
+      "title": "T-ARCH-003 transactional outbox event 유실·중복 side effect",
+      "normative_anchor": "VER-ATP-009#T-ARCH-003",
+      "requirement_ids": [
+        "DER-008",
+        "QUR-003",
+        "SYS-F-013",
+        "SYS-NF-005",
+        "SYS-NF-010"
+      ],
+      "procedure_id": "PROC-ARCH",
+      "metric_id": "METRIC-ARCH-003-OUTBOX-LOSS-OR-DUPLICATE-SIDE-EFFECT-COUNT",
+      "acceptance_formula": "outbox_loss_or_duplicate_side_effect_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "outbox_loss_or_duplicate_side_effect_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-ARCH-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ARCH-004",
+      "title": "T-ARCH-004 provider 장애 degraded mode 계약",
+      "normative_anchor": "VER-ATP-009#T-ARCH-004",
+      "requirement_ids": [
+        "DER-008",
+        "QUR-003",
+        "SYS-F-013",
+        "SYS-NF-005",
+        "SYS-NF-010"
+      ],
+      "procedure_id": "PROC-ARCH",
+      "metric_id": "METRIC-ARCH-004-DEGRADED-MODE-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "degraded_mode_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "degraded_mode_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "DEGRADED_MODE_ACTIVATED",
+      "fixture_contract_id": "DATASET-ARCH-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-ARCH-005",
+      "title": "T-ARCH-005 model·prompt·schema·rubric·index 재현",
+      "normative_anchor": "VER-ATP-009#T-ARCH-005",
+      "requirement_ids": [
+        "DER-008",
+        "QUR-003",
+        "SYS-F-013",
+        "SYS-F-018",
+        "SYS-NF-005",
+        "SYS-NF-009",
+        "SYS-NF-010"
+      ],
+      "procedure_id": "PROC-ARCH",
+      "metric_id": "METRIC-ARCH-005-REPRODUCIBILITY-MISMATCH-COUNT",
+      "acceptance_formula": "reproducibility_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "reproducibility_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-ARCH-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-BCP-001",
+      "title": "T-BCP-001 업무영향·연속성 tabletop",
+      "normative_anchor": "VER-ATP-009#T-BCP-001",
+      "requirement_ids": [
+        "COR-004"
+      ],
+      "procedure_id": "PROC-BCP",
+      "metric_id": "METRIC-BCP-001-BCP-CONTACT-DECISION-RECOVERY-ROLE-GAP-COUNT",
+      "acceptance_formula": "bcp_contact_decision_recovery_role_gap_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "bcp_contact_decision_recovery_role_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-BCP-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-001",
+      "title": "T-DATA-001 명명·코드·UTC·상위표준 준수",
+      "normative_anchor": "VER-ATP-009#T-DATA-001",
+      "requirement_ids": [
+        "DAR-001",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-001-DATA-NAMING-STANDARD-VIOLATION-COUNT",
+      "acceptance_formula": "data_naming_standard_violation_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_naming_standard_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-002",
+      "title": "T-DATA-002 데이터 사전·변경이력 완전성",
+      "normative_anchor": "VER-ATP-009#T-DATA-002",
+      "requirement_ids": [
+        "DAR-002",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-002-DATA-DICTIONARY-MISSING-ENTRY-COUNT",
+      "acceptance_formula": "data_dictionary_missing_entry_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_dictionary_missing_entry_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-003",
+      "title": "T-DATA-003 논리·물리 ERD·index·partition 정합",
+      "normative_anchor": "VER-ATP-009#T-DATA-003",
+      "requirement_ids": [
+        "DAR-003",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-003-DATA-MODEL-CONTRACT-ERROR-COUNT",
+      "acceptance_formula": "data_model_contract_error_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_model_contract_error_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-004",
+      "title": "T-DATA-004 FK·check·cardinality 무결성",
+      "normative_anchor": "VER-ATP-009#T-DATA-004",
+      "requirement_ids": [
+        "DAR-004",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-004-DATA-INTEGRITY-VIOLATION-COUNT",
+      "acceptance_formula": "data_integrity_violation_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_integrity_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "DATA_INTEGRITY_REJECTED",
+      "fixture_contract_id": "DATASET-DATA-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-005",
+      "title": "T-DATA-005 빈 DB·직전 release migration과 rollback",
+      "normative_anchor": "VER-ATP-009#T-DATA-005",
+      "requirement_ids": [
+        "DAR-005",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-005-MIGRATION-REHEARSAL-FAILURE-COUNT",
+      "acceptance_formula": "migration_rehearsal_failure_count == 0 AND seed_second_run_duplicate_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "migration_rehearsal_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-006",
+      "title": "T-DATA-006 값·참조·범위·중복 품질",
+      "normative_anchor": "VER-ATP-009#T-DATA-006",
+      "requirement_ids": [
+        "DAR-006",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-006-DATA-QUALITY-RULE-FAILURE-COUNT",
+      "acceptance_formula": "data_quality_rule_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_quality_rule_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DATA-007",
+      "title": "T-DATA-007 metadata·lineage·개방 API 추적",
+      "normative_anchor": "VER-ATP-009#T-DATA-007",
+      "requirement_ids": [
+        "DAR-007",
+        "SYS-F-018",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DATA",
+      "metric_id": "METRIC-DATA-007-DATA-LINEAGE-MISSING-EDGE-COUNT",
+      "acceptance_formula": "data_lineage_missing_edge_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "data_lineage_missing_edge_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DATA-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DEP-001",
+      "title": "T-DEP-001 환경 분리·production preflight",
+      "normative_anchor": "VER-ATP-009#T-DEP-001",
+      "requirement_ids": [
+        "ECR-002"
+      ],
+      "procedure_id": "PROC-DEP",
+      "metric_id": "METRIC-DEP-001-PRODUCTION-PREFLIGHT-VIOLATION-COUNT",
+      "acceptance_formula": "production_preflight_violation_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "production_preflight_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DEP-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DEP-002",
+      "title": "T-DEP-002 signed image canary health·smoke·SLO",
+      "normative_anchor": "VER-ATP-009#T-DEP-002",
+      "requirement_ids": [
+        "ECR-002",
+        "SYS-NF-004"
+      ],
+      "procedure_id": "PROC-DEP",
+      "metric_id": "METRIC-DEP-002-CANARY-DEPLOYMENT-FAILURE-COUNT",
+      "acceptance_formula": "canary_deployment_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "canary_deployment_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DEP-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DEP-003",
+      "title": "T-DEP-003 이전 image·registry·index rollback",
+      "normative_anchor": "VER-ATP-009#T-DEP-003",
+      "requirement_ids": [
+        "ECR-002"
+      ],
+      "procedure_id": "PROC-DEP",
+      "metric_id": "METRIC-DEP-003-ROLLBACK-RECOVERY-FAILURE-COUNT",
+      "acceptance_formula": "rollback_recovery_failure_count == 0 AND rollback_elapsed_ms <= 300000",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "rollback_recovery_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DEP-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DEP-004",
+      "title": "T-DEP-004 migration-once와 무중단 app rollout",
+      "normative_anchor": "VER-ATP-009#T-DEP-004",
+      "requirement_ids": [
+        "ECR-002"
+      ],
+      "procedure_id": "PROC-DEP",
+      "metric_id": "METRIC-DEP-004-DUPLICATE-MIGRATION-OR-DOWNTIME-COUNT",
+      "acceptance_formula": "duplicate_migration_or_downtime_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "duplicate_migration_or_downtime_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "DUPLICATE_MIGRATION_BLOCKED",
+      "fixture_contract_id": "DATASET-DEP-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-001",
+      "title": "T-DOC-001 정상 HWPX 문단·제목·목록 구조 보존",
+      "normative_anchor": "VER-ATP-009#T-DOC-001",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-008"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-001-HWPX-STRUCTURE-PRESERVATION-MICROUNIT",
+      "acceptance_formula": "hwpx_structure_preservation_microunit >= 980000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "hwpx_structure_preservation_microunit",
+        "comparison": ">=",
+        "value": 980000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-002",
+      "title": "T-DOC-002 병합·중첩표 topology와 locator",
+      "normative_anchor": "VER-ATP-009#T-DOC-002",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-008"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-002-NESTED-TABLE-TOPOLOGY-MICROUNIT",
+      "acceptance_formula": "nested_table_topology_microunit >= 950000 AND locator_coverage_microunit == 1000000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "nested_table_topology_microunit",
+        "comparison": ">=",
+        "value": 950000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-003",
+      "title": "T-DOC-003 HWP→HWPX/PDF 격리 변환과 preview",
+      "normative_anchor": "VER-ATP-009#T-DOC-003",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-009"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-003-HWP-ISOLATION-CONVERSION-FAILURE-COUNT",
+      "acceptance_formula": "hwp_isolation_conversion_failure_count == 0 AND macro_execution_count == 0 AND required_structure_valid == true AND preview_valid == true",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "hwp_isolation_conversion_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-004",
+      "title": "T-DOC-004 한국어 스캔·혼합 PDF OCR 정확도",
+      "normative_anchor": "VER-ATP-009#T-DOC-004",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-009"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-004-OCR-CHARACTER-ACCURACY-MICROUNIT",
+      "acceptance_formula": "ocr_character_accuracy_microunit >= 970000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "ocr_character_accuracy_microunit",
+        "comparison": ">=",
+        "value": 970000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-005",
+      "title": "T-DOC-005 손상·악성·압축폭탄·위장 MIME 격리",
+      "normative_anchor": "VER-ATP-009#T-DOC-005",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-009"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-005-UNSAFE-DOCUMENT-EXECUTION-COUNT",
+      "acceptance_formula": "unsafe_document_execution_count == 0 AND quarantine_or_reject_coverage_microunit == 1000000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unsafe_document_execution_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "DOCUMENT_QUARANTINED",
+      "fixture_contract_id": "DATASET-DOC-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-006",
+      "title": "T-DOC-006 낮은 confidence 자동 게시 차단과 검수 queue",
+      "normative_anchor": "VER-ATP-009#T-DOC-006",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007",
+        "SYS-F-009",
+        "SYS-NF-011"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-006-LOW-CONFIDENCE-AUTO-PUBLISH-COUNT",
+      "acceptance_formula": "low_confidence_auto_publish_count == 0 AND review_queue_routing_accuracy_microunit == 1000000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "low_confidence_auto_publish_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-007",
+      "title": "T-DOC-007 권리 미확인·만료·withdraw 문서 비노출",
+      "normative_anchor": "VER-ATP-009#T-DOC-007",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-007"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-007-INELIGIBLE-RIGHTS-EXPOSURE-COUNT",
+      "acceptance_formula": "ineligible_rights_exposure_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "ineligible_rights_exposure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "RIGHTS_NOT_ELIGIBLE",
+      "fixture_contract_id": "DATASET-DOC-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-008",
+      "title": "T-DOC-008 golden query hybrid retrieval Top-5",
+      "normative_anchor": "VER-ATP-009#T-DOC-008",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-010"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-008-RAG-TOP5-HIT-RATE-MICROUNIT",
+      "acceptance_formula": "rag_top5_hit_rate_microunit >= 950000 AND safety_rights_slice_hit_rate_microunit == 1000000 AND eligible_query_count >= 200",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "rag_top5_hit_rate_microunit",
+        "comparison": ">=",
+        "value": 950000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-008-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-009",
+      "title": "T-DOC-009 중요 claim citation coverage와 유효성",
+      "normative_anchor": "VER-ATP-009#T-DOC-009",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-010",
+        "SYS-F-011"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-009-IMPORTANT-CLAIM-CITATION-COVERAGE-MICROUNIT",
+      "acceptance_formula": "important_claim_citation_coverage_microunit >= 950000 AND invalid_citation_count == 0",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "important_claim_citation_coverage_microunit",
+        "comparison": ">=",
+        "value": 950000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-009-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-010",
+      "title": "T-DOC-010 cross-tenant·role chunk와 citation 격리",
+      "normative_anchor": "VER-ATP-009#T-DOC-010",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-010",
+        "SYS-F-011"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-010-UNAUTHORIZED-CHUNK-OR-CITATION-COUNT",
+      "acceptance_formula": "unauthorized_chunk_or_citation_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unauthorized_chunk_or_citation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "AUTHORIZATION_DENIED",
+      "fixture_contract_id": "DATASET-DOC-010-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-011",
+      "title": "T-DOC-011 근거 부족·상충·prompt injection 안전 응답",
+      "normative_anchor": "VER-ATP-009#T-DOC-011",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-011"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-011-DOCUMENT-INSTRUCTION-EXECUTION-COUNT",
+      "acceptance_formula": "document_instruction_execution_count == 0 AND no_answer_or_conflict_decision_accuracy_microunit == 1000000",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "document_instruction_execution_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "INSUFFICIENT_GROUNDED_EVIDENCE",
+      "fixture_contract_id": "DATASET-DOC-011-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOC-012",
+      "title": "T-DOC-012 승인 template HWPX 초안과 HWP 변환",
+      "normative_anchor": "VER-ATP-009#T-DOC-012",
+      "requirement_ids": [
+        "DER-005",
+        "PLR-003",
+        "SYS-F-012"
+      ],
+      "procedure_id": "PROC-DOC",
+      "metric_id": "METRIC-DOC-012-DRAFT-REQUIRED-SECTION-COVERAGE-MICROUNIT",
+      "acceptance_formula": "draft_required_section_coverage_microunit == 1000000 AND table_validation_passed == true AND citation_validation_passed == true AND checksum_valid == true AND draft_authorization_case_failure_count == 0",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "draft_required_section_coverage_microunit",
+        "comparison": "==",
+        "value": 1000000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOC-012-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": [
+        "AUTHZ-TCH015-ALLOW-TEACHER-READ",
+        "AUTHZ-TCH015-ALLOW-TEACHER-EDIT",
+        "AUTHZ-TCH015-ALLOW-TEACHER-SUBMIT",
+        "AUTHZ-TCH015-ALLOW-TEACHER-EXPORT",
+        "AUTHZ-TCH015-ALLOW-REVIEWER-READ",
+        "AUTHZ-TCH015-ALLOW-REVIEWER-DECISION",
+        "AUTHZ-TCH015-DENY-TEACHER-APPROVE",
+        "AUTHZ-TCH015-DENY-REVIEWER-EDIT",
+        "AUTHZ-TCH015-DENY-REVIEWER-EXPORT",
+        "AUTHZ-TCH015-DENY-OTHER-TENANT",
+        "AUTHZ-TCH015-DENY-TEACHER-NOT-OWNER-READ",
+        "AUTHZ-TCH015-DENY-REVIEWER-UNASSIGNED-READ",
+        "AUTHZ-TCH015-DENY-REVIEWER-UNASSIGNED-DECISION",
+        "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-EDIT",
+        "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-SUBMIT",
+        "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-EXPORT",
+        "AUTHZ-TCH015-DENY-REVIEWER-WRONG-STATE-DECISION"
+      ]
+    },
+    {
+      "test_id": "T-DOCS-001",
+      "title": "T-DOCS-001 문서 ID·링크·추적성·금지 토큰 무결성",
+      "normative_anchor": "VER-ATP-009#T-DOCS-001",
+      "requirement_ids": [
+        "PMR-005"
+      ],
+      "procedure_id": "PROC-DOCS",
+      "metric_id": "METRIC-DOCS-001-DESIGN-DOCUMENT-INTEGRITY-ERROR-COUNT",
+      "acceptance_formula": "design_document_integrity_error_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "design_document_integrity_error_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOCS-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DOCS-002",
+      "title": "T-DOCS-002 147-item inventory와 8 Markdown/PDF pair 최종 산출물 검증",
+      "normative_anchor": "VER-ATP-009#T-DOCS-002",
+      "requirement_ids": [
+        "PSR-002"
+      ],
+      "procedure_id": "PROC-DOCS",
+      "metric_id": "METRIC-DOCS-002-FINAL-DOCUMENT-CONTRACT-ERROR-COUNT",
+      "acceptance_formula": "final_document_contract_error_count == 0 AND inventory_item_count == 147 AND markdown_pdf_pair_count == 8",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "final_document_contract_error_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DOCS-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DR-001",
+      "title": "T-DR-001 DB·object·manifest 암호화 off-host backup",
+      "normative_anchor": "VER-ATP-009#T-DR-001",
+      "requirement_ids": [
+        "PSR-005",
+        "SYS-NF-012"
+      ],
+      "procedure_id": "PROC-DR",
+      "metric_id": "METRIC-DR-001-BACKUP-INTEGRITY-FAILURE-COUNT",
+      "acceptance_formula": "backup_integrity_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "backup_integrity_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DR-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DR-002",
+      "title": "T-DR-002 isolated point-in-time restore RPO",
+      "normative_anchor": "VER-ATP-009#T-DR-002",
+      "requirement_ids": [
+        "PSR-005",
+        "SYS-NF-012"
+      ],
+      "procedure_id": "PROC-DR",
+      "metric_id": "METRIC-DR-002-RESTORE-POINT-OBJECTIVE-MINUTES",
+      "acceptance_formula": "acceptance_owner_approved == true AND restore_point_objective_minutes <= 15",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "restore_point_objective_minutes",
+        "comparison": "<=",
+        "value": 15,
+        "unit": "minutes"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DR-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DR-003",
+      "title": "T-DR-003 핵심 서비스 복구 RTO",
+      "normative_anchor": "VER-ATP-009#T-DR-003",
+      "requirement_ids": [
+        "PSR-005",
+        "SYS-NF-012"
+      ],
+      "procedure_id": "PROC-DR",
+      "metric_id": "METRIC-DR-003-CORE-SERVICE-RECOVERY-MINUTES",
+      "acceptance_formula": "acceptance_owner_approved == true AND core_service_recovery_minutes <= 240",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "core_service_recovery_minutes",
+        "comparison": "<=",
+        "value": 240,
+        "unit": "minutes"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DR-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DR-004",
+      "title": "T-DR-004 index 재구축·citation 검증 RTO",
+      "normative_anchor": "VER-ATP-009#T-DR-004",
+      "requirement_ids": [
+        "PSR-005",
+        "SYS-NF-012"
+      ],
+      "procedure_id": "PROC-DR",
+      "metric_id": "METRIC-DR-004-INDEX-REBUILD-RECOVERY-MINUTES",
+      "acceptance_formula": "acceptance_owner_approved == true AND index_rebuild_recovery_minutes <= 1440 AND invalid_citation_count == 0",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "index_rebuild_recovery_minutes",
+        "comparison": "<=",
+        "value": 1440,
+        "unit": "minutes"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DR-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-DR-005",
+      "title": "T-DR-005 연락망·의사결정 tabletop",
+      "normative_anchor": "VER-ATP-009#T-DR-005",
+      "requirement_ids": [
+        "PSR-005",
+        "SYS-NF-012"
+      ],
+      "procedure_id": "PROC-DR",
+      "metric_id": "METRIC-DR-005-DR-TABLETOP-ROLE-NOTIFICATION-GAP-COUNT",
+      "acceptance_formula": "dr_tabletop_role_notification_gap_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "dr_tabletop_role_notification_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-DR-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GATE-001",
+      "title": "T-GATE-001 lint·unit·typecheck·coverage 자동 품질 gate",
+      "normative_anchor": "VER-ATP-009#T-GATE-001",
+      "requirement_ids": [
+        "SYS-NF-013",
+        "TER-001"
+      ],
+      "procedure_id": "PROC-GATE",
+      "metric_id": "METRIC-GATE-001-FAILED-QUALITY-GATE-COUNT",
+      "acceptance_formula": "failed_quality_gate_count == 0 AND statement_coverage_microunit >= 850000 AND branch_coverage_microunit >= 800000",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "failed_quality_gate_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GATE-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GATE-002",
+      "title": "T-GATE-002 DB·queue·storage·provider stub 통합 계약",
+      "normative_anchor": "VER-ATP-009#T-GATE-002",
+      "requirement_ids": [
+        "SYS-NF-013",
+        "TER-002"
+      ],
+      "procedure_id": "PROC-GATE",
+      "metric_id": "METRIC-GATE-002-FAILED-INTEGRATION-CONTRACT-COUNT",
+      "acceptance_formula": "failed_integration_contract_count == 0 AND retry_transaction_contract_passed == true",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "failed_integration_contract_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GATE-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GATE-003",
+      "title": "T-GATE-003 격리 Docker build부터 cleanup까지 전체 lifecycle",
+      "normative_anchor": "VER-ATP-009#T-GATE-003",
+      "requirement_ids": [
+        "SYS-NF-013",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-GATE",
+      "metric_id": "METRIC-GATE-003-FAILED-DOCKER-LIFECYCLE-STEP-COUNT",
+      "acceptance_formula": "failed_docker_lifecycle_step_count == 0 AND fatal_log_marker_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "failed_docker_lifecycle_step_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GATE-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-001",
+      "title": "T-GOV-001 승인 범위·모듈·여정·품질 기준선",
+      "normative_anchor": "VER-ATP-009#T-GOV-001",
+      "requirement_ids": [
+        "PLR-001",
+        "SYS-NF-015"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-001-UNAPPROVED-SCOPE-OR-OWNERLESS-DECISION-COUNT",
+      "acceptance_formula": "unapproved_scope_or_ownerless_decision_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "unapproved_scope_or_ownerless_decision_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-002",
+      "title": "T-GOV-002 규정 준수대장·감사 증적",
+      "normative_anchor": "VER-ATP-009#T-GOV-002",
+      "requirement_ids": [
+        "COR-001",
+        "SYS-NF-014"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-002-MISSING-APPLICABLE-REGULATION-COUNT",
+      "acceptance_formula": "missing_applicable_regulation_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "missing_applicable_regulation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-003",
+      "title": "T-GOV-003 ChangeRequest·과업심의 이력",
+      "normative_anchor": "VER-ATP-009#T-GOV-003",
+      "requirement_ids": [
+        "COR-003"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-003-PREAPPROVAL-BASELINE-CHANGE-COUNT",
+      "acceptance_formula": "preapproval_baseline_change_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "preapproval_baseline_change_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-004",
+      "title": "T-GOV-004 책임·보험 계약 산출물",
+      "normative_anchor": "VER-ATP-009#T-GOV-004",
+      "requirement_ids": [
+        "COR-005"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-004-MISSING-LIABILITY-ARTIFACT-COUNT",
+      "acceptance_formula": "missing_liability_artifact_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "missing_liability_artifact_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-005",
+      "title": "T-GOV-005 하도급 승인·산출물 통제",
+      "normative_anchor": "VER-ATP-009#T-GOV-005",
+      "requirement_ids": [
+        "COR-006"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-005-UNAPPROVED-SUBCONTRACT-OR-EXPORT-COUNT",
+      "acceptance_formula": "unapproved_subcontract_or_export_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "unapproved_subcontract_or_export_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-006",
+      "title": "T-GOV-006 SW사업정보 저장소 제출본",
+      "normative_anchor": "VER-ATP-009#T-GOV-006",
+      "requirement_ids": [
+        "PMR-007"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-006-MISSING-REPOSITORY-METADATA-OR-RECEIPT-COUNT",
+      "acceptance_formula": "missing_repository_metadata_or_receipt_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "missing_repository_metadata_or_receipt_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-GOV-007",
+      "title": "T-GOV-007 사전협의 조치대장",
+      "normative_anchor": "VER-ATP-009#T-GOV-007",
+      "requirement_ids": [
+        "PMR-008"
+      ],
+      "procedure_id": "PROC-GOV",
+      "metric_id": "METRIC-GOV-007-OVERDUE-OPEN-PRECONSULTATION-ACTION-COUNT",
+      "acceptance_formula": "overdue_open_preconsultation_action_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "overdue_open_preconsultation_action_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-GOV-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-INT-001",
+      "title": "T-INT-001 Portal adapter sandbox·timeout·retry·중복 방지",
+      "normative_anchor": "VER-ATP-009#T-INT-001",
+      "requirement_ids": [
+        "COR-002",
+        "SYS-F-017",
+        "SYS-NF-008"
+      ],
+      "procedure_id": "PROC-INT",
+      "metric_id": "METRIC-INT-001-PORTAL-ADAPTER-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "portal_adapter_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "portal_adapter_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-INT-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-INT-002",
+      "title": "T-INT-002 Learning adapter sandbox·timeout·retry·중복 방지",
+      "normative_anchor": "VER-ATP-009#T-INT-002",
+      "requirement_ids": [
+        "COR-002",
+        "SYS-F-017",
+        "SYS-NF-008"
+      ],
+      "procedure_id": "PROC-INT",
+      "metric_id": "METRIC-INT-002-LEARNING-ADAPTER-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "learning_adapter_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "learning_adapter_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-INT-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-INT-003",
+      "title": "T-INT-003 Storage adapter sandbox·timeout·retry·중복 방지",
+      "normative_anchor": "VER-ATP-009#T-INT-003",
+      "requirement_ids": [
+        "COR-002",
+        "SYS-F-017",
+        "SYS-NF-008"
+      ],
+      "procedure_id": "PROC-INT",
+      "metric_id": "METRIC-INT-003-STORAGE-ADAPTER-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "storage_adapter_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "storage_adapter_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-INT-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-INT-004",
+      "title": "T-INT-004 Email adapter sandbox·timeout·retry·중복 방지",
+      "normative_anchor": "VER-ATP-009#T-INT-004",
+      "requirement_ids": [
+        "COR-002",
+        "SYS-F-017",
+        "SYS-NF-008"
+      ],
+      "procedure_id": "PROC-INT",
+      "metric_id": "METRIC-INT-004-EMAIL-ADAPTER-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "email_adapter_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "email_adapter_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-INT-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-KPI-005",
+      "title": "T-KPI-005 9 task×3 provider-path 27-cell 구조화 출력 수용",
+      "normative_anchor": "VER-ATP-009#T-KPI-005",
+      "requirement_ids": [
+        "DER-001",
+        "DER-005",
+        "PLR-002",
+        "QUR-002",
+        "SYS-F-001",
+        "SYS-F-012",
+        "SYS-F-013"
+      ],
+      "procedure_id": "PROC-KPI",
+      "metric_id": "METRIC-KPI-005-STRUCTURED-OUTPUT-SUCCESS-MICROUNIT",
+      "acceptance_formula": "structured_output_success_microunit == overall_success_microunit AND structured_output_success_microunit >= 998000 AND minimum_cell_success_microunit >= 995000 AND executed_cell_count == 27 AND minimum_cell_denominator >= 1000 AND total_denominator >= 27000 AND enabled_unexecuted_cell_count == 0 AND second_repair_count == 0 AND unknown_schema_count == 0",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "structured_output_success_microunit",
+        "comparison": ">=",
+        "value": 998000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-KPI-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-001",
+      "title": "T-OPS-001 health·readiness dashboard와 runbook",
+      "normative_anchor": "VER-ATP-009#T-OPS-001",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-004",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-001-HEALTH-OBSERVABILITY-GAP-COUNT",
+      "acceptance_formula": "health_observability_gap_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "health_observability_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-002",
+      "title": "T-OPS-002 alert 발화·routing·runbook 연결",
+      "normative_anchor": "VER-ATP-009#T-OPS-002",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-002-ALERT-ROUTING-RUNBOOK-GAP-COUNT",
+      "acceptance_formula": "alert_routing_runbook_gap_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "alert_routing_runbook_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-003",
+      "title": "T-OPS-003 queue depth·backpressure 관측",
+      "normative_anchor": "VER-ATP-009#T-OPS-003",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-003-QUEUE-OBSERVABILITY-GAP-COUNT",
+      "acceptance_formula": "queue_observability_gap_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "queue_observability_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-004",
+      "title": "T-OPS-004 AI cost·budget dashboard와 alert",
+      "normative_anchor": "VER-ATP-009#T-OPS-004",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-004-COST-OBSERVABILITY-GAP-COUNT",
+      "acceptance_formula": "cost_observability_gap_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "cost_observability_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-005",
+      "title": "T-OPS-005 backup age dashboard와 stale alert",
+      "normative_anchor": "VER-ATP-009#T-OPS-005",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-005-BACKUP-AGE-MONITORING-GAP-COUNT",
+      "acceptance_formula": "backup_age_monitoring_gap_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "backup_age_monitoring_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-OPS-006",
+      "title": "T-OPS-006 운영 log redaction",
+      "normative_anchor": "VER-ATP-009#T-OPS-006",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-007"
+      ],
+      "procedure_id": "PROC-OPS",
+      "metric_id": "METRIC-OPS-006-OPERATIONAL-LOG-SENSITIVE-VALUE-COUNT",
+      "acceptance_formula": "operational_log_sensitive_value_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "operational_log_sensitive_value_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-OPS-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PERF-001",
+      "title": "T-PERF-001 일반 API 500 VU latency·error",
+      "normative_anchor": "VER-ATP-009#T-PERF-001",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-006",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-PERF",
+      "metric_id": "METRIC-PERF-001-GENERAL-API-P95-LATENCY-MS",
+      "acceptance_formula": "general_api_p95_latency_ms <= 800 AND error_rate_microunit < 10000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "general_api_p95_latency_ms",
+        "comparison": "<=",
+        "value": 800,
+        "unit": "milliseconds"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PERF-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PERF-002",
+      "title": "T-PERF-002 검색 200 concurrent latency",
+      "normative_anchor": "VER-ATP-009#T-PERF-002",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-006",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-PERF",
+      "metric_id": "METRIC-PERF-002-SEARCH-P95-LATENCY-MS",
+      "acceptance_formula": "search_p95_latency_ms <= 2000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "search_p95_latency_ms",
+        "comparison": "<=",
+        "value": 2000,
+        "unit": "milliseconds"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PERF-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PERF-003",
+      "title": "T-PERF-003 진단 100 concurrent stream TTFT",
+      "normative_anchor": "VER-ATP-009#T-PERF-003",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-006",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-PERF",
+      "metric_id": "METRIC-PERF-003-DIAGNOSIS-TTFT-P95-MS",
+      "acceptance_formula": "diagnosis_ttft_p95_ms <= 3000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "diagnosis_ttft_p95_ms",
+        "comparison": "<=",
+        "value": 3000,
+        "unit": "milliseconds"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PERF-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PERF-004",
+      "title": "T-PERF-004 RAG 50 concurrent 완료 latency·citation",
+      "normative_anchor": "VER-ATP-009#T-PERF-004",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-006",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-PERF",
+      "metric_id": "METRIC-PERF-004-RAG-COMPLETION-P95-MS",
+      "acceptance_formula": "rag_completion_p95_ms <= 10000 AND invalid_citation_count == 0",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "rag_completion_p95_ms",
+        "comparison": "<=",
+        "value": 10000,
+        "unit": "milliseconds"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PERF-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PERF-005",
+      "title": "T-PERF-005 1,000 문서 ingestion queue·memory·job 보존",
+      "normative_anchor": "VER-ATP-009#T-PERF-005",
+      "requirement_ids": [
+        "ECR-001",
+        "SYS-NF-005",
+        "SYS-NF-006",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-PERF",
+      "metric_id": "METRIC-PERF-005-INGESTION-JOB-LOSS-COUNT",
+      "acceptance_formula": "ingestion_job_loss_count == 0 AND queue_stable == true AND memory_leak_detected == false",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "ingestion_job_loss_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PERF-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-001",
+      "title": "T-PILOT-001 200명 모집·동의·cohort 표본계획",
+      "normative_anchor": "VER-ATP-009#T-PILOT-001",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-001-PILOT-ENROLLMENT-PLAN-FAILURE-COUNT",
+      "acceptance_formula": "pilot_enrollment_plan_failure_count == 0 AND consented_participant_count >= 200",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "pilot_enrollment_plan_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PILOT-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-002",
+      "title": "T-PILOT-002 1차 진단·추천·RAG·설문 데이터 완전성",
+      "normative_anchor": "VER-ATP-009#T-PILOT-002",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-002-PILOT-ROUND1-JOURNEY-COMPLETENESS-MICROUNIT",
+      "acceptance_formula": "pilot_round1_journey_completeness_microunit >= 950000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "pilot_round1_journey_completeness_microunit",
+        "comparison": ">=",
+        "value": 950000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PILOT-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-003",
+      "title": "T-PILOT-003 전문가 FGI 동의·근거·owner·결정",
+      "normative_anchor": "VER-ATP-009#T-PILOT-003",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-003-PILOT-FGI-GOVERNANCE-FAILURE-COUNT",
+      "acceptance_formula": "pilot_fgi_governance_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "pilot_fgi_governance_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PILOT-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-004",
+      "title": "T-PILOT-004 변경 승인·baseline 회귀",
+      "normative_anchor": "VER-ATP-009#T-PILOT-004",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-004-PILOT-BASELINE-REGRESSION-COUNT",
+      "acceptance_formula": "pilot_baseline_regression_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "pilot_baseline_regression_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "UNAPPROVED_CHANGE_BLOCKED",
+      "fixture_contract_id": "DATASET-PILOT-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-005",
+      "title": "T-PILOT-005 2차 동일 절차 metric·version 비교 가능성",
+      "normative_anchor": "VER-ATP-009#T-PILOT-005",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-005-PILOT-ROUND2-COMPARABILITY-FAILURE-COUNT",
+      "acceptance_formula": "pilot_round2_comparability_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "pilot_round2_comparability_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PILOT-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PILOT-006",
+      "title": "T-PILOT-006 승인 개선 반영률·사용자 만족",
+      "normative_anchor": "VER-ATP-009#T-PILOT-006",
+      "requirement_ids": [
+        "DER-007",
+        "SYS-F-016",
+        "TER-004"
+      ],
+      "procedure_id": "PROC-PILOT",
+      "metric_id": "METRIC-PILOT-006-IMPROVEMENT-INCORPORATION-MICROUNIT",
+      "acceptance_formula": "improvement_incorporation_microunit >= 900000 AND user_satisfaction_points >= 90",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "improvement_incorporation_microunit",
+        "comparison": ">=",
+        "value": 900000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PILOT-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PM-001",
+      "title": "T-PM-001 180일 WBS·milestone",
+      "normative_anchor": "VER-ATP-009#T-PM-001",
+      "requirement_ids": [
+        "PMR-001"
+      ],
+      "procedure_id": "PROC-PM",
+      "metric_id": "METRIC-PM-001-WBS-CRITICAL-PATH-OWNER-GATE-GAP-COUNT",
+      "acceptance_formula": "wbs_critical_path_owner_gate_gap_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "wbs_critical_path_owner_gate_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PM-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PM-002",
+      "title": "T-PM-002 주간·월간·이슈 보고",
+      "normative_anchor": "VER-ATP-009#T-PM-002",
+      "requirement_ids": [
+        "PMR-002"
+      ],
+      "procedure_id": "PROC-PM",
+      "metric_id": "METRIC-PM-002-OVERDUE-UNREPORTED-ISSUE-COUNT",
+      "acceptance_formula": "overdue_unreported_issue_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "overdue_unreported_issue_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PM-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PM-003",
+      "title": "T-PM-003 착수·수행계획 기준선",
+      "normative_anchor": "VER-ATP-009#T-PM-003",
+      "requirement_ids": [
+        "PMR-003"
+      ],
+      "procedure_id": "PROC-PM",
+      "metric_id": "METRIC-PM-003-PLAN-APPROVAL-OR-VERSION-GAP-COUNT",
+      "acceptance_formula": "plan_approval_or_version_gap_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "plan_approval_or_version_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PM-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PM-004",
+      "title": "T-PM-004 장소·장비·접근권한 계획",
+      "normative_anchor": "VER-ATP-009#T-PM-004",
+      "requirement_ids": [
+        "PMR-004"
+      ],
+      "procedure_id": "PROC-PM",
+      "metric_id": "METRIC-PM-004-UNAUTHORIZED-ACCESS-OR-EQUIPMENT-COUNT",
+      "acceptance_formula": "unauthorized_access_or_equipment_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "unauthorized_access_or_equipment_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PM-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PM-005",
+      "title": "T-PM-005 위험대장·완화·escalation",
+      "normative_anchor": "VER-ATP-009#T-PM-005",
+      "requirement_ids": [
+        "PMR-006"
+      ],
+      "procedure_id": "PROC-PM",
+      "metric_id": "METRIC-PM-005-OWNERLESS-OR-OVERDUE-HIGH-RISK-COUNT",
+      "acceptance_formula": "ownerless_or_overdue_high_risk_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "ownerless_or_overdue_high_risk_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PM-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-001",
+      "title": "T-PRIV-001 목적별 동의와 철회 후 신규처리 차단",
+      "normative_anchor": "VER-ATP-009#T-PRIV-001",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-001-POST-WITHDRAWAL-PROCESSING-COUNT",
+      "acceptance_formula": "post_withdrawal_processing_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "post_withdrawal_processing_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "CONSENT_WITHDRAWN",
+      "fixture_contract_id": "DATASET-PRIV-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-002",
+      "title": "T-PRIV-002 최소수집 field allowlist",
+      "normative_anchor": "VER-ATP-009#T-PRIV-002",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-002-UNNECESSARY-PERSONAL-FIELD-COUNT",
+      "acceptance_formula": "unnecessary_personal_field_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unnecessary_personal_field_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PRIV-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-003",
+      "title": "T-PRIV-003 개인정보 내보내기·삭제·lineage 파기",
+      "normative_anchor": "VER-ATP-009#T-PRIV-003",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-003-DATA-SUBJECT-REQUEST-FAILURE-COUNT",
+      "acceptance_formula": "data_subject_request_failure_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "data_subject_request_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PRIV-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-004",
+      "title": "T-PRIV-004 외부 AI Restricted egress 차단",
+      "normative_anchor": "VER-ATP-009#T-PRIV-004",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-F-013",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-004-RESTRICTED-EXTERNAL-EGRESS-COUNT",
+      "acceptance_formula": "restricted_external_egress_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "restricted_external_egress_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "DATA_EGRESS_DENIED",
+      "fixture_contract_id": "DATASET-PRIV-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-005",
+      "title": "T-PRIV-005 log·metric·trace secret·식별 원문 비노출",
+      "normative_anchor": "VER-ATP-009#T-PRIV-005",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-005-SENSITIVE-TELEMETRY-EXPOSURE-COUNT",
+      "acceptance_formula": "sensitive_telemetry_exposure_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "sensitive_telemetry_exposure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PRIV-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-PRIV-006",
+      "title": "T-PRIV-006 보존기간 만료 파기와 증적",
+      "normative_anchor": "VER-ATP-009#T-PRIV-006",
+      "requirement_ids": [
+        "SER-007",
+        "SYS-NF-002"
+      ],
+      "procedure_id": "PROC-PRIV",
+      "metric_id": "METRIC-PRIV-006-EXPIRED-RECORD-RETENTION-FAILURE-COUNT",
+      "acceptance_formula": "expired_record_retention_failure_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "expired_record_retention_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-PRIV-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-QUAL-001",
+      "title": "T-QUAL-001 코드·API·문서·데이터 표준 표본",
+      "normative_anchor": "VER-ATP-009#T-QUAL-001",
+      "requirement_ids": [
+        "QUR-001",
+        "SYS-NF-010",
+        "SYS-NF-015"
+      ],
+      "procedure_id": "PROC-QUAL",
+      "metric_id": "METRIC-QUAL-001-UNAPPROVED-STANDARD-DEVIATION-COUNT",
+      "acceptance_formula": "unapproved_standard_deviation_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "unapproved_standard_deviation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-QUAL-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-QUAL-002",
+      "title": "T-QUAL-002 품질계획·양방향 추적·AI gate",
+      "normative_anchor": "VER-ATP-009#T-QUAL-002",
+      "requirement_ids": [
+        "QUR-002"
+      ],
+      "procedure_id": "PROC-QUAL",
+      "metric_id": "METRIC-QUAL-002-TRACEABILITY-OR-HIDDEN-SKIP-COUNT",
+      "acceptance_formula": "traceability_or_hidden_skip_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "traceability_or_hidden_skip_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-QUAL-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-001",
+      "title": "T-REC-001 권한·게시·선행·접근성 hard filter",
+      "normative_anchor": "VER-ATP-009#T-REC-001",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-001-PROHIBITED-CANDIDATE-EXPOSURE-COUNT",
+      "acceptance_formula": "prohibited_candidate_exposure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "prohibited_candidate_exposure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-002",
+      "title": "T-REC-002 전문가 Top-N 추천 적합도",
+      "normative_anchor": "VER-ATP-009#T-REC-002",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-002-EXPERT-TOPN-RELEVANCE-MICROUNIT",
+      "acceptance_formula": "expert_topn_relevance_microunit >= 900000",
+      "comparator": "NUMERIC_THRESHOLD",
+      "threshold": {
+        "metric": "expert_topn_relevance_microunit",
+        "comparison": ">=",
+        "value": 900000,
+        "unit": "microunit_ratio"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-003",
+      "title": "T-REC-003 추천 reason과 ranking feature 일치",
+      "normative_anchor": "VER-ATP-009#T-REC-003",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-003-RECOMMENDATION-REASON-MISMATCH-COUNT",
+      "acceptance_formula": "recommendation_reason_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "recommendation_reason_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-004",
+      "title": "T-REC-004 콘텐츠·형식 coverage와 diversity",
+      "normative_anchor": "VER-ATP-009#T-REC-004",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004",
+        "SYS-F-005"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-004-COVERAGE-DIVERSITY-POLICY-FAILURE-COUNT",
+      "acceptance_formula": "coverage_diversity_policy_failure_count == 0 AND content_type_coverage_microunit >= 950000 AND recommendation_diversity_microunit >= 800000",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "coverage_diversity_policy_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-005",
+      "title": "T-REC-005 시간·지역·복귀·과부하 제약과 대안",
+      "normative_anchor": "VER-ATP-009#T-REC-005",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004",
+        "SYS-F-005"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-005-RECOMMENDATION-CONSTRAINT-VIOLATION-COUNT",
+      "acceptance_formula": "recommendation_constraint_violation_count == 0 AND constrained_query_without_alternative_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "recommendation_constraint_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-006",
+      "title": "T-REC-006 정책 version rollback 추천 snapshot 재현",
+      "normative_anchor": "VER-ATP-009#T-REC-006",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004",
+        "SYS-F-005"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-006-RECOMMENDATION-SNAPSHOT-MISMATCH-COUNT",
+      "acceptance_formula": "recommendation_snapshot_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "recommendation_snapshot_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-REC-007",
+      "title": "T-REC-007 feedback·거부·대체 사용자 통제와 감사",
+      "normative_anchor": "VER-ATP-009#T-REC-007",
+      "requirement_ids": [
+        "DER-003",
+        "SYS-F-004",
+        "SYS-F-005"
+      ],
+      "procedure_id": "PROC-REC",
+      "metric_id": "METRIC-REC-007-RECOMMENDATION-CONTROL-AUDIT-FAILURE-COUNT",
+      "acceptance_formula": "recommendation_control_audit_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "recommendation_control_audit_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-REC-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RES-001",
+      "title": "T-RES-001 AI·provider·queue·DB partial failure degraded mode",
+      "normative_anchor": "VER-ATP-009#T-RES-001",
+      "requirement_ids": [
+        "QUR-005",
+        "SYS-NF-004"
+      ],
+      "procedure_id": "PROC-RES",
+      "metric_id": "METRIC-RES-001-RESILIENCE-DATA-LOSS-OR-MODE-FAILURE-COUNT",
+      "acceptance_formula": "resilience_data_loss_or_mode_failure_count == 0",
+      "comparator": "STATE_AND_AUDIT",
+      "threshold": {
+        "metric": "resilience_data_loss_or_mode_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RES-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RPT-001",
+      "title": "T-RPT-001 동일 rubric 사전·사후 계산·기간·version",
+      "normative_anchor": "VER-ATP-009#T-RPT-001",
+      "requirement_ids": [
+        "DER-004",
+        "SYS-F-006"
+      ],
+      "procedure_id": "PROC-RPT",
+      "metric_id": "METRIC-RPT-001-SAME-RUBRIC-REPORT-MISMATCH-COUNT",
+      "acceptance_formula": "same_rubric_report_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "same_rubric_report_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RPT-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RPT-002",
+      "title": "T-RPT-002 상이한 rubric version 비교 한계 표시",
+      "normative_anchor": "VER-ATP-009#T-RPT-002",
+      "requirement_ids": [
+        "DER-004",
+        "SYS-F-006"
+      ],
+      "procedure_id": "PROC-RPT",
+      "metric_id": "METRIC-RPT-002-INVALID-CROSS-RUBRIC-DIRECT-COMPARISON-COUNT",
+      "acceptance_formula": "invalid_cross_rubric_direct_comparison_count == 0 AND limitation_disclosure_coverage_microunit == 1000000",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "invalid_cross_rubric_direct_comparison_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RPT-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RPT-003",
+      "title": "T-RPT-003 기관 소수집단 cell suppression",
+      "normative_anchor": "VER-ATP-009#T-RPT-003",
+      "requirement_ids": [
+        "DER-004",
+        "SYS-F-006"
+      ],
+      "procedure_id": "PROC-RPT",
+      "metric_id": "METRIC-RPT-003-EXPOSED-BELOW-THRESHOLD-CELL-COUNT",
+      "acceptance_formula": "exposed_below_threshold_cell_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "exposed_below_threshold_cell_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RPT-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RPT-004",
+      "title": "T-RPT-004 PDF·화면 구조 tag·표·대체텍스트 접근성",
+      "normative_anchor": "VER-ATP-009#T-RPT-004",
+      "requirement_ids": [
+        "DER-004",
+        "SYS-F-006"
+      ],
+      "procedure_id": "PROC-RPT",
+      "metric_id": "METRIC-RPT-004-REPORT-ACCESSIBILITY-VIOLATION-COUNT",
+      "acceptance_formula": "report_accessibility_violation_count == 0",
+      "comparator": "ACCESSIBILITY_ZERO_VIOLATION",
+      "threshold": {
+        "metric": "report_accessibility_violation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RPT-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-RPT-005",
+      "title": "T-RPT-005 report snapshot fact-version 재생성",
+      "normative_anchor": "VER-ATP-009#T-RPT-005",
+      "requirement_ids": [
+        "DER-004",
+        "SYS-F-006",
+        "SYS-NF-009"
+      ],
+      "procedure_id": "PROC-RPT",
+      "metric_id": "METRIC-RPT-005-REPORT-SNAPSHOT-MISMATCH-COUNT",
+      "acceptance_formula": "report_snapshot_mismatch_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "report_snapshot_mismatch_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-RPT-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-001",
+      "title": "T-SEC-001 보안 책임·권한·감사 통제 소유권",
+      "normative_anchor": "VER-ATP-009#T-SEC-001",
+      "requirement_ids": [
+        "SER-001",
+        "SYS-NF-001"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-001-OWNERLESS-SECURITY-CONTROL-COUNT",
+      "acceptance_formula": "ownerless_security_control_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "ownerless_security_control_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SEC-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-002",
+      "title": "T-SEC-002 법령·지침·ASVS 필수 통제",
+      "normative_anchor": "VER-ATP-009#T-SEC-002",
+      "requirement_ids": [
+        "SER-002",
+        "SYS-NF-001"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-002-MISSING-MANDATORY-SECURITY-CONTROL-COUNT",
+      "acceptance_formula": "missing_mandatory_security_control_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "missing_mandatory_security_control_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SEC-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-003",
+      "title": "T-SEC-003 원격접속·개발장소·MFA 승인 경계",
+      "normative_anchor": "VER-ATP-009#T-SEC-003",
+      "requirement_ids": [
+        "SER-003",
+        "SYS-NF-001"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-003-UNAUTHORIZED-REMOTE-ACCESS-COUNT",
+      "acceptance_formula": "unauthorized_remote_access_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unauthorized_remote_access_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "REMOTE_ACCESS_DENIED",
+      "fixture_contract_id": "DATASET-SEC-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-004",
+      "title": "T-SEC-004 반출·종료·계정회수 drill",
+      "normative_anchor": "VER-ATP-009#T-SEC-004",
+      "requirement_ids": [
+        "SER-004",
+        "SYS-NF-001"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-004-RESIDUAL-ACCESS-OR-MATERIAL-COUNT",
+      "acceptance_formula": "residual_access_or_material_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "residual_access_or_material_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "OFFBOARDING_CONTROL_BLOCK",
+      "fixture_contract_id": "DATASET-SEC-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-005",
+      "title": "T-SEC-005 계정·IP·고권한 감사 불변·검색·alert",
+      "normative_anchor": "VER-ATP-009#T-SEC-005",
+      "requirement_ids": [
+        "SER-005",
+        "SYS-F-015",
+        "SYS-F-018",
+        "SYS-NF-001",
+        "SYS-NF-014"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-005-PRIVILEGED-AUDIT-CONTROL-FAILURE-COUNT",
+      "acceptance_formula": "privileged_audit_control_failure_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "privileged_audit_control_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SEC-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-006",
+      "title": "T-SEC-006 SAST·DAST·SCA·container·pentest 고위험",
+      "normative_anchor": "VER-ATP-009#T-SEC-006",
+      "requirement_ids": [
+        "SER-006",
+        "SYS-NF-001",
+        "TER-003"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-006-OPEN-CRITICAL-OR-HIGH-VULNERABILITY-COUNT",
+      "acceptance_formula": "open_critical_or_high_vulnerability_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "open_critical_or_high_vulnerability_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SEC-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SEC-007",
+      "title": "T-SEC-007 보안 조치 재시험·관리수준 진단",
+      "normative_anchor": "VER-ATP-009#T-SEC-007",
+      "requirement_ids": [
+        "SER-008",
+        "SYS-NF-001"
+      ],
+      "procedure_id": "PROC-SEC",
+      "metric_id": "METRIC-SEC-007-UNCLOSED-HIGH-RISK-REMEDIATION-COUNT",
+      "acceptance_formula": "unclosed_high_risk_remediation_count == 0",
+      "comparator": "SCHEMA_AND_POLICY",
+      "threshold": {
+        "metric": "unclosed_high_risk_remediation_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SEC-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-SUP-001",
+      "title": "T-SUP-001 하자·SLA·접수·escalation",
+      "normative_anchor": "VER-ATP-009#T-SUP-001",
+      "requirement_ids": [
+        "PSR-004"
+      ],
+      "procedure_id": "PROC-SUP",
+      "metric_id": "METRIC-SUP-001-SLA-BREACH-OR-OWNERLESS-TICKET-COUNT",
+      "acceptance_formula": "sla_breach_or_ownerless_ticket_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "sla_breach_or_ownerless_ticket_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-SUP-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-TRN-001",
+      "title": "T-TRN-001 역할별 교육·이수 증적",
+      "normative_anchor": "VER-ATP-009#T-TRN-001",
+      "requirement_ids": [
+        "PSR-001"
+      ],
+      "procedure_id": "PROC-TRN",
+      "metric_id": "METRIC-TRN-001-REQUIRED-ROLE-TRAINING-GAP-COUNT",
+      "acceptance_formula": "required_role_training_gap_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "required_role_training_gap_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-TRN-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-TRN-002",
+      "title": "T-TRN-002 소스·설계·운영 기술이전",
+      "normative_anchor": "VER-ATP-009#T-TRN-002",
+      "requirement_ids": [
+        "PSR-003"
+      ],
+      "procedure_id": "PROC-TRN",
+      "metric_id": "METRIC-TRN-002-UNTRANSFERRED-ARTIFACT-OR-OPEN-QUESTION-COUNT",
+      "acceptance_formula": "untransferred_artifact_or_open_question_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "untransferred_artifact_or_open_question_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-TRN-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-001",
+      "title": "T-UX-001 1440px desktop 핵심 여정 overflow·행동",
+      "normative_anchor": "VER-ATP-009#T-UX-001",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-001-DESKTOP-JOURNEY-BLOCKER-COUNT",
+      "acceptance_formula": "desktop_journey_blocker_count == 0 AND horizontal_overflow_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "desktop_journey_blocker_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-001-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-002",
+      "title": "T-UX-002 768px tablet 핵심 여정 overflow·행동",
+      "normative_anchor": "VER-ATP-009#T-UX-002",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-002-TABLET-JOURNEY-BLOCKER-COUNT",
+      "acceptance_formula": "tablet_journey_blocker_count == 0 AND horizontal_overflow_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "tablet_journey_blocker_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-002-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-003",
+      "title": "T-UX-003 390px mobile 핵심 여정 overflow·행동",
+      "normative_anchor": "VER-ATP-009#T-UX-003",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-003-MOBILE-JOURNEY-BLOCKER-COUNT",
+      "acceptance_formula": "mobile_journey_blocker_count == 0 AND horizontal_overflow_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "mobile_journey_blocker_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-003-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-004",
+      "title": "T-UX-004 loading·empty 상태 설명과 행동",
+      "normative_anchor": "VER-ATP-009#T-UX-004",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-004-LOADING-EMPTY-STATE-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "loading_empty_state_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "loading_empty_state_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-004-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-005",
+      "title": "T-UX-005 error·partial 상태 설명과 복구 행동",
+      "normative_anchor": "VER-ATP-009#T-UX-005",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-005-ERROR-PARTIAL-STATE-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "error_partial_state_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "error_partial_state_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-005-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-006",
+      "title": "T-UX-006 no-answer 상태 근거와 다음 행동",
+      "normative_anchor": "VER-ATP-009#T-UX-006",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-006-NO-ANSWER-STATE-CONTRACT-FAILURE-COUNT",
+      "acceptance_formula": "no_answer_state_contract_failure_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "no_answer_state_contract_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-006-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-007",
+      "title": "T-UX-007 오류·도움말·trace ID 내부정보 비노출",
+      "normative_anchor": "VER-ATP-009#T-UX-007",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "QUR-005",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-007-UX-INTERNAL-INFORMATION-EXPOSURE-COUNT",
+      "acceptance_formula": "ux_internal_information_exposure_count == 0 AND missing_recovery_path_count == 0",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "ux_internal_information_exposure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-007-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    },
+    {
+      "test_id": "T-UX-008",
+      "title": "T-UX-008 교사 usability 완료율·시간·만족",
+      "normative_anchor": "VER-ATP-009#T-UX-008",
+      "requirement_ids": [
+        "DER-006",
+        "PLR-004",
+        "SYS-F-014"
+      ],
+      "procedure_id": "PROC-UX",
+      "metric_id": "METRIC-UX-008-USABILITY-ACCEPTANCE-FAILURE-COUNT",
+      "acceptance_formula": "usability_acceptance_failure_count == 0 AND task_completion_microunit >= 900000 AND median_time_ms <= 180000 AND satisfaction_points >= 90",
+      "comparator": "EXACT_JSON",
+      "threshold": {
+        "metric": "usability_acceptance_failure_count",
+        "comparison": "<=",
+        "value": 0,
+        "unit": "count"
+      },
+      "expected_error": "NONE",
+      "fixture_contract_id": "DATASET-UX-008-V1",
+      "command_contract_id": "CMD-CONTRACT-RUNNER-V1",
+      "authorization_case_ids": []
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+{
+  "schema_version": "evaluation-policy-contract.v1",
+  "policy_version": "evaluation-policy.v1",
+  "result_states": [
+    "PASS",
+    "FAIL",
+    "INSUFFICIENT_DATA",
+    "BLOCKED"
+  ],
+  "global_decision_order": [
+    "INVALID_EVIDENCE_TO_FAIL",
+    "LEAKAGE_TO_FAIL",
+    "INSUFFICIENT_DATA",
+    "METRIC_OR_SLICE_FAIL",
+    "PASS"
+  ],
+  "holdout_policy": {
+    "minimum_fraction_microunit": 200000,
+    "subject_disjoint": true,
+    "dataset_hash_locked_before_evaluation": true,
+    "training_or_prompt_tuning_reuse": "FORBIDDEN",
+    "post_unblinding_changes_require_new_dataset_version": true
+  },
+  "adjudication_policy": {
+    "minimum_independent_raters": 2,
+    "rater_identity_separation": true,
+    "retain_original_and_adjudicated_labels": true,
+    "adjudicator_cannot_be_model_tuner": true
+  },
+  "confidence_interval_policy": {
+    "required_for_every_metric": true,
+    "minimum_level_microunit": 950000,
+    "point_estimate_only": "FORBIDDEN",
+    "rounding": "INTEGER_MICROUNIT_HALF_UP"
+  },
+  "multiplicity_policy": {
+    "family_definition": "suite_id",
+    "method": "HOLM_BONFERRONI",
+    "family_wise_alpha_microunit": 50000,
+    "unadjusted_significance_claim": "FORBIDDEN"
+  },
+  "leakage_controls": {
+    "training_corpus_overlap_maximum": 0,
+    "subject_overlap_maximum": 0,
+    "near_duplicate_hash_overlap_maximum": 0,
+    "prompt_example_overlap_maximum": 0,
+    "retrieval_index_contains_holdout_labels": false,
+    "leakage_scan_receipt_required": true,
+    "detected_outcome": "FAIL"
+  },
+  "insufficient_data_policy": {
+    "sample_below_minimum": "INSUFFICIENT_DATA",
+    "empty_required_slice": "INSUFFICIENT_DATA",
+    "slice_below_minimum": "INSUFFICIENT_DATA",
+    "missing_confidence_interval": "INSUFFICIENT_DATA",
+    "missing_adjudication": "INSUFFICIENT_DATA",
+    "cannot_be_overridden_to_pass": true
+  },
+  "suites": [
+    {
+      "suite_id": "EVAL-DIAG-RAW-E2E",
+      "target": "raw dialogue -> minimized span -> indicator/anchor -> deterministic score/decision",
+      "minimum_sample_size": 300,
+      "unit": "SUBJECT_DISJOINT_SESSION",
+      "required_slices": [
+        {
+          "slice_id": "RETURN_AFTER_LEAVE",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "LOW_BANDWIDTH_CONTEXT",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "TIME_PRESSURE_CONTEXT",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "MISSING_CONTEXT",
+          "minimum_sample_size": 30
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "SPAN_F1",
+          "threshold_operator": ">=",
+          "threshold_microunit": 900000
+        },
+        {
+          "metric_id": "WEIGHTED_EXPERT_AGREEMENT",
+          "threshold_operator": ">=",
+          "threshold_microunit": 850000
+        },
+        {
+          "metric_id": "STRUCTURED_OUTPUT_SUCCESS",
+          "threshold_operator": ">=",
+          "threshold_microunit": 998000
+        },
+        {
+          "metric_id": "TRAIN_HOLDOUT_LEAKAGE",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        }
+      ],
+      "confidence_interval": {
+        "method": "STRATIFIED_SUBJECT_BOOTSTRAP",
+        "level_microunit": 950000,
+        "replicates": 10000,
+        "pass_rule": "LOWER_BOUND_MEETS_THRESHOLD"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "THIRD_EXPERT",
+        "retain_original_labels": true
+      }
+    },
+    {
+      "suite_id": "EVAL-PERSONA-CALIBRATION",
+      "target": "12-profile probability calibration and six-family aggregation",
+      "minimum_sample_size": 600,
+      "unit": "SUBJECT_DISJOINT_SESSION",
+      "required_slices": [
+        {
+          "slice_id": "P-01-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-01-B",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-02-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-02-B",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-03-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-03-B",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-04-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-04-B",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-05-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-05-B",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-06-A",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "P-06-B",
+          "minimum_sample_size": 40
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "EXPECTED_CALIBRATION_ERROR",
+          "threshold_operator": "<=",
+          "threshold_microunit": 50000
+        },
+        {
+          "metric_id": "BRIER_SCORE",
+          "threshold_operator": "<=",
+          "threshold_microunit": 180000
+        },
+        {
+          "metric_id": "PROFILE_PROBABILITY_SUM_ERROR",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        }
+      ],
+      "confidence_interval": {
+        "method": "STRATIFIED_SUBJECT_BOOTSTRAP",
+        "level_microunit": 950000,
+        "replicates": 10000,
+        "pass_rule": "UPPER_BOUND_MEETS_THRESHOLD"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "CONSENSUS_WITH_THIRD_EXPERT",
+        "retain_original_labels": true
+      }
+    },
+    {
+      "suite_id": "EVAL-RAG-CLAIM-CITATION",
+      "target": "hybrid retrieval and accessible claim citation",
+      "minimum_sample_size": 200,
+      "unit": "LOCKED_QUERY",
+      "required_slices": [
+        {
+          "slice_id": "PARAGRAPH",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "TABLE",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "MULTI_DOCUMENT",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "CURRENT_VERSION",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "NO_ANSWER",
+          "minimum_sample_size": 30
+        },
+        {
+          "slice_id": "RIGHTS_SAFETY",
+          "minimum_sample_size": 30
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "TOP5_HIT_RATE",
+          "threshold_operator": ">=",
+          "threshold_microunit": 950000
+        },
+        {
+          "metric_id": "CRITICAL_CLAIM_CITATION_COVERAGE",
+          "threshold_operator": ">=",
+          "threshold_microunit": 950000
+        },
+        {
+          "metric_id": "INVALID_OR_INACCESSIBLE_CITATIONS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        }
+      ],
+      "confidence_interval": {
+        "method": "WILSON_SCORE",
+        "level_microunit": 950000,
+        "replicates": 0,
+        "pass_rule": "LOWER_BOUND_MEETS_THRESHOLD"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "THIRD_EXPERT",
+        "retain_original_labels": true
+      }
+    },
+    {
+      "suite_id": "EVAL-HWP-LICENSED-ROUNDTRIP",
+      "target": "licensed HWP open-edit-save-reopen-print structural preservation",
+      "minimum_sample_size": 100,
+      "unit": "LICENSED_GOLDEN_DOCUMENT",
+      "required_slices": [
+        {
+          "slice_id": "MERGED_TABLE",
+          "minimum_sample_size": 15
+        },
+        {
+          "slice_id": "NESTED_TABLE",
+          "minimum_sample_size": 15
+        },
+        {
+          "slice_id": "STYLE",
+          "minimum_sample_size": 15
+        },
+        {
+          "slice_id": "IMAGE_ALT",
+          "minimum_sample_size": 15
+        },
+        {
+          "slice_id": "FIELD",
+          "minimum_sample_size": 15
+        },
+        {
+          "slice_id": "MACRO_OLE_QUARANTINE",
+          "minimum_sample_size": 15
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "OPEN_EDIT_SAVE_REOPEN_SUCCESS",
+          "threshold_operator": ">=",
+          "threshold_microunit": 980000
+        },
+        {
+          "metric_id": "PRINT_RENDER_ACCEPTANCE",
+          "threshold_operator": ">=",
+          "threshold_microunit": 950000
+        },
+        {
+          "metric_id": "ACTIVE_CONTENT_EXECUTIONS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        }
+      ],
+      "confidence_interval": {
+        "method": "WILSON_SCORE",
+        "level_microunit": 950000,
+        "replicates": 0,
+        "pass_rule": "LOWER_BOUND_MEETS_THRESHOLD"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "DOCUMENT_ENGINEER_REVIEW",
+        "retain_original_labels": true
+      }
+    },
+    {
+      "suite_id": "EVAL-AUTHZ-HIGH-PRIVILEGE",
+      "target": "ABAC SoD dual approval tenant isolation and deny-before-provider",
+      "minimum_sample_size": 400,
+      "unit": "AUTHORIZATION_VECTOR",
+      "required_slices": [
+        {
+          "slice_id": "CROSS_TENANT",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "SOD",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "DUAL_APPROVAL",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "STALE_POLICY",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "REDACTION",
+          "minimum_sample_size": 40
+        },
+        {
+          "slice_id": "UNKNOWN",
+          "minimum_sample_size": 40
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "UNAUTHORIZED_ALLOWS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        },
+        {
+          "metric_id": "DENIED_PROVIDER_CALLS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        },
+        {
+          "metric_id": "AUDIT_RECEIPT_COMPLETENESS",
+          "threshold_operator": ">=",
+          "threshold_microunit": 1000000
+        }
+      ],
+      "confidence_interval": {
+        "method": "CLOPPER_PEARSON",
+        "level_microunit": 950000,
+        "replicates": 0,
+        "pass_rule": "ZERO_EVENT_UPPER_BOUND_WITHIN_APPROVED_BUDGET"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "SECURITY_OWNER",
+        "retain_original_labels": true
+      }
+    },
+    {
+      "suite_id": "EVAL-PROVIDER-ROUTING",
+      "target": "data-class provider routing quality latency and fail-closed behavior",
+      "minimum_sample_size": 1000,
+      "unit": "LOCKED_PROVIDER_REQUEST",
+      "required_slices": [
+        {
+          "slice_id": "PUBLIC",
+          "minimum_sample_size": 100
+        },
+        {
+          "slice_id": "INTERNAL",
+          "minimum_sample_size": 100
+        },
+        {
+          "slice_id": "CONFIDENTIAL",
+          "minimum_sample_size": 100
+        },
+        {
+          "slice_id": "RESTRICTED",
+          "minimum_sample_size": 100
+        },
+        {
+          "slice_id": "UNKNOWN",
+          "minimum_sample_size": 100
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "RESTRICTED_EXTERNAL_EVENTS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        },
+        {
+          "metric_id": "UNKNOWN_CLASS_ALLOWS",
+          "threshold_operator": "==",
+          "threshold_microunit": 0
+        },
+        {
+          "metric_id": "ROUTING_POLICY_CONFORMANCE",
+          "threshold_operator": ">=",
+          "threshold_microunit": 1000000
+        }
+      ],
+      "confidence_interval": {
+        "method": "CLOPPER_PEARSON",
+        "level_microunit": 950000,
+        "replicates": 0,
+        "pass_rule": "ZERO_EVENT_UPPER_BOUND_WITHIN_APPROVED_BUDGET"
+      },
+      "adjudication": {
+        "independent_raters": 2,
+        "blinded": true,
+        "disagreement_resolution": "MODEL_RISK_OWNER",
+        "retain_original_labels": true
+      }
+    }
+  ],
+  "negative_vectors": [
+    {
+      "case_id": "EVAL-N-001",
+      "condition": "one_query_only",
+      "expected_state": "INSUFFICIENT_DATA"
+    },
+    {
+      "case_id": "EVAL-N-002",
+      "condition": "required_slice_empty",
+      "expected_state": "INSUFFICIENT_DATA"
+    },
+    {
+      "case_id": "EVAL-N-003",
+      "condition": "training_subject_reused_in_holdout",
+      "expected_state": "FAIL"
+    },
+    {
+      "case_id": "EVAL-N-004",
+      "condition": "confidence_interval_missing",
+      "expected_state": "INSUFFICIENT_DATA"
+    },
+    {
+      "case_id": "EVAL-N-005",
+      "condition": "adjudication_missing",
+      "expected_state": "INSUFFICIENT_DATA"
+    },
+    {
+      "case_id": "EVAL-N-006",
+      "condition": "unadjusted_multiple_comparisons",
+      "expected_state": "FAIL"
+    }
+  ],
+  "release_rule": {
+    "all_suites_fresh_pass_required": true,
+    "insufficient_data_is_not_pass": true,
+    "nonproduction_calibration_pending_outcome": "NOT_READY",
+    "acceptance_owner_signature_required": true
+  }
+}

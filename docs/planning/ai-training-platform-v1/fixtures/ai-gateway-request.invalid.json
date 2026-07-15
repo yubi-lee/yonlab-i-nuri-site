@@ -1,0 +1,28 @@
+{
+  "headers": {
+    "content_type": "application/json",
+    "idempotency_key": "00000000-0000-4000-8000-000000000011",
+    "x_request_id": "00000000-0000-4000-8000-000000000012",
+    "traceparent": "00-11111111111111111111111111111111-2222222222222222-01",
+    "workload_spiffe_id": "spiffe://yonlab/test/application-api"
+  },
+  "body": {
+    "task": "diagnosis.evidence.extract",
+    "tenant_id": "00000000-0000-4000-8000-000000000001",
+    "input": {"messages": []},
+    "response_schema_id": "diagnosis-evidence.v1",
+    "policy_versions": {
+      "routing": "routing.v1",
+      "prompt": "diagnosis-evidence-prompt.v1",
+      "model_registry": "model-registry.v1",
+      "schema_registry": "schema-registry.v1",
+      "data_use": "data-use.v1",
+      "consent_authorization": "consent-authz.v1",
+      "tenant_isolation": "tenant-isolation.v1",
+      "safeguarding_routing": "safeguarding-routing.v1"
+    },
+    "latency_budget_ms": 8000,
+    "data_use_context": {},
+    "provider_model": "forbidden-direct-provider-field"
+  }
+}

@@ -1,0 +1,673 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "YOnLab SSE and job event contract",
+    "version": "1.1.0"
+  },
+  "defaultContentType": "application/json",
+  "channels": {
+    "diagnosisTurns": {
+      "address": "/api/v1/diagnoses/{diagnosisId}/events",
+      "description": "Diagnosis turn streaming",
+      "parameters": {
+        "diagnosisId": {
+          "description": "Tenant-scoped UUID",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "messages": {
+        "sseEvent": {
+          "$ref": "#/components/messages/SseEvent"
+        }
+      },
+      "x-last-event-id-required": true,
+      "x-current-authorization-recheck": true,
+      "x-gap-policy": "EMIT_STREAM_GAP_AND_REQUIRE_REPLAY",
+      "x-terminal-event-required": true
+    },
+    "ragMessages": {
+      "address": "/api/v1/rag/sessions/{sessionId}/events",
+      "description": "Grounded answer streaming",
+      "parameters": {
+        "sessionId": {
+          "description": "Tenant-scoped UUID",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "messages": {
+        "sseEvent": {
+          "$ref": "#/components/messages/SseEvent"
+        }
+      },
+      "x-last-event-id-required": true,
+      "x-current-authorization-recheck": true,
+      "x-gap-policy": "EMIT_STREAM_GAP_AND_REQUIRE_REPLAY",
+      "x-terminal-event-required": true
+    },
+    "jobProgress": {
+      "address": "/api/v1/jobs/{jobId}/events",
+      "description": "Long-running job progress",
+      "parameters": {
+        "jobId": {
+          "description": "Tenant-scoped UUID",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "messages": {
+        "sseEvent": {
+          "$ref": "#/components/messages/SseEvent"
+        }
+      },
+      "x-last-event-id-required": true,
+      "x-current-authorization-recheck": true,
+      "x-gap-policy": "EMIT_STREAM_GAP_AND_REQUIRE_REPLAY",
+      "x-terminal-event-required": true
+    }
+  },
+  "operations": {
+    "receiveDiagnosisTurns": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/diagnosisTurns"
+      }
+    },
+    "receiveRagMessages": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/ragMessages"
+      }
+    },
+    "receiveJobProgress": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/jobProgress"
+      }
+    }
+  },
+  "components": {
+    "messages": {
+      "SseEvent": {
+        "name": "SseEvent.v1",
+        "payload": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/MessageDeltaEvent"
+            },
+            {
+              "$ref": "#/components/schemas/MessageCompletedEvent"
+            },
+            {
+              "$ref": "#/components/schemas/JobProgressEvent"
+            },
+            {
+              "$ref": "#/components/schemas/JobCompletedEvent"
+            },
+            {
+              "$ref": "#/components/schemas/ErrorEvent"
+            },
+            {
+              "$ref": "#/components/schemas/GapEvent"
+            },
+            {
+              "$ref": "#/components/schemas/HeartbeatEvent"
+            }
+          ]
+        }
+      }
+    },
+    "schemas": {
+      "MessageDeltaEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "message.delta"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": false
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stream_id",
+              "delta_text",
+              "delta_index"
+            ],
+            "properties": {
+              "stream_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "delta_text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "delta_index": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "MessageCompletedEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "message.completed"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stream_id",
+              "content_sha256",
+              "finish_reason",
+              "total_sequence"
+            ],
+            "properties": {
+              "stream_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "content_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "finish_reason": {
+                "enum": [
+                  "STOP",
+                  "LENGTH",
+                  "POLICY"
+                ]
+              },
+              "total_sequence": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      },
+      "JobProgressEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "job.progress"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": false
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "job_id",
+              "stage_code",
+              "progress_microunit"
+            ],
+            "properties": {
+              "job_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "stage_code": {
+                "type": "string"
+              },
+              "progress_microunit": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              }
+            }
+          }
+        }
+      },
+      "JobCompletedEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "job.completed"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "job_id",
+              "artifact_id",
+              "artifact_sha256"
+            ],
+            "properties": {
+              "job_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artifact_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artifact_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      },
+      "ErrorEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "error"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "retryable",
+              "safe_message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]+$"
+              },
+              "retryable": {
+                "type": "boolean"
+              },
+              "safe_message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GapEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "stream.gap"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": false
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expected_sequence",
+              "received_sequence",
+              "resume_from_event_id"
+            ],
+            "properties": {
+              "expected_sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "received_sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "resume_from_event_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        }
+      },
+      "HeartbeatEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "trace_id",
+          "sequence",
+          "previous_event_id",
+          "replayed",
+          "terminal",
+          "data"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "const": "heartbeat"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "const": false
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "server_time"
+            ],
+            "properties": {
+              "server_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-stream-semantics": {
+    "sequence_start": 0,
+    "next_sequence_rule": "CURRENT_EQUALS_PREVIOUS_PLUS_ONE",
+    "duplicate_rule": "SAME_EVENT_ID_AND_PAYLOAD_HASH_IS_IDEMPOTENT",
+    "gap_event_type": "stream.gap",
+    "replay_cursor_header": "Last-Event-ID",
+    "replay_requires_current_authorization": true,
+    "terminal_event_types": [
+      "message.completed",
+      "job.completed",
+      "error"
+    ],
+    "events_after_terminal": "REJECT"
+  }
+}

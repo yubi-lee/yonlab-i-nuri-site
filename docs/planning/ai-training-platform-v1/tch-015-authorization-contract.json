@@ -1,0 +1,280 @@
+{
+  "schema_version": "tch-015-authorization.v1",
+  "screen_id": "TCH-015",
+  "route": "/workspace/drafts/:draftId",
+  "screen_entry_guard": "ACTIVE_TENANT_MEMBERSHIP",
+  "default_decision": "DENY",
+  "operation_contracts": [
+    {
+      "contract_id": "AUTHZ-TCH-015-DRAFT-READ-V1",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "allowed_roles": [
+        "TEACHER",
+        "CONTENT_REVIEWER"
+      ],
+      "authorization_formula": "same_tenant AND ((role == TEACHER AND subject_id == draft.owner_id) OR (role == CONTENT_REVIEWER AND subject_id == draft.assigned_reviewer_id AND draft.state IN {REVIEW_REQUESTED, IN_REVIEW, CHANGES_REQUESTED, APPROVED}))",
+      "allowed_actions": [
+        "READ"
+      ]
+    },
+    {
+      "contract_id": "AUTHZ-TCH-015-DRAFT-EDIT-V1",
+      "operation_id": "PATCH /api/v1/drafts/{id}",
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "authorization_formula": "same_tenant AND role == TEACHER AND subject_id == draft.owner_id AND draft.state IN {DRAFT, CHANGES_REQUESTED}",
+      "allowed_actions": [
+        "EDIT"
+      ]
+    },
+    {
+      "contract_id": "AUTHZ-TCH-015-DRAFT-REVIEW-V1",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "allowed_roles": [
+        "TEACHER",
+        "CONTENT_REVIEWER"
+      ],
+      "authorization_formula": "same_tenant AND ((role == TEACHER AND subject_id == draft.owner_id AND action == SUBMIT_REVIEW AND draft.state IN {DRAFT, CHANGES_REQUESTED}) OR (role == CONTENT_REVIEWER AND subject_id == draft.assigned_reviewer_id AND action IN {APPROVE, REQUEST_CHANGES} AND draft.state IN {REVIEW_REQUESTED, IN_REVIEW}))",
+      "allowed_actions": [
+        "SUBMIT_REVIEW",
+        "APPROVE",
+        "REQUEST_CHANGES"
+      ]
+    },
+    {
+      "contract_id": "AUTHZ-TCH-015-DRAFT-EXPORT-V1",
+      "operation_id": "POST /api/v1/drafts/{id}/export",
+      "allowed_roles": [
+        "TEACHER"
+      ],
+      "authorization_formula": "same_tenant AND role == TEACHER AND subject_id == draft.owner_id AND draft.state IN {DRAFT, CHANGES_REQUESTED, APPROVED}",
+      "allowed_actions": [
+        "EXPORT"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-TEACHER-READ",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "DRAFT",
+      "action": "READ",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-TEACHER-EDIT",
+      "operation_id": "PATCH /api/v1/drafts/{id}",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "DRAFT",
+      "action": "EDIT",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-TEACHER-SUBMIT",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "DRAFT",
+      "action": "SUBMIT_REVIEW",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-TEACHER-EXPORT",
+      "operation_id": "POST /api/v1/drafts/{id}/export",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "DRAFT",
+      "action": "EXPORT",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-REVIEWER-READ",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "ASSIGNED_REVIEWER",
+      "state": "REVIEW_REQUESTED",
+      "action": "READ",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-ALLOW-REVIEWER-DECISION",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "ASSIGNED_REVIEWER",
+      "state": "IN_REVIEW",
+      "action": "APPROVE",
+      "expected_decision": "ALLOW",
+      "denial_reason": "NONE",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-TEACHER-APPROVE",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "IN_REVIEW",
+      "action": "APPROVE",
+      "expected_decision": "DENY",
+      "denial_reason": "ROLE_ACTION_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-REVIEWER-EDIT",
+      "operation_id": "PATCH /api/v1/drafts/{id}",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "ASSIGNED_REVIEWER",
+      "state": "IN_REVIEW",
+      "action": "EDIT",
+      "expected_decision": "DENY",
+      "denial_reason": "ROLE_ACTION_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-REVIEWER-EXPORT",
+      "operation_id": "POST /api/v1/drafts/{id}/export",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "ASSIGNED_REVIEWER",
+      "state": "APPROVED",
+      "action": "EXPORT",
+      "expected_decision": "DENY",
+      "denial_reason": "ROLE_ACTION_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-OTHER-TENANT",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "role": "TEACHER",
+      "tenant_relation": "OTHER_TENANT",
+      "resource_relation": "OWNER",
+      "state": "DRAFT",
+      "action": "READ",
+      "expected_decision": "DENY",
+      "denial_reason": "TENANT_MISMATCH",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-TEACHER-NOT-OWNER-READ",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "NONE",
+      "state": "DRAFT",
+      "action": "READ",
+      "expected_decision": "DENY",
+      "denial_reason": "RESOURCE_OWNERSHIP_REQUIRED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-REVIEWER-UNASSIGNED-READ",
+      "operation_id": "GET /api/v1/drafts/{id}",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "NONE",
+      "state": "REVIEW_REQUESTED",
+      "action": "READ",
+      "expected_decision": "DENY",
+      "denial_reason": "REVIEW_ASSIGNMENT_REQUIRED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-REVIEWER-UNASSIGNED-DECISION",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "NONE",
+      "state": "IN_REVIEW",
+      "action": "APPROVE",
+      "expected_decision": "DENY",
+      "denial_reason": "REVIEW_ASSIGNMENT_REQUIRED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-EDIT",
+      "operation_id": "PATCH /api/v1/drafts/{id}",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "APPROVED",
+      "action": "EDIT",
+      "expected_decision": "DENY",
+      "denial_reason": "RESOURCE_STATE_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-SUBMIT",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "APPROVED",
+      "action": "SUBMIT_REVIEW",
+      "expected_decision": "DENY",
+      "denial_reason": "RESOURCE_STATE_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-TEACHER-WRONG-STATE-EXPORT",
+      "operation_id": "POST /api/v1/drafts/{id}/export",
+      "role": "TEACHER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "OWNER",
+      "state": "REVIEW_REQUESTED",
+      "action": "EXPORT",
+      "expected_decision": "DENY",
+      "denial_reason": "RESOURCE_STATE_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    },
+    {
+      "case_id": "AUTHZ-TCH015-DENY-REVIEWER-WRONG-STATE-DECISION",
+      "operation_id": "POST /api/v1/drafts/{id}/review",
+      "role": "CONTENT_REVIEWER",
+      "tenant_relation": "SAME_TENANT",
+      "resource_relation": "ASSIGNED_REVIEWER",
+      "state": "DRAFT",
+      "action": "APPROVE",
+      "expected_decision": "DENY",
+      "denial_reason": "RESOURCE_STATE_DENIED",
+      "test_id": "T-DOC-012",
+      "evidence_id": "EVD-DOC-012"
+    }
+  ]
+}

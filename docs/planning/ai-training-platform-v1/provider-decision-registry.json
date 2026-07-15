@@ -1,0 +1,470 @@
+{
+  "schema_version": "provider-decision-registry.v1",
+  "routing_invariants": {
+    "PUBLIC": [
+      "EXTERNAL_OPENAI",
+      "INTERNAL_SLLM",
+      "DETERMINISTIC"
+    ],
+    "INTERNAL": [
+      "EXTERNAL_OPENAI_AFTER_POLICY_AUTHORIZATION",
+      "INTERNAL_SLLM",
+      "DETERMINISTIC"
+    ],
+    "CONFIDENTIAL": [
+      "INTERNAL_SLLM",
+      "DETERMINISTIC",
+      "EXTERNAL_OPENAI_AFTER_FIELD_REDACTION_AND_POLICY_AUTHORIZATION"
+    ],
+    "RESTRICTED": [
+      "INTERNAL_SLLM",
+      "DETERMINISTIC"
+    ],
+    "unknown": [
+      "DENY"
+    ]
+  },
+  "decisions": [
+    {
+      "decision_id": "DEC-AI-OPENAI-001",
+      "subject": "OpenAI Responses deployment snapshot and data-control terms",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-SEC"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-OAI-DPA",
+        "IN-OAI-REGION",
+        "IN-OAI-GOLDEN-EVAL",
+        "IN-OAI-COST"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-AI-OPENAI-001",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-AI-SLLM-002",
+      "subject": "sLLM model, quantization, tokenizer and serving image",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-OPS"
+      ],
+      "due_at": "D+30",
+      "required_input_ids": [
+        "IN-SLLM-QWEN3",
+        "IN-SLLM-GPT-OSS",
+        "IN-SLLM-KOREAN-EVAL",
+        "IN-SLLM-LICENSE"
+      ],
+      "gate_ids": [
+        "GATE-AI-KPI",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-AI-SLLM-002",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-OCR-003",
+      "subject": "Korean OCR and table-layout engine",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-SEC"
+      ],
+      "due_at": "D+25",
+      "required_input_ids": [
+        "IN-OCR-PADDLE-PPSTRUCTURE",
+        "IN-OCR-RAPIDOCR",
+        "IN-OCR-KOREAN-CORPUS",
+        "IN-OCR-DATA-TERMS"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-OCR-003",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-EMBED-004",
+      "subject": "Korean embedding and reranker deployment",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-DOC"
+      ],
+      "due_at": "D+30",
+      "required_input_ids": [
+        "IN-EMBED-GOLDEN-QUERY",
+        "IN-RERANK-GOLDEN-QUERY",
+        "IN-INDEX-CAPACITY"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-AI-KPI"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-EMBED-004",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-HARDWARE-005",
+      "subject": "sLLM/OCR GPU and Windows converter capacity",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-AI",
+        "OWN-DOC"
+      ],
+      "due_at": "D+30",
+      "required_input_ids": [
+        "IN-LOAD-PROFILE",
+        "IN-GPU-24-48-80GB-BENCH",
+        "IN-CONVERTER-CONCURRENCY",
+        "IN-MONTHLY-TCO"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "CONDITIONAL_ON_HOSTING_MODEL",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-HARDWARE-005",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-HWP-006",
+      "subject": "Licensed production HWP converter binary and isolated-node evidence",
+      "status": "BLOCKED",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-SEC",
+        "OWN-OPS"
+      ],
+      "due_at": "D+45",
+      "required_input_ids": [
+        "IN-HWP-BINARY-LICENSE",
+        "IN-HWP-GOLDEN-CORPUS",
+        "IN-HWP-SANDBOX-ATTESTATION"
+      ],
+      "gate_ids": [
+        "GATE-DOCUMENT-KPI",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-HWP-006",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-OBJECT-STORAGE-007",
+      "subject": "Tenant-bound object storage and immutable retention",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-STORAGE-DPA",
+        "IN-STORAGE-REGION",
+        "IN-STORAGE-LOCK-EVAL"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-OBJECT-STORAGE-007",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-EMAIL-008",
+      "subject": "Transactional email provider and suppression handling",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-PRIV"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-EMAIL-DPA",
+        "IN-EMAIL-REGION",
+        "IN-EMAIL-DELIVERABILITY"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-EMAIL-008",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-OIDC-009",
+      "subject": "OIDC identity provider MFA and lifecycle",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-OPS"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-OIDC-DPA",
+        "IN-OIDC-REGION",
+        "IN-OIDC-AAL2"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-OIDC-009",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-BROKER-010",
+      "subject": "Durable job and event broker",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "due_at": "D+25",
+      "required_input_ids": [
+        "IN-BROKER-DPA",
+        "IN-BROKER-REGION",
+        "IN-BROKER-DR"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-BROKER-010",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-MALWARE-011",
+      "subject": "Malware scanning and archive bomb analysis service",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-DOC"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-MALWARE-DPA",
+        "IN-MALWARE-REGION",
+        "IN-MALWARE-EVASION-CORPUS"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY",
+        "GATE-DOCUMENT-KPI"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-MALWARE-011",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-HOSTING-DNS-TLS-WAF-012",
+      "subject": "Hosting, DNS, TLS certificate automation and WAF",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-SEC"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-HOSTING-DPA",
+        "IN-HOSTING-REGION",
+        "IN-DNS-TLS-WAF-DRILL"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-HOSTING-DNS-TLS-WAF-012",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-MANAGED-DB-013",
+      "subject": "Managed PostgreSQL high availability and point-in-time recovery",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-DATA",
+        "OWN-OPS"
+      ],
+      "due_at": "D+25",
+      "required_input_ids": [
+        "IN-DB-DPA",
+        "IN-DB-REGION",
+        "IN-DB-PITR-DRILL"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-MANAGED-DB-013",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-REDIS-014",
+      "subject": "Redis-compatible cache, rate-limit and ephemeral state",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "due_at": "D+25",
+      "required_input_ids": [
+        "IN-REDIS-DPA",
+        "IN-REDIS-REGION",
+        "IN-REDIS-FAILOVER"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-REDIS-014",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-OFFHOST-BACKUP-015",
+      "subject": "Encrypted off-host backup vault and retention",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-DATA",
+        "OWN-SEC",
+        "OWN-OPS"
+      ],
+      "due_at": "D+25",
+      "required_input_ids": [
+        "IN-BACKUP-DPA",
+        "IN-BACKUP-REGION",
+        "IN-BACKUP-RESTORE-DRILL"
+      ],
+      "gate_ids": [
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-SECURITY-PRIVACY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-OFFHOST-BACKUP-015",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    },
+    {
+      "decision_id": "DEC-CICD-016",
+      "subject": "CI/CD platform, artifact signing and protected release environment",
+      "status": "REQUIRES_ACCEPTANCE_DATA",
+      "owner_ids": [
+        "OWN-DEV",
+        "OWN-SEC",
+        "OWN-OPS"
+      ],
+      "due_at": "D+20",
+      "required_input_ids": [
+        "IN-CICD-DPA",
+        "IN-CICD-REGION",
+        "IN-CICD-SUPPLY-CHAIN"
+      ],
+      "gate_ids": [
+        "GATE-SECURITY-PRIVACY",
+        "GATE-OPERATIONS-RECOVERY"
+      ],
+      "data_processing_agreement": "REQUIRED",
+      "approved_regions": [],
+      "region_decision_state": "REQUIRES_ACCEPTANCE_DATA",
+      "exit_plan_id": "EXIT-CICD-016",
+      "evidence_freshness_days": 90,
+      "release_state": "NOT_READY"
+    }
+  ],
+  "ocr_acceptance": {
+    "korean_character_accuracy_minimum": 0.97,
+    "complex_table_topology_minimum": 0.95,
+    "locator_accuracy_minimum": 1.0,
+    "restricted_external_pages_maximum": 0,
+    "metrics": [
+      "CER",
+      "reading_order",
+      "merged_cell",
+      "nested_table",
+      "latency_page_p95",
+      "cost_per_page",
+      "license"
+    ]
+  },
+  "model_acceptance": {
+    "diagnosis_agreement_minimum": 0.85,
+    "recommendation_relevance_minimum": 0.9,
+    "rag_top5_minimum": 0.95,
+    "structured_output_minimum": 0.998,
+    "restricted_external_events_maximum": 0
+  },
+  "activation_rule": "Every decision row must have approved DPA applicability, non-empty approved_regions where data is processed, a tested exit plan, fresh PASS gates and release_state READY; until then the overall state is NOT_READY. Model binaries and service credentials are never downloaded automatically by the implementation launcher.",
+  "overall_release_state": "NOT_READY",
+  "decision_required_fields": [
+    "decision_id",
+    "subject",
+    "status",
+    "owner_ids",
+    "due_at",
+    "required_input_ids",
+    "gate_ids",
+    "data_processing_agreement",
+    "approved_regions",
+    "region_decision_state",
+    "exit_plan_id",
+    "evidence_freshness_days",
+    "release_state"
+  ]
+}

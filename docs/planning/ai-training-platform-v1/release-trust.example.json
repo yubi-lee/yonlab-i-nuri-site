@@ -1,0 +1,107 @@
+{
+  "schema_version": "release-trust.v2",
+  "repository": "yubi-lee/yonlab-i-nuri-site",
+  "attestation_root": "C:\\ProgramData\\YOnLab\\attestations",
+  "owner_fingerprints": {
+    "OWN-ARCH": "REPLACE_WITH_OWN_ARCH_GPG_FINGERPRINT",
+    "OWN-UX": "REPLACE_WITH_OWN_UX_GPG_FINGERPRINT",
+    "OWN-AI": "REPLACE_WITH_OWN_AI_GPG_FINGERPRINT",
+    "OWN-DOC": "REPLACE_WITH_OWN_DOC_GPG_FINGERPRINT",
+    "OWN-SEC": "REPLACE_WITH_OWN_SEC_GPG_FINGERPRINT",
+    "OWN-OPS": "REPLACE_WITH_OWN_OPS_GPG_FINGERPRINT",
+    "OWN-QA": "REPLACE_WITH_OWN_QA_GPG_FINGERPRINT",
+    "OWN-ACC": "REPLACE_WITH_OWN_ACC_GPG_FINGERPRINT"
+  },
+  "tag_signer_fingerprint": "REPLACE_WITH_THE_SAME_OWN_QA_GPG_FINGERPRINT",
+  "trusted_tools": {
+    "powershell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": true,
+      "authenticode_signer_thumbprint": "REPLACE_WITH_40_OR_64_HEX_THUMBPRINT"
+    },
+    "python": {
+      "path": "C:\\Program Files\\Python312\\python.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": true,
+      "authenticode_signer_thumbprint": "REPLACE_WITH_40_OR_64_HEX_THUMBPRINT"
+    },
+    "git": {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": true,
+      "authenticode_signer_thumbprint": "REPLACE_WITH_40_OR_64_HEX_THUMBPRINT"
+    },
+    "gh": {
+      "path": "C:\\Program Files\\GitHub CLI\\gh.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": true,
+      "authenticode_signer_thumbprint": "REPLACE_WITH_40_OR_64_HEX_THUMBPRINT"
+    },
+    "docker": {
+      "path": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": true,
+      "authenticode_signer_thumbprint": "REPLACE_WITH_40_OR_64_HEX_THUMBPRINT"
+    },
+    "codex": {
+      "path": "C:\\Program Files\\OpenAI\\Codex\\codex.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": false,
+      "authenticode_signer_thumbprint": null
+    },
+    "gpg": {
+      "path": "C:\\Program Files (x86)\\GnuPG\\bin\\gpg.exe",
+      "sha256": "REPLACE_WITH_64_HEX_SHA256",
+      "authenticode_required": false,
+      "authenticode_signer_thumbprint": null
+    }
+  },
+  "github_policy": {
+    "allowed_actor_logins": [
+      "REPLACE_WITH_APPROVED_GITHUB_LOGIN"
+    ],
+    "workflows": [
+      {
+        "check_name": "design-package-linux",
+        "workflow_id": 0,
+        "workflow_path": ".github/workflows/release.yml",
+        "workflow_sha256": "REPLACE_WITH_64_HEX_SHA256",
+        "required_runner_labels": [
+          "ubuntu-latest"
+        ]
+      },
+      {
+        "check_name": "design-package-windows",
+        "workflow_id": 0,
+        "workflow_path": ".github/workflows/release.yml",
+        "workflow_sha256": "REPLACE_WITH_64_HEX_SHA256",
+        "required_runner_labels": [
+          "self-hosted",
+          "Windows",
+          "X64"
+        ]
+      },
+      {
+        "check_name": "security-and-schema",
+        "workflow_id": 0,
+        "workflow_path": ".github/workflows/release.yml",
+        "workflow_sha256": "REPLACE_WITH_64_HEX_SHA256",
+        "required_runner_labels": [
+          "ubuntu-latest"
+        ]
+      },
+      {
+        "check_name": "release-signatures",
+        "workflow_id": 0,
+        "workflow_path": ".github/workflows/release.yml",
+        "workflow_sha256": "REPLACE_WITH_64_HEX_SHA256",
+        "required_runner_labels": [
+          "self-hosted",
+          "Windows",
+          "X64"
+        ]
+      }
+    ]
+  }
+}

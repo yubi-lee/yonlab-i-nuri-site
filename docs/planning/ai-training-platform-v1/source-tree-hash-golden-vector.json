@@ -1,0 +1,19 @@
+{
+  "schema_version": "source-tree-hash-golden.v1",
+  "algorithm": "SHA-256 over UTF-8 bytes of RFC 8785 JCS(source-tree-manifest.v1)",
+  "path_policy": "tracked regular files only; relative POSIX paths; NFC; no dot segments, backslash, absolute path, duplicate normalized path, symlink, submodule, junction, mount redirect, or reparse point",
+  "mode_policy": "literal 100644 or 100755 only",
+  "ordering": "files array sorted by UTF-8 bytes of NFC path",
+  "vectors": [
+    {
+      "id": "GV-SOURCE-TREE-001",
+      "fixture_files": [
+        {"path": "a.txt", "mode": "100644", "content_utf8": "A\n", "size_bytes": 2, "content_sha256": "06f961b802bc46ee168555f066d28f4f0e9afdf3f88174c1ee6f9de004fc30a0"},
+        {"path": "docs/한글.md", "mode": "100755", "content_utf8": "# 제목\n", "size_bytes": 9, "content_sha256": "8367a9a3bbf4bace829f4cb21de57ec0701be93334b72c1ccdef0d001f7c6a22"}
+      ],
+      "canonical_manifest_utf8": "{\"files\":[{\"content_sha256\":\"06f961b802bc46ee168555f066d28f4f0e9afdf3f88174c1ee6f9de004fc30a0\",\"mode\":\"100644\",\"path\":\"a.txt\",\"size_bytes\":2},{\"content_sha256\":\"8367a9a3bbf4bace829f4cb21de57ec0701be93334b72c1ccdef0d001f7c6a22\",\"mode\":\"100755\",\"path\":\"docs/한글.md\",\"size_bytes\":9}],\"schema\":\"source-tree-manifest.v1\"}",
+      "canonical_digest_sha256": "7bc646414081f45498f57bf2a4019721934c6d4e59244493edc1437547f7e3a1"
+    }
+  ],
+  "canonical_digest_sha256": "7bc646414081f45498f57bf2a4019721934c6d4e59244493edc1437547f7e3a1"
+}

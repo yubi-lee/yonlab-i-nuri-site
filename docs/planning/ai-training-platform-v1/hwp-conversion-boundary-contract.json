@@ -1,0 +1,206 @@
+{
+  "schema_version": "hwp-conversion-boundary.v1",
+  "contract_state": "BLOCKED_UNTIL_PRODUCTION_CONVERTER_AND_GOLDEN_CORPUS_EVIDENCE",
+  "bridge_host": {
+    "service_id": "hwp-conversion-bridge",
+    "workload_identity": "SPIFFE_X509_SVID_REQUIRED",
+    "public_ingress": "DENY",
+    "database_credentials": "NONE",
+    "egress_allowlist": [
+      "conversion-job-broker",
+      "tenant-object-capability-service",
+      "telemetry-collector"
+    ],
+    "queue": {
+      "queue_name": "document.hwp.convert.v1",
+      "delivery": "AT_LEAST_ONCE",
+      "deduplication_key": "job_id",
+      "acknowledgement": "AFTER_OUTPUT_ATTESTATION_AND_OBJECT_COMMIT",
+      "dead_letter_policy": "FAIL_CLOSED_AFTER_3_ATTEMPTS"
+    }
+  },
+  "job_envelope": {
+    "schema_id": "urn:yonlab:hwp-conversion-job:1.0.0",
+    "additional_properties": "REJECT",
+    "required_fields": [
+      "job_id",
+      "tenant_id",
+      "input_object_id",
+      "input_sha256",
+      "input_size_bytes",
+      "output_format",
+      "conversion_policy_version",
+      "sandbox_policy_sha256",
+      "idempotency_key",
+      "trace_id",
+      "issued_at_utc",
+      "expires_at_utc"
+    ],
+    "output_format": "HWPX",
+    "maximum_lifetime_seconds": 300,
+    "raw_document_bytes_in_queue": "FORBIDDEN"
+  },
+  "bridge_child_ipc": {
+    "transport": "HOST_LOCAL_NAMED_PIPE_OR_VSOCK",
+    "network_socket": "FORBIDDEN",
+    "protocol": "LENGTH_PREFIXED_CANONICAL_CBOR_V1",
+    "request_fields": [
+      "job_id",
+      "local_input_path",
+      "local_output_path",
+      "input_sha256",
+      "conversion_policy_version",
+      "sandbox_policy_sha256"
+    ],
+    "response_fields": [
+      "job_id",
+      "status",
+      "output_sha256",
+      "output_size_bytes",
+      "converter_exit_code",
+      "started_at_utc",
+      "finished_at_utc"
+    ],
+    "path_root": "PER_JOB_EPHEMERAL_DIRECTORY",
+    "reject_absolute_or_parent_paths": true
+  },
+  "child_sandbox": {
+    "process_identity": "ONE_JOB_ONE_UNPRIVILEGED_EPHEMERAL_PROCESS",
+    "network": "NONE",
+    "credentials": "NONE",
+    "environment_secret_allowlist": [],
+    "database_access": "NONE",
+    "queue_access": "NONE",
+    "object_storage_access": "NONE",
+    "telemetry_access": "NONE",
+    "filesystem": {
+      "binary_mount": "READ_ONLY",
+      "input_mount": "READ_ONLY_SINGLE_FILE",
+      "output_mount": "WRITE_ONLY_EMPTY_DIRECTORY",
+      "host_paths": "DENY",
+      "secure_cleanup": "REQUIRED_AFTER_ATTESTATION_OR_FAILURE"
+    },
+    "isolation": {
+      "capabilities": "DROP_ALL",
+      "privilege_escalation": "DENY",
+      "syscall_policy": "DEFAULT_DENY_ALLOWLIST",
+      "cpu_memory_process_wall_time_limits": "REQUIRED",
+      "macro_script_execution": "DENY"
+    }
+  },
+  "output_attestation": {
+    "schema_id": "urn:yonlab:hwp-conversion-attestation:1.0.0",
+    "additional_properties": "REJECT",
+    "required_fields": [
+      "job_id",
+      "tenant_id",
+      "input_sha256",
+      "output_sha256",
+      "output_size_bytes",
+      "converter_image_digest",
+      "converter_binary_sha256",
+      "converter_version",
+      "conversion_policy_version",
+      "sandbox_policy_sha256",
+      "started_at_utc",
+      "finished_at_utc",
+      "converter_exit_code",
+      "structure_validation_sha256",
+      "preview_diff_sha256",
+      "bridge_workload_id",
+      "signature"
+    ],
+    "signature": "ED25519_DETACHED_OVER_RFC8785_JCS_UNSIGNED_ATTESTATION",
+    "acceptance_predicates": [
+      "job_id tenant_id input_sha256 and policy hashes equal the authorized job",
+      "converter_exit_code equals 0",
+      "output_size_bytes is greater than 0 and equals actual output bytes",
+      "output_sha256 equals SHA-256 of actual output bytes",
+      "converter image binary and sandbox digests are approved release values",
+      "structure and preview validation evidence exists and is fresh",
+      "bridge signature verifies against the active workload signing key"
+    ]
+  },
+  "failure_policy": {
+    "unknown_field": "REJECT",
+    "expired_or_replayed_job": "REJECT_WITHOUT_CHILD_EXECUTION",
+    "input_hash_mismatch": "REJECT_WITHOUT_CHILD_EXECUTION",
+    "child_network_or_credential_presence": "BLOCK_AND_QUARANTINE_HOST",
+    "output_attestation_mismatch": "DELETE_OUTPUT_AND_DEAD_LETTER",
+    "converter_or_golden_evidence_missing": "RELEASE_BLOCKED",
+    "simulator_evidence": "NEVER_COUNTS_AS_PRODUCTION_ACCEPTANCE"
+  },
+  "licensed_roundtrip_acceptance": {
+    "release_state": "NOT_READY",
+    "environment": "LICENSED_WINDOWS_CONVERTER_ISOLATED_NODE",
+    "minimum_golden_documents": 100,
+    "required_actions": [
+      "OPEN",
+      "EDIT",
+      "SAVE_AS_HWPX",
+      "REOPEN",
+      "PRINT_TO_PDF"
+    ],
+    "edit_script": [
+      "REPLACE_TEXT_IN_PARAGRAPH",
+      "EDIT_MERGED_CELL",
+      "UPDATE_FIELD_VALUE",
+      "REPLACE_IMAGE_ALT_TEXT"
+    ],
+    "required_slices": [
+      "MERGED_TABLE",
+      "NESTED_TABLE",
+      "STYLE",
+      "BORDER",
+      "IMAGE_ALT",
+      "FIELD",
+      "MACRO",
+      "OLE"
+    ],
+    "acceptance_metrics": [
+      {
+        "metric_id": "OPEN_EDIT_SAVE_REOPEN_SUCCESS",
+        "operator": ">=",
+        "threshold_microunit": 980000
+      },
+      {
+        "metric_id": "PRINT_RENDER_ACCEPTANCE",
+        "operator": ">=",
+        "threshold_microunit": 950000
+      },
+      {
+        "metric_id": "TABLE_TOPOLOGY_PRESERVATION",
+        "operator": ">=",
+        "threshold_microunit": 950000
+      },
+      {
+        "metric_id": "STYLE_BORDER_FIELD_RESOURCE_DANGLING_REFERENCES",
+        "operator": "==",
+        "threshold_microunit": 0
+      },
+      {
+        "metric_id": "MACRO_OLE_EXECUTIONS",
+        "operator": "==",
+        "threshold_microunit": 0
+      }
+    ],
+    "required_evidence": [
+      "LICENSE_RECEIPT_SHA256",
+      "CONVERTER_BINARY_SHA256",
+      "SANDBOX_ATTESTATION_SHA256",
+      "OPEN_EDIT_SAVE_TRACE_SHA256",
+      "PRINT_PDF_SHA256",
+      "STRUCTURE_DIFF_SHA256",
+      "VISUAL_DIFF_SHA256",
+      "ACTIVE_CONTENT_SCAN_SHA256"
+    ],
+    "simulator_or_hwpx_only_result": "BLOCKED"
+  },
+  "active_content_roundtrip_policy": {
+    "macro": "QUARANTINE_NEVER_EXECUTE_NEVER_REEMBED",
+    "ole": "QUARANTINE_NEVER_ACTIVATE_STATIC_NONINTERACTIVE_RENDER_ONLY",
+    "external_link": "REMOVE_OR_APPROVED_STATIC_TEXT_ONLY",
+    "scan_receipt_required_before_child_execution": true,
+    "detected_execution": "QUARANTINE_HOST_AND_FAIL_RELEASE"
+  }
+}

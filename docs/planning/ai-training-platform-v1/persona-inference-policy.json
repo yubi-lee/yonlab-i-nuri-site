@@ -1,0 +1,1179 @@
+{
+  "schema_version": "persona-inference-policy.v1",
+  "policy_version": "persona-inference.v1",
+  "release_state": "NON_PRODUCTION_REQUIRES_PILOT_CALIBRATION",
+  "feature_dictionary_ref": "rubric-question-contract.json#/feature_dictionary",
+  "features": [
+    {
+      "feature_id": "context.return_after_leave",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "context.career_band",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "context.region_resource_category",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "experience.practice_context_breadth",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "interest.keyword_id",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "constraint.time_pressure",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "constraint.low_bandwidth",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "preference.mentor_support",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "preference.examples_first",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "preference.small_steps",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "need.policy_change_refresh",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "need.digital_reentry",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "interest.advanced_cases",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "interest.peer_coaching",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "need.local_resource_alternative",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "preference.human_support",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "support.current_emotional_load",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    },
+    {
+      "feature_id": "support.encouragement_preference",
+      "input_minimum_microunit": 0,
+      "input_maximum_microunit": 1000000,
+      "missing_value_microunit": 0,
+      "missing_indicator_audited": true
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "P-01-A",
+      "family_id": "P-01",
+      "name": "기초 루틴 구축형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 700000
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 900000
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 700000
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-01-B",
+      "family_id": "P-01",
+      "name": "멘토 동행 적용형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 500000
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 500000
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 300000
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-02-A",
+      "family_id": "P-02",
+      "name": "예시 확인 우선형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-02-B",
+      "family_id": "P-02",
+      "name": "작은 단계 확신형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 200000
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-03-A",
+      "family_id": "P-03",
+      "name": "제도 변화 재정렬형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 800000
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-03-B",
+      "family_id": "P-03",
+      "name": "디지털 도구 재진입형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 600000
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 300000
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-04-A",
+      "family_id": "P-04",
+      "name": "고급 사례 탐구형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": -400000
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 700000
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 300000
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-04-B",
+      "family_id": "P-04",
+      "name": "동료 코칭 확장형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": -400000
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 800000
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": -200000
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 500000
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-05-A",
+      "family_id": "P-05",
+      "name": "시간제약 핵심형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 500000
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 200000
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 600000
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-05-B",
+      "family_id": "P-05",
+      "name": "사람지원 연계형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 500000
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 800000
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 700000
+        }
+      ]
+    },
+    {
+      "profile_id": "P-06-A",
+      "family_id": "P-06",
+      "name": "저대역폭 비동기형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 600000
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    },
+    {
+      "profile_id": "P-06-B",
+      "family_id": "P-06",
+      "name": "지역자원 연계형",
+      "intercept_microunit": 0,
+      "coefficients": [
+        {
+          "feature_id": "context.return_after_leave",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.career_band",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "context.region_resource_category",
+          "coefficient_microunit": 900000
+        },
+        {
+          "feature_id": "experience.practice_context_breadth",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.keyword_id",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "constraint.time_pressure",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "constraint.low_bandwidth",
+          "coefficient_microunit": 400000
+        },
+        {
+          "feature_id": "preference.mentor_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.examples_first",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "preference.small_steps",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.policy_change_refresh",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "need.digital_reentry",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.advanced_cases",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "interest.peer_coaching",
+          "coefficient_microunit": 200000
+        },
+        {
+          "feature_id": "need.local_resource_alternative",
+          "coefficient_microunit": 1000000
+        },
+        {
+          "feature_id": "preference.human_support",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.current_emotional_load",
+          "coefficient_microunit": 0
+        },
+        {
+          "feature_id": "support.encouragement_preference",
+          "coefficient_microunit": 0
+        }
+      ]
+    }
+  ],
+  "normalization": {
+    "arithmetic": "ARBITRARY_PRECISION_INTEGER",
+    "coefficient_scale": 1000000,
+    "raw_score_formula": "intercept_microunit + div_half_up(sum(coefficient_microunit * feature_value_microunit), 1000000)",
+    "positive_score_formula": "max(1, 20000000 + raw_score_microunit)",
+    "probability_formula": "div_half_up(1000000 * positive_score, sum_positive_scores)",
+    "residual_rule": "assign 1000000-sum(probabilities) to lexicographically greatest profile_id",
+    "profile_probability_sum": 1000000,
+    "family_probability_formula": "sum(profile probabilities for family_id)",
+    "family_probability_sum": 1000000,
+    "mixed_family_threshold_microunit": 450000,
+    "top_profile_count": 3,
+    "tie_break": "probability descending then profile_id NFC UTF-8 bytewise ascending"
+  },
+  "missingness": {
+    "encoding": "MISSING",
+    "neutral_imputation_microunit": 0,
+    "maximum_missing_features": 6,
+    "exceeded_outcome": "INSUFFICIENT_CONTEXT",
+    "silent_imputation": "FORBIDDEN"
+  },
+  "prohibited_inputs": {
+    "direct": [
+      "sex",
+      "gender_identity",
+      "age",
+      "disability",
+      "nationality",
+      "race",
+      "religion",
+      "health",
+      "inferred_psychological_state"
+    ],
+    "proxies": [
+      "postal_code",
+      "exact_region",
+      "school_name",
+      "device_price",
+      "name_embedding",
+      "free_text_demographic_inference"
+    ],
+    "inferred_protected_attribute": "FORBIDDEN",
+    "effect_on_competency_score": "FORBIDDEN"
+  },
+  "sensitive_support_policy": {
+    "field_ids": [
+      "support.current_emotional_load",
+      "support.encouragement_preference"
+    ],
+    "collection": "EXPLICIT_SESSION_OPT_IN_SELF_REPORT_ONLY",
+    "data_class": "RESTRICTED",
+    "retention": "SESSION_OR_24_HOURS",
+    "allowed_use": [
+      "RESPONSE_TONE",
+      "LOW_BURDEN_PATH",
+      "OPTIONAL_HUMAN_SUPPORT_OFFER"
+    ],
+    "clinical_or_emotion_inference": "FORBIDDEN",
+    "diagnosis_score_effect": "FORBIDDEN",
+    "employment_decision_use": "FORBIDDEN",
+    "withdrawal_effect": "PURGE_IMMEDIATELY_AND_RECOMPUTE_WITHOUT_FIELDS"
+  },
+  "calibration": {
+    "dataset_split": "LOCKED_SUBJECT_DISJOINT_HOLDOUT",
+    "minimum_sessions": 600,
+    "minimum_per_profile": 40,
+    "expected_calibration_error_maximum_microunit": 50000,
+    "brier_score_maximum_microunit": 180000,
+    "maximum_slice_ece_gap_microunit": 50000,
+    "confidence_level_microunit": 950000,
+    "current_evidence_state": "MISSING",
+    "activation_outcome": "NOT_READY"
+  },
+  "user_control": {
+    "responses": [
+      "CONFIRM",
+      "PARTIALLY_DIFFERENT",
+      "DO_NOT_USE"
+    ],
+    "do_not_use_effect": "PERSONA_CONTEXT_REMOVED_AND_RECOMMENDATIONS_RECOMPUTED",
+    "competency_score_mutation": "FORBIDDEN",
+    "immutable_version_history": true
+  }
+}

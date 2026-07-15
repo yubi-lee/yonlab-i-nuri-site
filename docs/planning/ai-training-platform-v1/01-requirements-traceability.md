@@ -7,27 +7,29 @@
 
 YOnLab 플랫폼은 보육교사가 AI와 자연스럽게 대화하면서 자신의 역량과 학습 필요를 파악하고, 검증된 연수·자료·실천 과제를 추천받으며, HWP/HWPX 중심의 현장 자료를 출처 기반으로 검색·활용·초안 생성할 수 있도록 한다. 운영자는 AI 품질, 콘텐츠, 문서, 추천, 사용자, 성과와 보안을 통합 관리한다.
 
+KPI 계산식·한계값, 경로, 페르소나 계층, 복구 목표와 판정 상태는 [design-baseline.json](design-baseline.json)이 normative source다. 60개 RFP 요구, 33개 시스템 요구, 139개 개별 시험의 design/screen/API/evidence/gate edge는 [requirements-test-registry.json](requirements-test-registry.json)이 machine-readable normative registry다. 아래 표는 사람이 읽는 mirror이며 registry와 같은 변경에서 갱신한다.
+
 ## 2. 핵심 성과지표
 
 | ID | 지표 | 목표 | 증거 |
 |---|---|---:|---|
-| KPI-001 | 전문가 진단 일치도 | ≥0.80 | 이중 전문가 라벨 골든셋 |
-| KPI-002 | 맞춤 연수 추천 적합도 | ≥85% | 전문가·교사 적합성 평가 |
-| KPI-003 | RAG Top-5 검색 정확도 | ≥90% | HWP/HWPX/PDF 질의셋 |
-| KPI-004 | 출처 제시율 | ≥95% | answer-citation 검사 |
-| KPI-005 | 구조화 출력 성공률 | ≥99.5% | Schema validator 로그 |
-| KPI-006 | 사용자 만족도 | ≥80/100 | 시범운영 설문 |
-| KPI-007 | 시범운영 개선 반영률 | ≥80% | 이슈-릴리스 추적표 |
+| KPI-001 | 전문가 진단 일치도 | ≥0.85 | 이중 전문가 라벨 골든셋 |
+| KPI-002 | 맞춤 연수 추천 적합도 | ≥90% | 전문가·교사 적합성 평가 |
+| KPI-003 | RAG Top-5 검색 정확도 | ≥95% | HWP/HWPX/PDF 질의셋 |
+| KPI-004 | 중요 claim citation coverage | ≥95%, invalid citation 0건 | answer-citation 검사 |
+| KPI-005 | 구조화 출력 성공률 | ≥99.8% | Schema validator 로그 |
+| KPI-006 | 사용자 만족도 | ≥90/100 | 시범운영 설문 |
+| KPI-007 | 시범운영 개선 반영률 | ≥90% | 이슈-릴리스 추적표 |
 | KPI-008 | Restricted 외부 전송 | 0건 | egress audit |
 | KPI-009 | 접근성 핵심 여정 | 오류 0건 | 자동+수동 접근성 결과 |
-| KPI-010 | 백업 복구 | 승인 RPO/RTO 충족 | restore drill 기록 |
+| KPI-010 | 백업 복구 | 승인 RPO/RTO 충족률 ≥1.0(100%); 승인 전 `REQUIRES_ACCEPTANCE_DATA` | 승인 기록+restore drill 기록 |
 
 ## 3. 시스템 기능 요구사항
 
 | ID | 요구사항 | 수용 기준 |
 |---|---|---|
 | SYS-F-001 | 대화형 역량진단 | 세션·턴·근거·점수·결과가 재현 가능 |
-| SYS-F-002 | 교사 맥락·페르소나 | 5~6종 확률 분포, 근거, 사용자 수정 제공 |
+| SYS-F-002 | 교사 맥락·페르소나 | 12개 operational profile 확률 분포와 6개 family aggregation, 근거, 사용자 수정 제공 |
 | SYS-F-003 | 결정적 진단 scoring | 동일 evidence/rubric에 동일 결과 |
 | SYS-F-004 | 맞춤 추천 | 추천 사유·보완역량·학습단계·대안 표시 |
 | SYS-F-005 | 학습경로 | 기초-심화-적용, 실천과제, 후속 추천 연결 |
@@ -72,17 +74,17 @@ YOnLab 플랫폼은 보육교사가 AI와 자연스럽게 대화하면서 자신
 | RFP ID | 목표 설계 반영 | 주요 시험 |
 |---|---|---|
 | PLR-001 | 최종 모듈·여정·품질 기준선 | T-GOV-001 |
-| PLR-002 | 역량체계·진단·추천·경로 | T-AI-001~008 |
+| PLR-002 | 역량체계·진단·추천·경로 | T-AI-001~008, T-KPI-005 |
 | PLR-003 | HWP DocumentGraph·RAG·초안 | T-DOC-001~012 |
-| PLR-004 | 역할별 IA·접근성·사용성 | T-UX-001~008 |
-| ECR-001 | Hybrid 인프라·AI serving·storage | T-OPS-001~006 |
+| PLR-004 | 역할별 IA·접근성·사용성 | T-UX-001~008, T-A11Y-001~008 |
+| ECR-001 | Hybrid 인프라·AI serving·storage | T-OPS-001~006, T-PERF-001~005 |
 | ECR-002 | dev/test/stage/prod 분리 | T-DEP-001~004 |
-| DER-001 | 대화형 역량진단 engine | T-AI-001~004 |
-| DER-002 | 5~6종 확률적 페르소나 | T-AI-005~008 |
+| DER-001 | 대화형 역량진단 engine | T-AI-001~004, T-KPI-005 |
+| DER-002 | 6개 대표 family·12개 versioned operational profile | T-AI-005~008 |
 | DER-003 | 맞춤 추천·학습경로 | T-REC-001~007 |
 | DER-004 | 개인·기관 성과 리포트 | T-RPT-001~005 |
-| DER-005 | Document AI·HWP RAG | T-DOC-001~012 |
-| DER-006 | 교사·관리자 반응형 UI | T-UX-001~008 |
+| DER-005 | Document AI·HWP RAG | T-DOC-001~012, T-KPI-005 |
+| DER-006 | 교사·관리자 반응형 UI | T-UX-001~008, T-A11Y-001~008 |
 | DER-007 | cohort·설문·FGI·개선추적 | T-PILOT-001~006 |
 | DER-008 | 독립 모듈·표준 계약 | T-ARCH-001~005 |
 | SIR-001 | 교사·관리자 dashboard API | T-API-001~004 |
@@ -97,7 +99,7 @@ YOnLab 플랫폼은 보육교사가 AI와 자연스럽게 대화하면서 자신
 | DAR-007 | 메타데이터·lineage·개방 API | T-DATA-007 |
 | TER-001 | 자동 단위시험 | T-GATE-001 |
 | TER-002 | 모듈 통합·provider stub | T-GATE-002 |
-| TER-003 | 전체 시스템·부하·보안 | T-GATE-003 |
+| TER-003 | 전체 시스템·부하·보안 | T-GATE-003, T-PERF-001~005, T-SEC-006 |
 | TER-004 | 200명×2회 사용자 검증 | T-PILOT-001~006 |
 | SER-001 | 보안 거버넌스·책임·점검 | T-SEC-001 |
 | SER-002 | 법령·지침·개발보안 준수 | T-SEC-002 |
@@ -108,7 +110,7 @@ YOnLab 플랫폼은 보육교사가 AI와 자연스럽게 대화하면서 자신
 | SER-007 | 개인정보 동의·가명·파기 | T-PRIV-001~006 |
 | SER-008 | 취약점 조치·관리수준 진단 | T-SEC-007 |
 | QUR-001 | 코딩·API·문서·데이터 표준 | T-QUAL-001 |
-| QUR-002 | 품질계획·요구추적·AI 품질 | T-QUAL-002 |
+| QUR-002 | 품질계획·요구추적·AI 품질 | T-QUAL-002, T-KPI-005 |
 | QUR-003 | 확장·상호운용·유지보수 | T-ARCH-001~005 |
 | QUR-004 | 요구별 기능 정확성 | T-ACC-001 |
 | QUR-005 | 오류·설명·도움말·신뢰성 | T-UX-007, T-RES-001 |
@@ -134,9 +136,13 @@ YOnLab 플랫폼은 보육교사가 AI와 자연스럽게 대화하면서 자신
 
 ## 6. 변경 통제
 
+### 6.1 양방향 registry 불변조건
+
+`requirements-test-registry.json`은 RFP 60행, SYS 33행과 시험 139행을 range token 없이 개별 ID로 열거한다. 각 requirement→test edge는 test의 `requirement_ids`에 역방향으로도 존재해야 하며, test는 exact procedure와 evidence ID를 하나씩 가진다. requirement/test/design/screen/API/evidence/gate orphan, duplicate ID, `~`가 남은 test token은 `GATE-DESIGN-INTEGRITY` 실패다. `T-DOCS-002`와 `T-PERF-001`~`005`는 registry와 09 문서에 모두 개별 정의한다.
+
 - 요구사항 변경은 ChangeRequest로 등록한다.
 - 영향받는 화면, CDD, API, 엔터티, 시험 ID를 자동·수동으로 추적한다.
 - 사업 범위·비용·일정·보안에 영향을 주는 변경은 CDR 또는 과업심의 승인을 요구한다.
 - 승인 전 요구사항은 구현 baseline에 포함하지 않는다.
 - 폐기된 요구사항도 사유, 승인자, 대체 요구사항과 함께 보존한다.
-
+- 기준값 변경은 `design-baseline.json`과 모든 narrative mirror를 같은 변경으로 갱신하고 semantic verifier를 통과해야 한다.

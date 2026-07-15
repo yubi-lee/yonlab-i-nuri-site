@@ -1,0 +1,349 @@
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+$runner = Join-Path (Split-Path -Parent $PSScriptRoot) "invoke-ai-training-platform-v1.ps1"
+$tokens = $null; $errors = $null
+$ast = [Management.Automation.Language.Parser]::ParseFile($runner, [ref]$tokens, [ref]$errors)
+if ($errors.Count -gt 0) { throw "runner parse failed" }
+foreach ($name in @("Canonical", "String-Sha256", "Bytes-Sha256", "Assert-BoundedFile", "Assert-NoReparseComponent", "Get-NoFollowTreeEntries", "Assert-StrictJsonLexical", "ConvertFrom-StrictJsonText", "Assert-CodexEventSemantics", "Read-CodexEvents", "Quote-WindowsArgument", "Get-ForbiddenExecutionEnvironmentNames", "Assert-NoExecutionEnvironmentOverrides", "Set-SafeProcessEnvironment", "Get-TrustedExecutableWorkingDirectory", "Test-SafeTrustedExecutablePathSyntax", "Get-GitGpgProgramSpec", "Get-GitHubCredentialHelperSpec", "New-KillOnCloseJob", "Close-KillOnCloseJob", "Stop-NativeProcessTree", "New-BoundedCaptureStream", "Invoke-NativeCaptureBytes", "Native", "Write-AtomicUtf8Text", "Read-Utf8NoBomText", "Try-PersistThreadReceipt", "Invoke-Utf8Process", "Invoke-TrustedValidatorProcess", "Get-FinalDocumentInventoryPaths", "Get-ThreadId", "Get-GitControlPlaneSnapshot", "Compare-GitControlPlaneSnapshot", "Get-GitReferenceSnapshot", "Compare-GitReferenceSnapshot", "Get-BoundedFileInventory", "Snapshot-Digest", "Test-UnsafeGitConfigName", "Assert-SafeGitConfigScopeNameFields", "Get-ValidSignatureStatus", "Assert-ValidSignaturePolicy", "Assert-ExactRequiredCiInventory")) {
+    $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
+    if ($null -eq $functionAst) { throw "missing function $name" }
+    . ([scriptblock]::Create($functionAst.Extent.Text))
+}
+function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/${ExitCode}: $Message" }
+$MaxJsonBytes = 8388608
+$MaxJsonlBytes = 268435456
+$MaxJsonlLineBytes = 1048576
+$MaxNativeCaptureBytes = 67108864
+$MaxNativeSeconds = 120
+$MaxCodexSeconds = 21600
+$MaxWorktreeSnapshotBytes = 268435456
+$MaxWorktreeFileBytes = 67108864
+$MaxWorktreeFiles = 20000
+$ProtectedGpgHome = "C:\ProgramData\YOnLab\gnupg"
+$script:GitHubCredentialHelper = $null
+$savedGitDir = $env:GIT_DIR
+try {
+    $env:GIT_DIR = "C:\attacker\forged-git-dir"
+    $environmentRejected = $false
+    try { Assert-NoExecutionEnvironmentOverrides } catch { $environmentRejected = $true }
+    if (-not $environmentRejected) { throw "GIT_DIR environment override was accepted" }
+} finally { $env:GIT_DIR = $savedGitDir }
+if (-not (Test-UnsafeGitConfigName "filter.evil.process") -or -not (Test-UnsafeGitConfigName "url.https://evil.invalid/.insteadOf") -or -not (Test-UnsafeGitConfigName "credential.helper") -or (Test-UnsafeGitConfigName "core.repositoryformatversion")) { throw "Git executable/redirect config classifier mismatch" }
+$safeCommandFields = @("command","core.fsmonitor","command","core.hookspath","command","core.pager","command","pager.branch","command","pager.log","local","core.repositoryformatversion")
+Assert-SafeGitConfigScopeNameFields $safeCommandFields
+foreach ($unsafePair in @(
+    @("system","filter.evil.process"),
+    @("global","credential.helper"),
+    @("local","url.https://evil.invalid/.insteadOf"),
+    @("command","alias.evil")
+)) {
+    $fixture = @($safeCommandFields) + @($unsafePair[0],$unsafePair[1])
+    $scopeRejected = $false
+    try { Assert-SafeGitConfigScopeNameFields $fixture } catch { $scopeRejected = $true }
+    if (-not $scopeRejected) { throw "unsafe $($unsafePair[0])-scope Git config was accepted: $($unsafePair[1])" }
+}
+$spaceSafeGpg = Get-GitGpgProgramSpec "C:\Program Files (x86)\GnuPG\bin\gpg.exe" "C:\ProgramData\YOnLab\gnupg"
+if ($spaceSafeGpg -cne '"C:/Program Files (x86)/GnuPG/bin/gpg.exe"') { throw "protected GPG executable specification mismatch" }
+$script:GitHubCredentialHelper = Get-GitHubCredentialHelperSpec "C:\Program Files\GitHub CLI\gh.exe"
+$safePsi = New-Object Diagnostics.ProcessStartInfo
+Set-SafeProcessEnvironment $safePsi
+if ($safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] -cne "1" -or $safePsi.EnvironmentVariables["GIT_CONFIG_KEY_0"] -cne "credential.https://github.com.helper" -or $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_0"] -cne '!"C:/Program Files/GitHub CLI/gh.exe" auth git-credential') { throw "pinned gh credential helper injection mismatch" }
+$script:GitHubCredentialHelper = $null
+Write-Host "PASS: rejects execution-affecting environment and Git configuration overrides"
+
+$signatureFingerprint = "0123456789ABCDEF0123456789ABCDEF01234567"
+$ed25519Status = "[GNUPG:] VALIDSIG $signatureFingerprint 2026-07-14 1784000000 0 4 0 22 8 00 $signatureFingerprint"
+[void](Assert-ValidSignaturePolicy $ed25519Status $signatureFingerprint "Ed25519 fixture")
+$rsaStatus = "[GNUPG:] VALIDSIG $signatureFingerprint 2026-07-14 1784000000 0 4 0 1 8 00 $signatureFingerprint"
+$rsaRejected = $false
+try { [void](Assert-ValidSignaturePolicy $rsaStatus $signatureFingerprint "RSA fixture") } catch { $rsaRejected = $true }
+if (-not $rsaRejected) { throw "RSA signature was accepted under Ed25519 signing policy" }
+Write-Host "PASS: rejects RSA signature under exact Ed25519/SHA-256 policy"
+
+$requiredChecks = @("design-package-linux", "design-package-windows", "security-and-schema", "release-signatures")
+$exactChecks = @($requiredChecks | ForEach-Object { [pscustomobject]@{name=$_} })
+if (@(Assert-ExactRequiredCiInventory ([pscustomobject]@{total_count=4;check_runs=$exactChecks}) $requiredChecks).Count -ne 4) { throw "exact CI inventory was rejected" }
+$extraChecks = @($exactChecks) + @([pscustomobject]@{name="trusted-extra-success"})
+$extraCiRejected = $false
+try { [void](Assert-ExactRequiredCiInventory ([pscustomobject]@{total_count=5;check_runs=$extraChecks}) $requiredChecks) } catch { $extraCiRejected = $true }
+if (-not $extraCiRejected) { throw "extra successful CI context was accepted" }
+Write-Host "PASS: rejects extra successful CI context outside exact four-check set"
+$strictJsonCases = @(
+    '{"A":1,"nested":{"b":[true,false,null,-1.25e+3]},"text":"한글\\n😀"}',
+    '[]',
+    '"root-string"'
+)
+foreach ($json in $strictJsonCases) { Assert-StrictJsonLexical $json "valid fixture" }
+$nonStrictJsonCases = @(
+    '{"a":1,"A":2}',
+    '{"schema_version":1,"schema_\u0076ersion":2}',
+    '{"a":01}',
+    '{"a":.1}',
+    '{"a":1.}',
+    '{"a":NaN}',
+    '{"a":1,}',
+    '{/*comment*/"a":1}',
+    '[1,]',
+    'true false'
+)
+foreach ($json in $nonStrictJsonCases) {
+    $rejected = $false
+    try { Assert-StrictJsonLexical $json "invalid fixture" } catch { $rejected = $true }
+    if (-not $rejected) { throw "strict JSON scanner accepted: $json" }
+}
+Write-Host "PASS: dependency-free strict JSON grammar and duplicate-property scanner"
+$threadId = "01990000-0000-7000-8000-000000000001"
+if ((Get-ThreadId @([pscustomobject]@{type="thread.started";thread_id=$threadId})) -cne $threadId) { throw "Codex thread UUID was rejected" }
+Write-Host "PASS: validated exact Codex thread UUID extraction"
+
+$workRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot "../../.."))
+$inventory = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $workRoot "yonlab-ai-training-platform-design/final-document-inventory.json") | ConvertFrom-Json
+$inventoryPaths = @(Get-FinalDocumentInventoryPaths $inventory "v1.0.0-rc1")
+$expectedInventoryCount = [int]$inventory.expected_counts.total
+if ($expectedInventoryCount -le 0 -or $inventoryPaths.Count -ne $expectedInventoryCount -or $inventoryPaths -notcontains "docs/releases/ai-training-platform/v1.0.0-rc1/README.md" -or $inventoryPaths -notcontains "dist/docs/v1.0.0-rc1/manuals/quick-start.pdf") { throw "normative final-document inventory expansion mismatch" }
+Write-Host "PASS: normative $expectedInventoryCount-path final-document inventory expansion"
+
+$temp = Join-Path ([IO.Path]::GetTempPath()) ("yonlab process test " + [Guid]::NewGuid().ToString("N"))
+[IO.Directory]::CreateDirectory($temp) | Out-Null
+try {
+    $gitDirectory = Join-Path $temp "repository/.git"
+    $commonDirectory = $gitDirectory
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "hooks")) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "info")) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "objects/info")) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "refs/replace")) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "refs/heads")) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "refs/tags")) | Out-Null
+    $dotGitPath = $gitDirectory
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "config"), "[core]`n`tbare = false`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "info/exclude"), "# baseline`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "HEAD"), "ref: refs/heads/main`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "index"), "synthetic-index", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "refs/heads/main"), ("a" * 40) + "`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $baselineControlPlane = Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath
+    $baselineReferences = Get-GitReferenceSnapshot $gitDirectory $commonDirectory
+
+    [IO.File]::AppendAllText((Join-Path $gitDirectory "config"), "`tfsmonitor = C:\attacker\marker.cmd`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if (Compare-GitControlPlaneSnapshot $baselineControlPlane (Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath)) { throw "core.fsmonitor mutation was not detected before post-Codex Git" }
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "config"), "[core]`n`tbare = false`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+
+    [IO.File]::AppendAllText((Join-Path $gitDirectory "config"), "[gpg]`n`tprogram = C:\attacker\fake-gpg.cmd`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if (Compare-GitControlPlaneSnapshot $baselineControlPlane (Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath)) { throw "fake gpg.program mutation was not detected before signed-tag verification" }
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "config"), "[core]`n`tbare = false`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+
+    [IO.File]::AppendAllText((Join-Path $gitDirectory "info/exclude"), ".forged-release-evidence`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if (Compare-GitControlPlaneSnapshot $baselineControlPlane (Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath)) { throw "info/exclude mutation was not detected before clean-worktree verification" }
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "info/exclude"), "# baseline`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+
+    $gitmodulesPath = Join-Path (Split-Path -Parent $gitDirectory) ".gitmodules"
+    [IO.File]::WriteAllText($gitmodulesPath, "[submodule `"evil`"]`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $gitmodulesRejected = $false
+    try { [void](Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath) } catch { $gitmodulesRejected = $true }
+    Remove-Item -LiteralPath $gitmodulesPath -Force
+    if (-not $gitmodulesRejected) { throw ".gitmodules creation was accepted" }
+    [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "modules/evil/hooks")) | Out-Null
+    $submoduleMetadataRejected = $false
+    try { [void](Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath) } catch { $submoduleMetadataRejected = $true }
+    Remove-Item -LiteralPath (Join-Path $gitDirectory "modules") -Recurse -Force
+    if (-not $submoduleMetadataRejected) { throw ".git/modules creation was accepted" }
+    Write-Host "PASS: Git control-plane detects fsmonitor, fake GPG, exclude, and submodule mutations"
+
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "refs/heads/main"), ("b" * 40) + "`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if (Compare-GitReferenceSnapshot $baselineReferences (Get-GitReferenceSnapshot $gitDirectory $commonDirectory)) { throw "Git ref mutation was not detected" }
+    [IO.File]::WriteAllText((Join-Path $gitDirectory "refs/heads/main"), ("a" * 40) + "`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if (-not (Compare-GitReferenceSnapshot $baselineReferences (Get-GitReferenceSnapshot $gitDirectory $commonDirectory))) { throw "Git reference snapshot did not return to baseline" }
+    Write-Host "PASS: Git reference snapshot detects index/HEAD/heads/tags/packed-refs mutation"
+
+    $outsideTree = Join-Path $temp "outside-tree"
+    [IO.Directory]::CreateDirectory($outsideTree) | Out-Null
+    foreach ($fixture in @(
+        [pscustomobject]@{root=(Join-Path $gitDirectory "hooks");code="GIT-CONTROL";label="hooks subtree"},
+        [pscustomobject]@{root=(Join-Path $gitDirectory "refs/tags");code="GIT-REFS";label="refs/tags subtree"},
+        [pscustomobject]@{root=(Join-Path $temp "gpg-home");code="PRE-TRUST";label="GPG subtree"},
+        [pscustomobject]@{root=(Join-Path $temp "artifact-root");code="POST-ARTIFACT";label="artifact subtree"}
+    )) {
+        [IO.Directory]::CreateDirectory([string]$fixture.root) | Out-Null
+        $link = Join-Path ([string]$fixture.root) "forbidden-reparse"
+        $itemType=$(if($env:OS -ceq "Windows_NT"){"Junction"}else{"SymbolicLink"})
+        New-Item -ItemType $itemType -Path $link -Target $outsideTree -ErrorAction Stop | Out-Null
+        $reparseRejected=$false
+        try {
+            if ([string]$fixture.code -ceq "GIT-CONTROL") { [void](Get-GitControlPlaneSnapshot $gitDirectory $commonDirectory $dotGitPath) }
+            elseif ([string]$fixture.code -ceq "GIT-REFS") { [void](Get-GitReferenceSnapshot $gitDirectory $commonDirectory) }
+            else { [void](Get-NoFollowTreeEntries ([string]$fixture.root) ([string]$fixture.code) ([string]$fixture.label)) }
+        } catch { $reparseRejected=$true }
+        Remove-Item -LiteralPath $link -Force
+        if (-not $reparseRejected) { throw "no-follow traversal accepted a reparse point in $($fixture.label)" }
+    }
+    Write-Host "PASS: no-follow BFS rejects hooks, refs/tags, GPG, and artifact subtree reparse points before descent"
+
+    $ignoredProbe = Join-Path (Split-Path -Parent $gitDirectory) "ignored-probe.bin"
+    [IO.File]::WriteAllText($ignoredProbe, "AAAA", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $ignoredBaseline = Get-BoundedFileInventory (Split-Path -Parent $gitDirectory) @("ignored-probe.bin") "ignored"
+    [IO.File]::WriteAllText($ignoredProbe, "BBBB", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $ignoredMutated = Get-BoundedFileInventory (Split-Path -Parent $gitDirectory) @("ignored-probe.bin") "ignored"
+    if ((Snapshot-Digest $ignoredBaseline) -ceq (Snapshot-Digest $ignoredMutated)) { throw "same-path/same-length ignored file content mutation was not detected" }
+    Write-Host "PASS: ignored inventory detects same-path same-length content mutation"
+
+    $malformedJsonl = Join-Path $temp "malformed-after-thread.jsonl"
+    [IO.File]::WriteAllText($malformedJsonl, "{`"type`":`"thread.started`",`"thread_id`":`"$threadId`"}`n{not-json}`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $parsed = Read-CodexEvents $malformedJsonl
+    if (@($parsed.Events).Count -ne 1 -or $null -eq $parsed.ParseError -or (Get-ThreadId @($parsed.Events)) -cne $threadId) { throw "stream parser did not preserve the validated thread receipt before malformed JSONL" }
+    Write-Host "PASS: malformed trailing JSONL preserves validated thread identity and fails closed"
+
+    $nonStringEvent = Join-Path $temp "non-string-thread-event.jsonl"
+    [IO.File]::WriteAllText($nonStringEvent, '{"type":["thread.started"],"thread_id":"01990000-0000-7000-8000-000000000001"}' + "`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if ($null -eq (Read-CodexEvents $nonStringEvent).ParseError) { throw "non-string Codex event type was accepted" }
+    $ambiguousEvent = Join-Path $temp "ambiguous-thread-event.jsonl"
+    [IO.File]::WriteAllText($ambiguousEvent, '{"type":"thread.started","thread_id":"01990000-0000-7000-8000-000000000001","message":"forged"}' + "`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if ($null -eq (Read-CodexEvents $ambiguousEvent).ParseError) { throw "ambiguous thread event property set was accepted" }
+    Write-Host "PASS: rejects-non-string-or-ambiguous-thread-events"
+
+    $oversizedJsonl = Join-Path $temp "oversized-line.jsonl"
+    [IO.File]::WriteAllText($oversizedJsonl, ('{"type":"error","message":"' + ('x' * ($MaxJsonlLineBytes + 1)) + '"}' + "`n"), (New-Object Text.UTF8Encoding -ArgumentList $false))
+    if ($null -eq (Read-CodexEvents $oversizedJsonl).ParseError) { throw "oversized JSONL line was accepted" }
+    $oversizedFinal = Join-Path $temp "oversized-final.json"
+    [IO.File]::WriteAllBytes($oversizedFinal, (New-Object byte[] ([int]($MaxJsonBytes + 1))))
+    $sizeRejected = $false; try { [void](Assert-BoundedFile $oversizedFinal $MaxJsonBytes "TEST" "oversized final JSON") } catch { $sizeRejected = $true }
+    if (-not $sizeRejected) { throw "oversized final JSON was accepted" }
+    Write-Host "PASS: fails-closed-on-oversized-jsonl-diff-and-final-json"
+
+    $noBomJson = Join-Path $temp "run-manifest.json"
+    Write-AtomicUtf8Text $noBomJson '{"manifest":"한글"}'
+    $rawNoBom = [IO.File]::ReadAllBytes($noBomJson)
+    if ($rawNoBom.Length -ge 3 -and $rawNoBom[0] -eq 0xEF -and $rawNoBom[1] -eq 0xBB -and $rawNoBom[2] -eq 0xBF) { throw "atomic UTF-8 writer emitted BOM" }
+    if ((Read-Utf8NoBomText $noBomJson 1024 "manifest") -cne '{"manifest":"한글"}') { throw "UTF-8 no-BOM round trip failed" }
+    Write-Host "PASS: WinPS5-safe no-BOM run/resume artifact encoding"
+
+    $currentPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+    $oversizedNativeScript = '[Console]::Out.Write("x" * 4096); [Console]::Error.Write("y" * 4096)'
+    $oversizedNativeEncoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($oversizedNativeScript))
+    $savedNativeLimit = $MaxNativeCaptureBytes
+    $nativeLimitRejected = $false
+    try {
+        $MaxNativeCaptureBytes = 1024
+        [void](Native $currentPowerShell @("-NoLogo", "-NoProfile", "-EncodedCommand", $oversizedNativeEncoded))
+    } catch { $nativeLimitRejected = $_.Exception.Message -match 'bounded total capture limit' }
+    finally { $MaxNativeCaptureBytes = $savedNativeLimit }
+    if (-not $nativeLimitRejected) { throw "bounded Native helper accepted oversized stdout/stderr" }
+    Write-Host "PASS: bounded Native helper rejects oversized stdout/stderr"
+
+    $nativeTimeoutScript = 'Start-Sleep -Seconds 3; [Console]::Out.Write("late")'
+    $nativeTimeoutEncoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($nativeTimeoutScript))
+    $nativeTimeoutRejected = $false
+    try { [void](Invoke-NativeCaptureBytes $currentPowerShell @("-NoLogo", "-NoProfile", "-EncodedCommand", $nativeTimeoutEncoded) 1024 1) }
+    catch { $nativeTimeoutRejected = $_.Exception.Message -match 'hard timeout' }
+    if (-not $nativeTimeoutRejected) { throw "Native helper accepted a process past its hard deadline" }
+    Write-Host "PASS: Native helper enforces a hard per-command deadline"
+
+    $nativeToolDirectory = Join-Path $temp "protected native tool parent"
+    New-Item -ItemType Directory -Path $nativeToolDirectory | Out-Null
+    $nativeWorkingDirectoryMock = Join-Path $nativeToolDirectory "working-directory-tool"
+    [IO.File]::WriteAllText($nativeWorkingDirectoryMock, "#!/usr/bin/env bash`nprintf '%s' `"`$PWD`"`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    & chmod +x $nativeWorkingDirectoryMock
+    if ($LASTEXITCODE -ne 0) { throw "native working-directory mock chmod failed" }
+    $nativeWorkingDirectoryResult = Invoke-NativeCaptureBytes $nativeWorkingDirectoryMock @() 4096 10
+    $nativeObservedWorkingDirectory = (New-Object Text.UTF8Encoding -ArgumentList $false, $true).GetString($nativeWorkingDirectoryResult.Bytes)
+    if (-not [StringComparer]::Ordinal.Equals(([IO.Path]::GetFullPath($nativeToolDirectory)), ([IO.Path]::GetFullPath($nativeObservedWorkingDirectory)))) { throw "Native helper inherited repository/current working directory instead of executable parent" }
+    Write-Host "PASS: Native helper pins executable-parent working directory"
+
+    $mock = Join-Path $temp "mock codex executable"
+    $inputReceipt = Join-Path $temp "input.bin"
+    $stdout = Join-Path $temp "stdout.jsonl"
+    $stderr = Join-Path $temp "stderr.log"
+    $script = @'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s' "$PWD" > "$MOCK_WORKING_DIRECTORY_RECEIPT"
+cat > "$MOCK_INPUT_RECEIPT"
+printf '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001","text":"한글"}\n'
+for i in $(seq 1 20000); do printf '{"type":"item","i":%s,"text":"가나다"}\n' "$i"; done
+for i in $(seq 1 20000); do printf '오류-stream-%s-abcdefghijklmnopqrstuvwxyz\n' "$i" >&2; done
+'@
+    [IO.File]::WriteAllText($mock, $script, (New-Object Text.UTF8Encoding -ArgumentList $false))
+    & chmod +x $mock
+    if ($LASTEXITCODE -ne 0) { throw "chmod failed" }
+    $env:MOCK_INPUT_RECEIPT = $inputReceipt
+    $workingDirectoryReceipt = Join-Path $temp "codex-working-directory.txt"
+    $env:MOCK_WORKING_DIRECTORY_RECEIPT = $workingDirectoryReceipt
+    $input = "한국어 프롬프트`n경로 공백 및 😀`n"
+    $code = Invoke-Utf8Process -Command $mock -Arguments @() -InputText $input -StdoutPath $stdout -StderrPath $stderr
+    if ($code -ne 0) { throw "mock returned $code" }
+    $expected = (New-Object Text.UTF8Encoding -ArgumentList $false, $true).GetBytes($input)
+    $actual = [IO.File]::ReadAllBytes($inputReceipt)
+    if ([Convert]::ToBase64String($expected) -cne [Convert]::ToBase64String($actual)) { throw "UTF-8 stdin bytes differ" }
+    $observedCodexWorkingDirectory = [IO.File]::ReadAllText($workingDirectoryReceipt).Trim()
+    if (-not [StringComparer]::Ordinal.Equals(([IO.Path]::GetFullPath((Split-Path -Parent $mock))), ([IO.Path]::GetFullPath($observedCodexWorkingDirectory)))) { throw "Codex process inherited repository/current working directory instead of executable parent" }
+    $strict = New-Object Text.UTF8Encoding -ArgumentList $false, $true
+    $outText = $strict.GetString([IO.File]::ReadAllBytes($stdout)); $errText = $strict.GetString([IO.File]::ReadAllBytes($stderr))
+    if (-not $outText.Contains('"text":"한글"') -or -not $outText.Contains('"i":20000')) { throw "stdout capture incomplete" }
+    if (-not $errText.Contains('오류-stream-20000')) { throw "stderr capture incomplete" }
+    Write-Host "PASS: UTF-8 concurrent large stdout/stderr mock with space path"
+
+    $timeoutMock = Join-Path $temp "timeout mock executable"
+    [IO.File]::WriteAllText($timeoutMock, "#!/usr/bin/env bash`ncat >/dev/null`nsleep 3`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
+    & chmod +x $timeoutMock
+    if ($LASTEXITCODE -ne 0) { throw "timeout mock chmod failed" }
+    $codexTimeoutRejected = $false
+    try { [void](Invoke-Utf8Process -Command $timeoutMock -Arguments @() -InputText "deadline`n" -StdoutPath $stdout -StderrPath $stderr -TimeoutSeconds 1) }
+    catch { $codexTimeoutRejected = $_.Exception.Message -match 'hard timeout' }
+    if (-not $codexTimeoutRejected) { throw "Codex process helper accepted a process past its hard deadline" }
+    Write-Host "PASS: Codex process helper enforces a hard execution deadline"
+
+    $heartbeatMock = Join-Path $temp "heartbeat mock executable"
+    $heartbeatScript = @'
+#!/usr/bin/env bash
+set -euo pipefail
+cat >/dev/null
+for i in $(seq 1 20000); do printf '{"type":"item","i":%s,"padding":"abcdefghijklmnopqrstuvwxyz0123456789"}\n' "$i"; done
+printf '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001"}\n'
+sleep 2.2
+printf '{"type":"turn.completed"}\n'
+'@
+    [IO.File]::WriteAllText($heartbeatMock, $heartbeatScript, (New-Object Text.UTF8Encoding -ArgumentList $false))
+    & chmod +x $heartbeatMock
+    if ($LASTEXITCODE -ne 0) { throw "heartbeat mock chmod failed" }
+    $heartbeatStdout = Join-Path $temp "heartbeat.jsonl"
+    $heartbeatStderr = Join-Path $temp "heartbeat-errors.log"
+    $heartbeatMessages = @(& {
+        Invoke-Utf8Process -Command $heartbeatMock -Arguments @() -InputText "heartbeat`n" `
+            -StdoutPath $heartbeatStdout -StderrPath $heartbeatStderr -RunId "heartbeat-test" `
+            -HeartbeatSeconds 1 -ResumeCommand "resume-exact"
+    } 6>&1 | ForEach-Object { $_.ToString() })
+    if (-not ($heartbeatMessages -match '^RUNNING: run_id=heartbeat-test, elapsed=.+, progress=.+, stdout_bytes=[0-9]+, stderr_bytes=[0-9]+')) {
+        throw "heartbeat console message missing"
+    }
+    if (-not ($heartbeatMessages -match 'stdout_bytes=[1-9][0-9]{6,}.*event=(item|thread\.started)')) { throw "bounded tail did not summarize a complete event from the large JSONL: $($heartbeatMessages -join ' | ')" }
+    $heartbeatRaw = [IO.File]::ReadAllText($heartbeatStdout, $strict)
+    if ($heartbeatRaw.Contains('RUNNING:') -or -not $heartbeatRaw.Contains('"type":"turn.completed"')) {
+        throw "heartbeat altered raw JSONL evidence"
+    }
+    Write-Host "PASS: heartbeat is console-only while JSONL remains byte-faithful"
+
+    $cmd = Join-Path $temp "forbidden-shell-shim.cmd"
+    [IO.File]::WriteAllText($cmd, "@echo off`r`nexit /b 0`r`n", [Text.Encoding]::ASCII)
+    $shimRejected = $false
+    try {
+        [void](Invoke-Utf8Process -Command $cmd -Arguments @() -InputText "forbidden`n" -StdoutPath $stdout -StderrPath $stderr)
+    } catch {
+        $shimRejected = $_.Exception.Message -match "shell shims are forbidden"
+    }
+    if (-not $shimRejected) { throw "Invoke-Utf8Process accepted a .cmd shell shim" }
+    Write-Host "PASS: process helper rejects .cmd/.bat shell shims"
+
+    $validatorWorkingDirectory = [IO.Path]::GetFullPath((Split-Path -Parent $currentPowerShell)).Replace("'", "''")
+    $largeValidator = ("# trusted validator padding`n" * 4096) + @'
+param([string]$ResultPath,[string]$ExpectedRunId,[string]$ProjectRoot,[string]$ExpectedAttemptStartedAt)
+if ($ExpectedRunId -cne "large-validator-test") { exit 9 }
+if (-not [StringComparer]::Ordinal.Equals([IO.Path]::GetFullPath([Environment]::CurrentDirectory), '__TRUSTED_EXECUTABLE_PARENT__')) { exit 10 }
+exit 0
+'@
+    $largeValidator = $largeValidator.Replace("__TRUSTED_EXECUTABLE_PARENT__", $validatorWorkingDirectory)
+    $largeBytes = (New-Object Text.UTF8Encoding -ArgumentList $false).GetBytes($largeValidator)
+    if ($largeBytes.Length -le 32768) { throw "large trusted validator fixture is too small" }
+    $validatorResult = Invoke-TrustedValidatorProcess -PowerShellCommand $currentPowerShell -TrustedValidatorBytes $largeBytes -ResultPath (Join-Path $temp "unused.json") -ExpectedRunId "large-validator-test" -ProjectRoot $temp -ExpectedAttemptStartedAt ([DateTimeOffset]::UtcNow.ToString("o"))
+    if ($validatorResult.ExitCode -ne 0) { throw "large stdin validator failed: $($validatorResult.Text)" }
+    Write-Host "PASS: validator larger than Windows command-line limit executes from preloaded stdin bytes"
+} finally {
+    Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
+}

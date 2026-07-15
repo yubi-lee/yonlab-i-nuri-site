@@ -1,0 +1,57 @@
+{
+  "headers": {
+    "content_type": "application/json",
+    "idempotency_key": "00000000-0000-4000-8000-000000000011",
+    "x_request_id": "00000000-0000-4000-8000-000000000012",
+    "traceparent": "00-11111111111111111111111111111111-2222222222222222-01",
+    "workload_spiffe_id": "spiffe://yonlab/test/application-api"
+  },
+  "body": {
+    "task": "diagnosis.evidence.extract",
+    "tenant_id": "00000000-0000-4000-8000-000000000001",
+    "input": {"messages": [{"role": "user", "content": "비식별 합성 발화"}]},
+    "response_schema_id": "diagnosis-evidence.v1",
+    "policy_versions": {
+      "routing": "routing.v1",
+      "prompt": "diagnosis-evidence-prompt.v1",
+      "model_registry": "model-registry.v1",
+      "schema_registry": "schema-registry.v1",
+      "data_use": "data-use.v1",
+      "consent_authorization": "consent-authz.v1",
+      "tenant_isolation": "tenant-isolation.v1",
+      "safeguarding_routing": "safeguarding-routing.v1"
+    },
+    "latency_budget_ms": 8000,
+    "data_use_context": {
+      "payload": {
+        "schema": "DataUseContext.v1",
+        "context_id": "00000000-0000-4000-8000-000000000013",
+        "tenant_id": "00000000-0000-4000-8000-000000000001",
+        "subject_pseudonym": "teacher-pseudonym-001",
+        "purpose": "diagnosis_support",
+        "task": "diagnosis.evidence.extract",
+        "data_class": "INTERNAL",
+        "field_categories": ["diagnosis_narrative.redacted"],
+        "allowed_destination": "INTERNAL_SLLM",
+        "consent_basis": "CONSENT",
+        "consent_epoch": 17,
+        "acl_version": 42,
+        "safeguarding_decision": "STANDARD",
+        "policy_versions": {
+          "DataUsePolicyVersion": "data-use.v1",
+          "ConsentAuthorizationPolicyVersion": "consent-authz.v1",
+          "TenantIsolationPolicyVersion": "tenant-isolation.v1",
+          "SafeguardingRoutingPolicyVersion": "safeguarding-routing.v1"
+        },
+        "payload_sha256": "69eed1935aee197595dd0800c986cfa8dd02fb25c9413dbfb76a8de83008ada6",
+        "issuer": "spiffe://yonlab/test/identity-consent",
+        "audience": "spiffe://yonlab/test/ai-gateway",
+        "issued_at": "2026-07-13T00:00:00Z",
+        "expires_at": "2026-07-13T00:01:00Z",
+        "trace_id": "00000000-0000-4000-8000-000000000014"
+      },
+      "signature": "YWJj..ZGVm",
+      "canonicalization": "JCS"
+    }
+  }
+}

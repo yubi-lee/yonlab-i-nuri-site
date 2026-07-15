@@ -1,0 +1,803 @@
+{
+  "schema_version": "operation-authorization-contracts.v1",
+  "policy_version": "high-privilege-abac.v1",
+  "default_decision": "DENY",
+  "data_use_policy_registry_ref": "data-use-policy-registry.json",
+  "role_vocabulary": [
+    "ROLE_AI_PLATFORM_OPERATOR",
+    "ROLE_CHILD_SAFEGUARDING_REVIEWER",
+    "ROLE_DATABASE_OPERATOR",
+    "ROLE_DATA_OWNER",
+    "ROLE_DIAGNOSIS_REVIEWER",
+    "ROLE_DOCUMENT_APPROVER",
+    "ROLE_DOCUMENT_EDITOR",
+    "ROLE_EDUCATION_APPROVER",
+    "ROLE_EVALUATION_OPERATOR",
+    "ROLE_IDENTITY_OPERATOR",
+    "ROLE_MODEL_RISK_APPROVER",
+    "ROLE_PRIVACY_APPROVER",
+    "ROLE_PRIVACY_OPERATOR",
+    "ROLE_PRIVACY_REVIEWER",
+    "ROLE_RIGHTS_APPROVER",
+    "ROLE_RUBRIC_EDITOR",
+    "ROLE_SECURITY_APPROVER",
+    "ROLE_SERVICE_OWNER"
+  ],
+  "operations": [
+    {
+      "operation_id": "OP-DIAGNOSIS-OVERRIDE",
+      "action": "DIAGNOSIS_EVIDENCE_OVERRIDE",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_DIAGNOSIS_REVIEWER"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_CHILD_SAFEGUARDING_REVIEWER",
+          "ROLE_PRIVACY_REVIEWER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-RUBRIC-PUBLISH",
+      "action": "RUBRIC_VERSION_PUBLISH",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_RUBRIC_EDITOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_EDUCATION_APPROVER",
+          "ROLE_MODEL_RISK_APPROVER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-EVAL-EXPORT",
+      "action": "PSEUDONYMOUS_EVALUATION_EXPORT",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_EVALUATION_OPERATOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_PRIVACY_REVIEWER",
+          "ROLE_DATA_OWNER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-HWP-PUBLISH",
+      "action": "HWP_DRAFT_TEMPLATE_PUBLISH",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_DOCUMENT_EDITOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_DOCUMENT_APPROVER",
+          "ROLE_RIGHTS_APPROVER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-PROVIDER-ACTIVATE",
+      "action": "PROVIDER_DEPLOYMENT_ACTIVATE",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_AI_PLATFORM_OPERATOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_SECURITY_APPROVER",
+          "ROLE_MODEL_RISK_APPROVER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-LINEAGE-DELETE",
+      "action": "LINEAGE_CASCADE_DELETE",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_PRIVACY_OPERATOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_DATA_OWNER",
+          "ROLE_PRIVACY_APPROVER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-BACKUP-RESTORE",
+      "action": "PRODUCTION_BACKUP_RESTORE",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_DATABASE_OPERATOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_SERVICE_OWNER",
+          "ROLE_SECURITY_APPROVER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    },
+    {
+      "operation_id": "OP-ADMIN-GRANT",
+      "action": "PRIVILEGED_ROLE_GRANT",
+      "risk_tier": "HIGH_PRIVILEGE",
+      "initiator_roles": [
+        "ROLE_IDENTITY_OPERATOR"
+      ],
+      "subject_constraints": [
+        "active=true",
+        "mfa_age_seconds<=300",
+        "session_assurance=AAL2_OR_HIGHER"
+      ],
+      "resource_constraints": [
+        "tenant_id==subject.tenant_id",
+        "resource.tenant_id==request.tenant_id",
+        "resource_state_is_current=true"
+      ],
+      "environment_constraints": [
+        "approved_change_window=true",
+        "policy_bundle_fresh=true",
+        "audit_sink_ready=true"
+      ],
+      "separation_of_duties": {
+        "initiator_cannot_approve": true,
+        "approvers_must_be_distinct": true,
+        "approver_role_sets": [
+          "ROLE_SECURITY_APPROVER",
+          "ROLE_SERVICE_OWNER"
+        ]
+      },
+      "dual_approval": {
+        "required": true,
+        "minimum_distinct_approvers": 2,
+        "approval_ttl_seconds": 1800,
+        "bind_fields": [
+          "operation_id",
+          "tenant_id",
+          "resource_id",
+          "resource_version",
+          "request_sha256",
+          "purpose",
+          "expires_at"
+        ]
+      },
+      "data_use_authorization": {
+        "registry_ref": "data-use-policy-registry.json",
+        "required_decision": "ALLOW",
+        "purpose_exact_match": true,
+        "field_allowlist_exact_match": true,
+        "redaction_receipt_required": true
+      },
+      "success_receipts": [
+        "POLICY_DECISION_RECEIPT",
+        "DUAL_APPROVAL_RECEIPT",
+        "REDACTION_RECEIPT",
+        "AUDIT_COMMIT_RECEIPT"
+      ]
+    }
+  ],
+  "operation_vectors": [
+    {
+      "case_id": "OP-DIAGNOSIS-OVERRIDE-ALLOW",
+      "operation_id": "OP-DIAGNOSIS-OVERRIDE",
+      "initiator_role": "ROLE_DIAGNOSIS_REVIEWER",
+      "approver_roles": [
+        "ROLE_CHILD_SAFEGUARDING_REVIEWER",
+        "ROLE_PRIVACY_REVIEWER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-DIAGNOSIS-OVERRIDE-DENY-SOD",
+      "operation_id": "OP-DIAGNOSIS-OVERRIDE",
+      "initiator_role": "ROLE_DIAGNOSIS_REVIEWER",
+      "approver_roles": [
+        "ROLE_DIAGNOSIS_REVIEWER",
+        "ROLE_CHILD_SAFEGUARDING_REVIEWER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-RUBRIC-PUBLISH-ALLOW",
+      "operation_id": "OP-RUBRIC-PUBLISH",
+      "initiator_role": "ROLE_RUBRIC_EDITOR",
+      "approver_roles": [
+        "ROLE_EDUCATION_APPROVER",
+        "ROLE_MODEL_RISK_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-RUBRIC-PUBLISH-DENY-SOD",
+      "operation_id": "OP-RUBRIC-PUBLISH",
+      "initiator_role": "ROLE_RUBRIC_EDITOR",
+      "approver_roles": [
+        "ROLE_RUBRIC_EDITOR",
+        "ROLE_EDUCATION_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-EVAL-EXPORT-ALLOW",
+      "operation_id": "OP-EVAL-EXPORT",
+      "initiator_role": "ROLE_EVALUATION_OPERATOR",
+      "approver_roles": [
+        "ROLE_PRIVACY_REVIEWER",
+        "ROLE_DATA_OWNER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-EVAL-EXPORT-DENY-SOD",
+      "operation_id": "OP-EVAL-EXPORT",
+      "initiator_role": "ROLE_EVALUATION_OPERATOR",
+      "approver_roles": [
+        "ROLE_EVALUATION_OPERATOR",
+        "ROLE_PRIVACY_REVIEWER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-HWP-PUBLISH-ALLOW",
+      "operation_id": "OP-HWP-PUBLISH",
+      "initiator_role": "ROLE_DOCUMENT_EDITOR",
+      "approver_roles": [
+        "ROLE_DOCUMENT_APPROVER",
+        "ROLE_RIGHTS_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-HWP-PUBLISH-DENY-SOD",
+      "operation_id": "OP-HWP-PUBLISH",
+      "initiator_role": "ROLE_DOCUMENT_EDITOR",
+      "approver_roles": [
+        "ROLE_DOCUMENT_EDITOR",
+        "ROLE_DOCUMENT_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-PROVIDER-ACTIVATE-ALLOW",
+      "operation_id": "OP-PROVIDER-ACTIVATE",
+      "initiator_role": "ROLE_AI_PLATFORM_OPERATOR",
+      "approver_roles": [
+        "ROLE_SECURITY_APPROVER",
+        "ROLE_MODEL_RISK_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-PROVIDER-ACTIVATE-DENY-SOD",
+      "operation_id": "OP-PROVIDER-ACTIVATE",
+      "initiator_role": "ROLE_AI_PLATFORM_OPERATOR",
+      "approver_roles": [
+        "ROLE_AI_PLATFORM_OPERATOR",
+        "ROLE_SECURITY_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-LINEAGE-DELETE-ALLOW",
+      "operation_id": "OP-LINEAGE-DELETE",
+      "initiator_role": "ROLE_PRIVACY_OPERATOR",
+      "approver_roles": [
+        "ROLE_DATA_OWNER",
+        "ROLE_PRIVACY_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-LINEAGE-DELETE-DENY-SOD",
+      "operation_id": "OP-LINEAGE-DELETE",
+      "initiator_role": "ROLE_PRIVACY_OPERATOR",
+      "approver_roles": [
+        "ROLE_PRIVACY_OPERATOR",
+        "ROLE_DATA_OWNER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-BACKUP-RESTORE-ALLOW",
+      "operation_id": "OP-BACKUP-RESTORE",
+      "initiator_role": "ROLE_DATABASE_OPERATOR",
+      "approver_roles": [
+        "ROLE_SERVICE_OWNER",
+        "ROLE_SECURITY_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-BACKUP-RESTORE-DENY-SOD",
+      "operation_id": "OP-BACKUP-RESTORE",
+      "initiator_role": "ROLE_DATABASE_OPERATOR",
+      "approver_roles": [
+        "ROLE_DATABASE_OPERATOR",
+        "ROLE_SERVICE_OWNER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-ADMIN-GRANT-ALLOW",
+      "operation_id": "OP-ADMIN-GRANT",
+      "initiator_role": "ROLE_IDENTITY_OPERATOR",
+      "approver_roles": [
+        "ROLE_SECURITY_APPROVER",
+        "ROLE_SERVICE_OWNER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "ALLOW",
+      "provider_calls_before_allow": 0
+    },
+    {
+      "case_id": "OP-ADMIN-GRANT-DENY-SOD",
+      "operation_id": "OP-ADMIN-GRANT",
+      "initiator_role": "ROLE_IDENTITY_OPERATOR",
+      "approver_roles": [
+        "ROLE_IDENTITY_OPERATOR",
+        "ROLE_SECURITY_APPROVER"
+      ],
+      "tenant_relation": "SAME_TENANT",
+      "redaction_receipt": "VALID_AND_PAYLOAD_BOUND",
+      "expected_decision": "DENY",
+      "provider_calls_before_allow": 0
+    }
+  ],
+  "decision_algorithm": [
+    "STRICT_PARSE_AND_REJECT_UNKNOWN",
+    "AUTHENTICATE_AAL2_AND_CURRENT_SESSION",
+    "BIND_TENANT_SUBJECT_RESOURCE_AND_REQUEST_HASH",
+    "EVALUATE_OPERATION_ABAC_DENY_OVERRIDES",
+    "VERIFY_SOD_AND_TWO_DISTINCT_FRESH_APPROVALS",
+    "AUTHORIZE_DATA_PURPOSE_FIELDS_AND_DESTINATION",
+    "VERIFY_REDACTION_RECEIPT_AGAINST_PAYLOAD_HASH",
+    "COMMIT_IMMUTABLE_AUDIT_PRECONDITION",
+    "EXECUTE_ONCE_WITH_IDEMPOTENCY_KEY",
+    "COMMIT_RESULT_RECEIPT_OR_COMPENSATE"
+  ],
+  "deny_invariants": {
+    "unknown_operation": "DENY",
+    "unknown_attribute": "DENY",
+    "missing_attribute": "DENY",
+    "cross_tenant": "DENY_AND_SECURITY_EVENT",
+    "stale_or_replayed_approval": "DENY",
+    "missing_redaction_receipt": "DENY",
+    "provider_call_count": 0,
+    "side_effect_count": 0,
+    "sensitive_field_in_log_count": 0
+  },
+  "redaction_receipt": {
+    "registry_contract_ref": "data-use-policy-registry.json#/redaction_receipt_contract",
+    "required_fields": [
+      "receipt_id",
+      "policy_version",
+      "input_hash",
+      "output_hash",
+      "removed_field_codes",
+      "decision",
+      "provider_call_count",
+      "tenant_id",
+      "operation_id",
+      "issued_at",
+      "expires_at",
+      "issuer",
+      "signature"
+    ],
+    "signature": "ED25519_OVER_RFC8785_JCS",
+    "maximum_lifetime_seconds": 300,
+    "empty_removed_fields_allowed_only_if_policy_expected_empty": true
+  },
+  "negative_vectors": [
+    {
+      "case_id": "AUTH-N-001",
+      "mutation": "missing_second_approval",
+      "expected_decision": "DENY",
+      "expected_provider_calls": 0
+    },
+    {
+      "case_id": "AUTH-N-002",
+      "mutation": "initiator_is_approver",
+      "expected_decision": "DENY",
+      "expected_provider_calls": 0
+    },
+    {
+      "case_id": "AUTH-N-003",
+      "mutation": "cross_tenant_resource",
+      "expected_decision": "DENY_AND_SECURITY_EVENT",
+      "expected_provider_calls": 0
+    },
+    {
+      "case_id": "AUTH-N-004",
+      "mutation": "stale_policy_bundle",
+      "expected_decision": "DENY",
+      "expected_provider_calls": 0
+    },
+    {
+      "case_id": "AUTH-N-005",
+      "mutation": "missing_redaction_receipt",
+      "expected_decision": "DENY",
+      "expected_provider_calls": 0
+    },
+    {
+      "case_id": "AUTH-N-006",
+      "mutation": "unknown_operation",
+      "expected_decision": "DENY",
+      "expected_provider_calls": 0
+    }
+  ],
+  "audit": {
+    "required_fields": [
+      "decision_id",
+      "operation_id",
+      "tenant_id",
+      "subject_pseudonym",
+      "resource_id",
+      "policy_hash",
+      "approval_receipt_hashes",
+      "redaction_receipt_hash",
+      "request_sha256",
+      "decision",
+      "reason_codes",
+      "provider_call_count",
+      "occurred_at"
+    ],
+    "raw_payload": "FORBIDDEN",
+    "append_only": true
+  }
+}

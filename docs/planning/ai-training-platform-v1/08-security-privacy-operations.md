@@ -3,25 +3,31 @@
 문서 ID: SEC-OPS-008  
 보안 기준: 최소권한, zero implicit trust, privacy by design, fail closed
 
+동의 epoch, tenant/RLS, 권리 철회, safeguarding와 물리 파기의 normative contract는 [규범 정책·인터페이스 계약](15-normative-policy-and-interface-contracts.md)이다.
+
 ## 1. 데이터 분류와 처리
 
 | 등급 | 예시 | 저장·전송 | AI 처리 |
 |---|---|---|---|
 | PUBLIC | 게시 승인 교육자료 | 표준 암호화 | 승인 외부·내부 모델 허용 |
 | INTERNAL | 운영 메타, 가명 평가셋 | 조직 접근통제 | 최소화 후 승인 route |
-| PERSONAL | 이름, 이메일, 자유서술, 학습이력 | field/volume 암호화, 목적별 권한 | 비식별 field만 외부 허용 |
+| CONFIDENTIAL | 이름, 이메일, 비식별·최소화된 학습이력 | field/volume 암호화, 목적별 권한 | field redaction과 signed policy authorization 뒤 승인 외부 route 가능 |
 | RESTRICTED | raw 감사, 보안자료, 고위험 원문 | 분리 key, 강한 감사, 반출승인 | 외부 전송 금지 |
 
 데이터 소유자는 수집 목적, 필수성, 보유기간, 처리자, 제3자 제공, 파기방식을 DataProcessingRegistry에 등록한다. 목적이 없는 field는 수집하지 않는다.
+
+정확한 4등급 어휘와 entity별 floor·상속·retention·deletion은 [persistent-domain-catalog.json](persistent-domain-catalog.json)이 고정한다. 파생물은 source 중 가장 강한 등급을 상속하고 unknown은 `RESTRICTED`다. 기관·cohort 분석은 기본 집단크기 10 미만을 억제하며, 5 미만으로 낮출 수 없고 변경에는 보안·제품 승인과 privacy regression 증거가 필요하다.
+
+미분류 교사 자유서술·narrative와 raw/scanned upload는 `RESTRICTED`다. 분류와 signed policy authorization이 성공하기 전 external AI egress는 `DENY`이며 unknown safeguarding 결과도 fail closed 한다.
 
 ## 2. 개인정보 생명주기
 
 1. 가입·진단·시범운영 목적별 동의를 분리한다.
 2. 교사 맥락의 심리상태는 임상정보가 아닌 사용자가 선택한 학습지원 제약으로 최소 수집한다.
 3. 분석·AI 평가에는 직접 식별자를 분리하고 rotating pseudonym을 사용한다.
-4. 동의 철회 즉시 신규 처리를 중단하고 파기 job을 생성한다.
+4. 동의 grant·철회·범위 변경 transaction은 `(tenant, subject, purpose)`의 `consent_epoch`을 증가시킨다. 철회 commit 즉시 신규 처리를 중단하고 파기 job을 생성한다.
 5. 내보내기는 재인증, 비동기 생성, 짧은 signed URL, 다운로드 감사를 적용한다.
-6. 파기는 DB, object, index, cache, 평가 복제본을 lineage로 확인하고 증적을 보존한다.
+6. 파기는 DB, object/version, index/vector, cache, 평가 복제본, export, provider artifact를 lineage로 확인하고 adapter receipt와 독립 검증 증적을 보존한다.
 
 ## 3. 인증·세션·권한
 
@@ -32,8 +38,16 @@
 - 권한·secret·삭제·반출·모델배포 변경은 15분 이내 재인증한다.
 - RBAC로 기능을, ABAC로 tenant·organization·ownership·data class를 판단한다.
 - 사용자·기관 관리자는 다른 교사의 진단 원문을 기본 열람할 수 없다.
+- tenant-scoped DB는 tenant 포함 PK/FK와 `FORCE RLS`를 적용하고 service role의 `BYPASSRLS`를 금지한다. object/cache/vector/event는 동일 tenant namespace와 cross-tenant 부정 시험을 요구한다.
+- access token은 하나의 `active_tenant_id`와 current membership version만 갖는다. tenant 전환은 membership 재검증 후 새 token 발급으로만 수행하며 request tenant override를 금지한다. 공개 자료는 별도 immutable public registry allowlist를 사용한다.
 
 ## 4. 애플리케이션 보안
+
+### 4.1 고권한 operation authorization
+
+[operation-authorization-contracts.json](operation-authorization-contracts.json)은 진단 evidence override, rubric publish, 가명 평가 export, HWP template publish, provider activation, lineage delete, production restore, privileged role grant의 8개 operation을 닫힌 allowlist로 고정한다. 모든 operation은 `DENY`가 기본이며 AAL2 current session, subject/resource/request tenant 일치, fresh policy bundle, 승인 change window와 audit sink readiness를 동시에 요구한다.
+
+요청 initiator는 approver가 될 수 없고 서로 다른 승인 역할의 두 principal이 request hash·tenant·resource version·purpose·만료시각에 서명해야 한다. [data-use-policy-registry.json](data-use-policy-registry.json)의 exact purpose/field/destination `ALLOW`와 payload hash에 결속된 redaction receipt가 추가로 필요하다. unknown/missing attribute, cross-tenant, stale/replayed approval, 누락 receipt는 provider 호출·side effect 전에 거부하며 이때 provider call, side effect, 민감 log 수는 모두 0이어야 한다.
 
 | 위협 | 통제 |
 |---|---|
@@ -54,10 +68,14 @@ Critical/High 취약점은 production release를 차단한다. Medium은 위험 
 - system/developer prompt와 검색 문서를 서로 다른 trust level로 취급한다.
 - 문서 안의 지시문은 실행하지 않고 인용 데이터로만 처리한다.
 - tool 호출은 task별 allowlist, typed argument, 사용자·정책 승인으로 제한한다.
-- 검색 전에 ACL을 적용하고 citation 조회 때 다시 권한을 확인한다.
-- 외부 AI egress는 AI Gateway와 outbound allowlist를 통과해야 한다.
+- 검색 전에 tenant/current ACL을 적용하고 citation 반환·dereference 때 현재 membership·publication·license·retention과 `acl_version`을 동기 재승인한다. index rollback은 현재 권리를 rollback할 수 없다.
+- 외부 AI egress는 별도 내부 AI Gateway와 outbound allowlist를 통과해야 한다. API/worker→Gateway는 mTLS workload identity와 canonical API를 사용하며 provider credential은 Gateway에만 존재한다.
+- 모든 generation·embedding·rerank·repair는 signed `DataUseContext`를 포함하고 Gateway가 current `consent_epoch`과 `acl_version`을 매 호출 동기 승인한다. stale·authorization 장애·unknown policy는 provider 호출 없이 거부한다.
+- workload mTLS는 환경별 SPIRE trust domain, node/workload attestation, 최대 60분 X.509-SVID, TTL 절반 전 rotation과 hash-pinned trust bundle을 사용한다. entry 폐기나 trust stale은 fail closed 하고 certificate/secret runbook 증거를 요구한다.
 - prompt·response 원문은 기본 log 금지; 품질 재현용 표본은 별도 동의·가명·기한을 적용한다.
 - 모델 탈옥, indirect injection, data exfiltration, cross-tenant retrieval 평가를 release gate에 포함한다.
+- safeguarding 판정이 child/imminent danger이면 외부 model 대신 최소정보의 승인 담당자 경로로 보내고, security exfiltration이면 tool·egress를 차단한다. 자동 신고·인사조치는 금지한다.
+- exact provider route와 미결정 owner·기한·필수입력·gate는 [provider-decision-registry.json](provider-decision-registry.json)을 따른다. 특히 `RESTRICTED`는 내부 sLLM 또는 deterministic 처리만 허용하고 외부 event 허용량은 0이다.
 
 ## 6. 감사
 
@@ -79,13 +97,15 @@ Critical/High 취약점은 production release를 차단한다. Medium은 위험 
 
 `build → SBOM/scan → unit/integration → AI/doc eval → signed image → stage migration → smoke/E2E → approval → production migration → canary → full rollout`
 
-Cloud VM+Docker Compose는 시범·초기 운영 기준으로 사용하되 reverse proxy/TLS, private DB, 자동재시작, resource limit, off-host backup, monitoring agent를 필수화한다. 확장 시 동일 image와 contract로 orchestrator 전환이 가능해야 한다.
+`pilot-single-vm` Cloud VM+Linux Docker Compose는 제한 시범·초기 검증에만 사용하되 reverse proxy/TLS, private DB, 자동재시작, resource limit, off-host backup, monitoring agent를 필수화한다. 이는 단일 장애점이며 production availability·zone failover 수용 증거로 사용할 수 없다. HWP 변환은 동일 Linux engine이 아니라 별도 Windows converter node에서 수행한다.
+
+`production-ha`는 최소 Web 2, API 3, AI Gateway 3, worker queue별 2, SPIRE Server 3, managed PostgreSQL multi-AZ, Redis HA, multi-AZ Object Storage, 별도 Windows converter 2를 서로 다른 failure domain에 분산하고 health-aware load balancer와 fencing/failover를 갖는다. replica 수는 부하·DR 증거로 상향하며 topology fingerprint를 release evidence에 기록한다.
 
 ## 8. 관측성과 SLO
 
 | SLI | 목표 SLO |
 |---|---:|
-| 공개·회원 API availability | 월 99.9% |
+| 공개·회원 API availability | production-ha 활성화·fresh failover evidence 이후 월 99.9%; pilot-single-vm에는 비적용 |
 | 일반 API latency | p95 ≤800 ms |
 | 검색 latency | p95 ≤2.0 s |
 | 진단 턴 첫 응답 | p95 ≤3.0 s |
@@ -95,6 +115,8 @@ Cloud VM+Docker Compose는 시범·초기 운영 기준으로 사용하되 rever
 | error rate | 5분 window <1% |
 
 Metric은 endpoint·task·status·model deployment까지 분해하되 user ID·원문을 label로 넣지 않는다. OpenTelemetry trace로 web→API→queue→worker→AI provider를 연결한다. 비용 ledger는 tenant·task·model별 token/GPU/storage를 집계한다.
+
+SLO clock은 `production-ha` topology fingerprint, replica readiness, load test, DB/Redis failover와 isolated restore evidence가 모두 fresh PASS인 시점부터 시작한다. 그 전 상태는 proposed engineering target이며 수용 SLO 달성으로 보고하지 않는다. pilot 측정치는 별도 profile label로 보존한다.
 
 ### 8.1 경보
 
@@ -124,7 +146,11 @@ Metric은 endpoint·task·status·model deployment까지 분해하되 user ID·�
 6. 법정·계약 통지 판단
 7. 사후 분석, 재발방지, 시험 추가
 
-운영자는 AI 오답을 서비스 장애와 분리하지 않고 품질 incident로 등록할 수 있다. model rollback은 Prompt/Schema/Route/Index snapshot을 함께 되돌린다.
+운영자는 AI 오답을 서비스 장애와 분리하지 않고 품질 incident로 등록할 수 있다. model rollback은 Prompt/Schema/Route/Index snapshot을 함께 되돌리되 canonical current ACL·license·publication·deletion ledger와 `acl_version`은 되돌리지 않는다.
+
+### 10.1 물리 삭제 검증
+
+삭제 상태는 `ACTIVE → DELETE_REQUESTED → PURGING → VERIFIED`이며 legal hold는 `LEGAL_HOLD`로 분기한다. `DELETE_REQUESTED` commit은 즉시 읽기·AI 사용·citation을 deny하고 consent/ACL epoch을 증가시킨다. backup은 복원 전에 deletion ledger를 재적용하고 crypto-erasure를 수행한다. receipt 누락, lineage unknown 또는 복원 후 재등장은 `BLOCKED` 증거이며 `ACCEPTED`를 금지한다.
 
 ## 11. 운영 전 필수 조건
 
@@ -136,4 +162,3 @@ Metric은 endpoint·task·status·model deployment까지 분해하되 user ID·�
 - SAST/DAST/dependency/container/pentest 결과 High/Critical 0
 - 접근성·성능·AI·Document AI 수용시험 승인
 - 운영·관리자·사용자 교육과 기술이전 완료
-

@@ -1,0 +1,776 @@
+{
+  "schema_version": "legacy-reuse-matrix.v1",
+  "decision_vocabulary": [
+    "REUSE",
+    "ADAPT",
+    "REWRITE",
+    "RETIRE"
+  ],
+  "source_repository": "https://github.com/yubi-lee/yonlab-i-nuri-site.git",
+  "source_branch": "feat/production-readiness",
+  "assets": [
+    {
+      "asset_id": "LEG-001",
+      "capability": "backend authentication rotation/reset/session",
+      "source_paths": [
+        "backend/app/rc1.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-API-001",
+        "T-SEC-005"
+      ],
+      "target_contract_ids": [
+        "domains/identity",
+        "PUB-004",
+        "ADM-012",
+        "deployed-auth-api-union.v1"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-002",
+      "capability": "Alembic migration foundation",
+      "source_paths": [
+        "backend/alembic/"
+      ],
+      "decision": "REUSE",
+      "characterization_test_ids": [
+        "T-DATA-005"
+      ],
+      "target_contract_ids": [
+        "db/migrations"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-003",
+      "capability": "production admin bootstrap",
+      "source_paths": [
+        "backend/app/admin_bootstrap.py"
+      ],
+      "decision": "REUSE",
+      "characterization_test_ids": [
+        "T-DEP-001"
+      ],
+      "target_contract_ids": [
+        "ADM-012"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-004",
+      "capability": "Docker isolated verification",
+      "source_paths": [
+        "scripts/verify-docker.ps1"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-GATE-003"
+      ],
+      "target_contract_ids": [
+        "infra/compose",
+        "scripts/verify"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-005",
+      "capability": "PostgreSQL backup/restore drill",
+      "source_paths": [
+        "scripts/backup-postgres.ps1",
+        "scripts/restore-postgres.ps1"
+      ],
+      "decision": "REUSE",
+      "characterization_test_ids": [
+        "T-DR-001"
+      ],
+      "target_contract_ids": [
+        "runbooks/backup",
+        "runbooks/restore"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-006",
+      "capability": "StorageAdapter and upload defenses",
+      "source_paths": [
+        "backend/app/storage.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-DOC-005"
+      ],
+      "target_contract_ids": [
+        "domains/documents",
+        "ADM-006"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-007",
+      "capability": "public resource/search/catalog",
+      "source_paths": [
+        "frontend/src/",
+        "backend/app/main.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-UX-001"
+      ],
+      "target_contract_ids": [
+        "PUB-001",
+        "PUB-002",
+        "PUB-003"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-008",
+      "capability": "notice/article/FAQ content",
+      "source_paths": [
+        "backend/app/models.py",
+        "backend/app/seed.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-API-003"
+      ],
+      "target_contract_ids": [
+        "ContentItem types",
+        "PUB-002",
+        "PUB-003",
+        "ADM-004"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-009",
+      "capability": "100-resource education content pack",
+      "source_paths": [
+        "backend/app/seed.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-GATE-002"
+      ],
+      "target_contract_ids": [
+        "synthetic content import",
+        "PUB-001",
+        "PUB-002"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-010",
+      "capability": "inquiry and inquiry history",
+      "source_paths": [
+        "frontend/src/MemberPages.tsx",
+        "backend/app/rc1.py"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-API-009"
+      ],
+      "target_contract_ids": [
+        "TCH-016",
+        "ADM support queue"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-011",
+      "capability": "bookmark storage",
+      "source_paths": [
+        "backend/app/rc1.py"
+      ],
+      "decision": "REWRITE",
+      "characterization_test_ids": [
+        "T-REC-007"
+      ],
+      "target_contract_ids": [
+        "saved recommendation/content activity",
+        "TCH-007",
+        "TCH-016"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-012",
+      "capability": "monolithic RC1 CMS/API module",
+      "source_paths": [
+        "backend/app/rc1.py"
+      ],
+      "decision": "REWRITE",
+      "characterization_test_ids": [
+        "T-ARCH-001"
+      ],
+      "target_contract_ids": [
+        "domain packages",
+        "generated OpenAPI client"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-013",
+      "capability": "Playwright responsive E2E",
+      "source_paths": [
+        "frontend/e2e/portal.spec.ts"
+      ],
+      "decision": "ADAPT",
+      "characterization_test_ids": [
+        "T-UX-003"
+      ],
+      "target_contract_ids": [
+        "36-screen E2E catalog",
+        "VIS-001~006"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    },
+    {
+      "asset_id": "LEG-014",
+      "capability": "reference source assets",
+      "source_paths": [
+        "reference/private/"
+      ],
+      "decision": "RETIRE",
+      "characterization_test_ids": [
+        "T-QUAL-001"
+      ],
+      "target_contract_ids": [
+        "manifest-only provenance; no runtime bundle"
+      ],
+      "clean_room_rule": "No third-party portal code, copy, image, attachment or distinctive layout is reused."
+    }
+  ],
+  "authentication_api_union_contract": {
+    "contract_id": "deployed-auth-api-union.v1",
+    "screen_scoped_contract_ref": "platform-openapi.json",
+    "screen_scoped_operation_count": 113,
+    "screen_scoped_write_operation_count": 57,
+    "deployed_operation_count": 117,
+    "deployed_write_operation_count": 61,
+    "screen_scoped_auth_operation_ids": [
+      "POST /api/v1/auth/register",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/password-resets",
+      "POST /api/v1/auth/mfa/challenges",
+      "POST /api/v1/auth/mfa/challenges/{challenge_id}/verify",
+      "POST /api/v1/auth/mfa/recovery",
+      "POST /api/v1/auth/mfa/enrollments",
+      "POST /api/v1/auth/mfa/enrollments/{id}/verify",
+      "POST /api/v1/auth/mfa/recovery-codes/rotate"
+    ],
+    "service_only_operations": [
+      {
+        "operation_id": "POST /api/v1/auth/refresh",
+        "request_field_codes": [
+          "REFRESH_TOKEN_COOKIE",
+          "CSRF_TOKEN",
+          "COMMAND_ID"
+        ],
+        "response_field_codes": [
+          "ACCESS_TOKEN",
+          "EXPIRES_IN_SECONDS",
+          "ROTATED_REFRESH_SESSION_ID",
+          "SESSION_FAMILY_ID"
+        ],
+        "request_field_contracts": [
+          {
+            "field_code": "REFRESH_TOKEN_COOKIE",
+            "wire_name": "yonlab_refresh",
+            "location": "COOKIE",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 2048
+            }
+          },
+          {
+            "field_code": "CSRF_TOKEN",
+            "wire_name": "X-CSRF-Token",
+            "location": "HEADER",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 512
+            }
+          },
+          {
+            "field_code": "COMMAND_ID",
+            "wire_name": "command_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "response_field_contracts": [
+          {
+            "field_code": "ACCESS_TOKEN",
+            "wire_name": "access_token",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 4096
+            }
+          },
+          {
+            "field_code": "EXPIRES_IN_SECONDS",
+            "wire_name": "expires_in_seconds",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "field_code": "ROTATED_REFRESH_SESSION_ID",
+            "wire_name": "rotated_refresh_session_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "field_code": "SESSION_FAMILY_ID",
+            "wire_name": "session_family_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "success_status": "200",
+        "error_codes": [
+          "AUTH_REFRESH_INVALID",
+          "AUTH_REFRESH_REPLAY_DETECTED",
+          "CSRF_INVALID",
+          "RATE_LIMITED"
+        ],
+        "security": [
+          {
+            "refreshCookie": [],
+            "csrfHeader": []
+          }
+        ],
+        "state_transition": "ROTATE_ONCE_AND_REVOKE_PREDECESSOR",
+        "owner_ids": [
+          "OWN-ARCH",
+          "OWN-SEC"
+        ],
+        "requirement_ids": [
+          "SIR-002",
+          "SYS-NF-001"
+        ],
+        "test_ids": [
+          "T-API-001",
+          "T-SEC-005"
+        ],
+        "data_use_category_ids": [
+          "IDENTITY_CREDENTIAL"
+        ],
+        "data_use_field_codes": [
+          "SUBJECT_PSEUDONYM",
+          "TENANT_PSEUDONYM",
+          "AUTH_FACTOR_RESULT"
+        ],
+        "unknown_field_policy": "REJECT",
+        "audit_event_required": true,
+        "replay_policy": "DENY_AND_REVOKE_SESSION_FAMILY",
+        "request_log_policy": "REDACT_SECRETS"
+      },
+      {
+        "operation_id": "POST /api/v1/auth/logout",
+        "request_field_codes": [
+          "REFRESH_TOKEN_COOKIE",
+          "CSRF_TOKEN",
+          "COMMAND_ID"
+        ],
+        "response_field_codes": [
+          "REVOKED_REFRESH_SESSION_ID",
+          "LOGGED_OUT_AT"
+        ],
+        "request_field_contracts": [
+          {
+            "field_code": "REFRESH_TOKEN_COOKIE",
+            "wire_name": "yonlab_refresh",
+            "location": "COOKIE",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 2048
+            }
+          },
+          {
+            "field_code": "CSRF_TOKEN",
+            "wire_name": "X-CSRF-Token",
+            "location": "HEADER",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 512
+            }
+          },
+          {
+            "field_code": "COMMAND_ID",
+            "wire_name": "command_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "response_field_contracts": [
+          {
+            "field_code": "REVOKED_REFRESH_SESSION_ID",
+            "wire_name": "revoked_refresh_session_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "field_code": "LOGGED_OUT_AT",
+            "wire_name": "logged_out_at",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "success_status": "200",
+        "error_codes": [
+          "AUTH_REFRESH_INVALID",
+          "CSRF_INVALID",
+          "RATE_LIMITED"
+        ],
+        "security": [
+          {
+            "refreshCookie": [],
+            "csrfHeader": []
+          }
+        ],
+        "state_transition": "REVOKE_CURRENT_REFRESH_SESSION",
+        "owner_ids": [
+          "OWN-ARCH",
+          "OWN-SEC"
+        ],
+        "requirement_ids": [
+          "SIR-002",
+          "SYS-NF-001"
+        ],
+        "test_ids": [
+          "T-API-001",
+          "T-SEC-005"
+        ],
+        "data_use_category_ids": [
+          "IDENTITY_CREDENTIAL"
+        ],
+        "data_use_field_codes": [
+          "SUBJECT_PSEUDONYM",
+          "TENANT_PSEUDONYM",
+          "AUTH_FACTOR_RESULT"
+        ],
+        "unknown_field_policy": "REJECT",
+        "audit_event_required": true,
+        "replay_policy": "DENY_AND_REVOKE_SESSION_FAMILY",
+        "request_log_policy": "REDACT_SECRETS"
+      },
+      {
+        "operation_id": "POST /api/v1/auth/logout-all",
+        "request_field_codes": [
+          "CSRF_TOKEN",
+          "COMMAND_ID",
+          "REAUTH_ASSERTION",
+          "REASON_CODE"
+        ],
+        "response_field_codes": [
+          "REVOKED_SESSION_COUNT",
+          "SECURITY_EVENT_ID",
+          "LOGGED_OUT_AT"
+        ],
+        "request_field_contracts": [
+          {
+            "field_code": "CSRF_TOKEN",
+            "wire_name": "X-CSRF-Token",
+            "location": "HEADER",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 512
+            }
+          },
+          {
+            "field_code": "COMMAND_ID",
+            "wire_name": "command_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "field_code": "REAUTH_ASSERTION",
+            "wire_name": "reauth_assertion",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 4096
+            }
+          },
+          {
+            "field_code": "REASON_CODE",
+            "wire_name": "reason_code",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ],
+        "response_field_contracts": [
+          {
+            "field_code": "REVOKED_SESSION_COUNT",
+            "wire_name": "revoked_session_count",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "field_code": "SECURITY_EVENT_ID",
+            "wire_name": "security_event_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "field_code": "LOGGED_OUT_AT",
+            "wire_name": "logged_out_at",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "success_status": "200",
+        "error_codes": [
+          "AUTHENTICATION_REQUIRED",
+          "CSRF_INVALID",
+          "REAUTH_REQUIRED",
+          "RATE_LIMITED"
+        ],
+        "security": [
+          {
+            "bearerAuth": [],
+            "csrfHeader": []
+          }
+        ],
+        "state_transition": "REVOKE_ENTIRE_REFRESH_SESSION_FAMILY",
+        "owner_ids": [
+          "OWN-ARCH",
+          "OWN-SEC"
+        ],
+        "requirement_ids": [
+          "SIR-002",
+          "SYS-NF-001"
+        ],
+        "test_ids": [
+          "T-API-001",
+          "T-SEC-005"
+        ],
+        "data_use_category_ids": [
+          "IDENTITY_CREDENTIAL"
+        ],
+        "data_use_field_codes": [
+          "SUBJECT_PSEUDONYM",
+          "TENANT_PSEUDONYM",
+          "AUTH_FACTOR_RESULT"
+        ],
+        "unknown_field_policy": "REJECT",
+        "audit_event_required": true,
+        "replay_policy": "DENY_AND_REVOKE_SESSION_FAMILY",
+        "request_log_policy": "REDACT_SECRETS"
+      },
+      {
+        "operation_id": "POST /api/v1/auth/password-resets/confirm",
+        "request_field_codes": [
+          "COMMAND_ID",
+          "ONE_TIME_RESET_TOKEN",
+          "NEW_PASSWORD"
+        ],
+        "response_field_codes": [
+          "PASSWORD_CHANGED_AT",
+          "REVOKED_SESSION_COUNT",
+          "SECURITY_EVENT_ID"
+        ],
+        "request_field_contracts": [
+          {
+            "field_code": "COMMAND_ID",
+            "wire_name": "command_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "field_code": "ONE_TIME_RESET_TOKEN",
+            "wire_name": "one_time_reset_token",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32,
+              "maxLength": 512
+            }
+          },
+          {
+            "field_code": "NEW_PASSWORD",
+            "wire_name": "new_password",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 12,
+              "maxLength": 128
+            }
+          }
+        ],
+        "response_field_contracts": [
+          {
+            "field_code": "PASSWORD_CHANGED_AT",
+            "wire_name": "password_changed_at",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "field_code": "REVOKED_SESSION_COUNT",
+            "wire_name": "revoked_session_count",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "field_code": "SECURITY_EVENT_ID",
+            "wire_name": "security_event_id",
+            "location": "BODY",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "success_status": "200",
+        "error_codes": [
+          "PASSWORD_POLICY_REJECTED",
+          "RATE_LIMITED",
+          "RESET_TOKEN_CONSUMED",
+          "RESET_TOKEN_EXPIRED",
+          "RESET_TOKEN_INVALID"
+        ],
+        "security": [],
+        "state_transition": "CONSUME_TOKEN_ROTATE_PASSWORD_REVOKE_ALL_SESSIONS",
+        "owner_ids": [
+          "OWN-ARCH",
+          "OWN-SEC"
+        ],
+        "requirement_ids": [
+          "SIR-002",
+          "SYS-NF-001"
+        ],
+        "test_ids": [
+          "T-API-001",
+          "T-SEC-005"
+        ],
+        "data_use_category_ids": [
+          "IDENTITY_CREDENTIAL"
+        ],
+        "data_use_field_codes": [
+          "SUBJECT_PSEUDONYM",
+          "TENANT_PSEUDONYM",
+          "AUTH_FACTOR_RESULT"
+        ],
+        "unknown_field_policy": "REJECT",
+        "audit_event_required": true,
+        "replay_policy": "DENY_AND_REVOKE_SESSION_FAMILY",
+        "request_log_policy": "NEVER",
+        "secret_request_field_codes": [
+          "ONE_TIME_RESET_TOKEN",
+          "NEW_PASSWORD"
+        ],
+        "secret_path_parameter_count": 0
+      }
+    ],
+    "deployed_required_auth_operation_ids": [
+      "POST /api/v1/auth/register",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/password-resets",
+      "POST /api/v1/auth/mfa/challenges",
+      "POST /api/v1/auth/mfa/challenges/{challenge_id}/verify",
+      "POST /api/v1/auth/mfa/recovery",
+      "POST /api/v1/auth/mfa/enrollments",
+      "POST /api/v1/auth/mfa/enrollments/{id}/verify",
+      "POST /api/v1/auth/mfa/recovery-codes/rotate",
+      "POST /api/v1/auth/refresh",
+      "POST /api/v1/auth/logout",
+      "POST /api/v1/auth/logout-all",
+      "POST /api/v1/auth/password-resets/confirm"
+    ],
+    "merge_rule": "DEPLOYED_OPENAPI_AUTH_SET_EQUALS_SCREEN_SCOPED_UNION_SERVICE_ONLY",
+    "duplicate_operation_policy": "REJECT",
+    "missing_operation_policy": "FAIL_RELEASE",
+    "acceptance_test_ids": [
+      "T-API-001",
+      "T-SEC-005"
+    ],
+    "owner_ids": [
+      "OWN-ARCH",
+      "OWN-SEC"
+    ]
+  },
+  "portal_content_rule": "Notices, articles and FAQs remain typed ContentItem records in public search/detail and ADM-004 rather than creating duplicate silos.",
+  "content_pack_rule": "The 100-resource synthetic pack is retained as development/pilot demonstration data and is never represented as institution-approved production content."
+}

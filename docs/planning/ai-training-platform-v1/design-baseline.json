@@ -1,0 +1,327 @@
+{
+  "baseline_id": "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1",
+  "baseline_version": "1.1",
+  "effective_date": "2026-07-13",
+  "normative_source_path": "docs/planning/ai-training-platform-v1/design-baseline.json",
+  "repository": {
+    "windows_root": "D:\\Views\\yonlab-inuri-site",
+    "remote_name": "origin",
+    "remote": "https://github.com/yubi-lee/yonlab-i-nuri-site.git",
+    "work_branch": "feat/ai-training-platform-v1",
+    "clean_worktree_required": true,
+    "base_branch_heuristic_allowed": false
+  },
+  "artifact_roots": {
+    "planning_source": "docs/planning/ai-training-platform-v1/",
+    "final_design": "docs/design/ai-training-platform/",
+    "operations": "docs/operations/ai-training-platform/",
+    "quality_assurance": "docs/qa/ai-training-platform/",
+    "manuals": "docs/manuals/ai-training-platform/",
+    "releases": "docs/releases/ai-training-platform/",
+    "distribution_docs": "dist/docs/"
+  },
+  "kpis": [
+    {
+      "id": "KPI-001",
+      "metric": "diagnosis_agreement",
+      "formula": "minimum of per-competency weighted_kappa for ordinal levels and ICC(2,k) for continuous scores against the adjudicated expert golden set",
+      "comparison": ">=",
+      "minimum": 0.85,
+      "unit": "ratio",
+      "acceptance_data_required": true
+    },
+    {
+      "id": "KPI-002",
+      "metric": "recommendation_relevance",
+      "formula": "recommendations rated relevant by the approved expert-teacher evaluation / all recommendations evaluated in the approved Top-N query set",
+      "comparison": ">=",
+      "minimum": 0.9,
+      "unit": "ratio",
+      "acceptance_data_required": true
+    },
+    {
+      "id": "KPI-003",
+      "metric": "rag_top_5_hit_rate",
+      "formula": "eligible golden queries with at least one relevant accessible result in ranks 1 through 5 / all eligible golden queries",
+      "comparison": ">=",
+      "minimum": 0.95,
+      "unit": "ratio",
+      "acceptance_data_required": false
+    },
+    {
+      "id": "KPI-004",
+      "metric": "important_claim_citation_coverage",
+      "formula": "important answer claims with at least one valid and accessible citation / all important answer claims",
+      "comparison": ">=",
+      "minimum": 0.95,
+      "unit": "ratio",
+      "invalid_citation_maximum": 0,
+      "acceptance_data_required": false
+    },
+    {
+      "id": "KPI-005",
+      "metric": "structured_output_success",
+      "formula": "requests whose final output validates against the required schema within the allowed initial attempt plus at most one repair / all requests requiring structured output",
+      "comparison": ">=",
+      "minimum": 0.998,
+      "unit": "ratio",
+      "acceptance_data_required": false
+    },
+    {
+      "id": "KPI-006",
+      "metric": "user_satisfaction",
+      "formula": "sum of valid pilot survey scores normalized to 100 / count of valid pilot survey responses",
+      "comparison": ">=",
+      "minimum": 90,
+      "unit": "points_out_of_100",
+      "acceptance_data_required": true
+    },
+    {
+      "id": "KPI-007",
+      "metric": "improvement_incorporation",
+      "formula": "approved improvements due for the release that are implemented and verification-PASS / all approved improvements due for the release",
+      "comparison": ">=",
+      "minimum": 0.9,
+      "unit": "ratio",
+      "acceptance_data_required": true
+    },
+    {
+      "id": "KPI-008",
+      "metric": "restricted_external_egress",
+      "formula": "count of externally transmitted payloads classified RESTRICTED at the authorization point",
+      "comparison": "<=",
+      "maximum": 0,
+      "unit": "events",
+      "acceptance_data_required": false
+    },
+    {
+      "id": "KPI-009",
+      "metric": "critical_journey_accessibility_errors",
+      "formula": "count of unresolved WCAG 2.2 AA violations in the required automated and manual critical-journey evidence set",
+      "comparison": "<=",
+      "maximum": 0,
+      "unit": "violations",
+      "acceptance_data_required": false
+    },
+    {
+      "id": "KPI-010",
+      "metric": "approved_recovery_objectives_met",
+      "formula": "recovery objectives with institution-approved target and fresh isolated-drill PASS evidence / all required recovery objectives",
+      "comparison": ">=",
+      "minimum": 1.0,
+      "unit": "ratio",
+      "acceptance_data_required": true
+    }
+  ],
+  "persona_hierarchy": {
+    "version": "persona.v1",
+    "family_count": 6,
+    "operational_profile_count": 12,
+    "families": [
+      {
+        "family_id": "P-01",
+        "name_ko": "의욕적인 초임 실행가",
+        "profiles": [
+          {"profile_id": "P-01-A", "name_ko": "기초 루틴 구축형", "version": "1.0.0"},
+          {"profile_id": "P-01-B", "name_ko": "멘토 동행 적용형", "version": "1.0.0"}
+        ]
+      },
+      {
+        "family_id": "P-02",
+        "name_ko": "신중한 적응형 교사",
+        "profiles": [
+          {"profile_id": "P-02-A", "name_ko": "예시 확인 우선형", "version": "1.0.0"},
+          {"profile_id": "P-02-B", "name_ko": "작은 단계 확신형", "version": "1.0.0"}
+        ]
+      },
+      {
+        "family_id": "P-03",
+        "name_ko": "휴직 후 복귀 재정비형",
+        "profiles": [
+          {"profile_id": "P-03-A", "name_ko": "제도 변화 재정렬형", "version": "1.0.0"},
+          {"profile_id": "P-03-B", "name_ko": "디지털 도구 재진입형", "version": "1.0.0"}
+        ]
+      },
+      {
+        "family_id": "P-04",
+        "name_ko": "숙련 실천 개선가",
+        "profiles": [
+          {"profile_id": "P-04-A", "name_ko": "고급 사례 탐구형", "version": "1.0.0"},
+          {"profile_id": "P-04-B", "name_ko": "동료 코칭 확장형", "version": "1.0.0"}
+        ]
+      },
+      {
+        "family_id": "P-05",
+        "name_ko": "업무과부하 지원 필요형",
+        "profiles": [
+          {"profile_id": "P-05-A", "name_ko": "시간제약 핵심형", "version": "1.0.0"},
+          {"profile_id": "P-05-B", "name_ko": "사람지원 연계형", "version": "1.0.0"}
+        ]
+      },
+      {
+        "family_id": "P-06",
+        "name_ko": "지역·소규모 자원제약형",
+        "profiles": [
+          {"profile_id": "P-06-A", "name_ko": "저대역폭 비동기형", "version": "1.0.0"},
+          {"profile_id": "P-06-B", "name_ko": "지역자원 연계형", "version": "1.0.0"}
+        ]
+      }
+    ],
+    "inference_contract": {
+      "profile_probability_count": 12,
+      "family_aggregation_count": 6,
+      "profile_output_order": [
+        "P-01-A", "P-01-B", "P-02-A", "P-02-B", "P-03-A", "P-03-B",
+        "P-04-A", "P-04-B", "P-05-A", "P-05-B", "P-06-A", "P-06-B"
+      ],
+      "profile_probability_sum": 1.0,
+      "family_probability_sum": 1.0,
+      "probability_sum_tolerance": 0.000001,
+      "family_probability_formula": "sum of the two operational-profile probabilities belonging to the family",
+      "display_top_profile_count": 3,
+      "mixed_or_undetermined_formula": "max(family_probability) < 0.45",
+      "mixed_or_undetermined_threshold": 0.45
+    }
+  },
+  "recovery_objectives": {
+    "acceptance_status": "REQUIRES_ACCEPTANCE_DATA",
+    "target_status": "PROPOSED_NOT_ACCEPTED",
+    "approval_authority": "발주기관",
+    "objectives": [
+      {
+        "id": "RPO-CORE-DATA",
+        "type": "RPO",
+        "scope": "database, object storage, and version manifest",
+        "maximum_minutes": 15
+      },
+      {
+        "id": "RTO-CORE-SERVICE",
+        "type": "RTO",
+        "scope": "core user and administration services",
+        "maximum_minutes": 240
+      },
+      {
+        "id": "RTO-DOCUMENT-REINDEX",
+        "type": "RTO",
+        "scope": "document index rebuild with citation validation",
+        "maximum_minutes": 1440,
+        "invalid_citation_maximum": 0
+      }
+    ],
+    "acceptance_rule": "Each target requires institution approval and fresh isolated-drill PASS evidence before KPI-010 can PASS.",
+    "release_state_ceiling_before_acceptance": "CODE_COMPLETE / ACCEPTANCE DATA PENDING"
+  },
+  "release_gates": [
+    {"id": "GATE-DESIGN-INTEGRITY", "kpi_ids": [], "required_evidence": "design verifier PASS with no baseline, link, ID, or placeholder drift"},
+    {"id": "GATE-CODE-QUALITY", "kpi_ids": [], "required_evidence": "required lint, type, unit, integration, build, migration, seed, and E2E checks PASS"},
+    {"id": "GATE-SECURITY-PRIVACY", "kpi_ids": ["KPI-008"], "required_evidence": "Critical/High findings, cross-tenant leaks, and RESTRICTED external egress all equal 0"},
+    {"id": "GATE-AI-KPI", "kpi_ids": ["KPI-001", "KPI-002", "KPI-005"], "required_evidence": "KPI-001, KPI-002, and KPI-005 satisfy their baseline comparisons"},
+    {"id": "GATE-DOCUMENT-KPI", "kpi_ids": ["KPI-003", "KPI-004"], "required_evidence": "KPI-003 and KPI-004 satisfy their baseline comparisons"},
+    {"id": "GATE-UX-ACCESSIBILITY", "kpi_ids": ["KPI-006", "KPI-009"], "required_evidence": "KPI-006 and KPI-009 satisfy their baseline comparisons"},
+    {"id": "GATE-OPERATIONS-RECOVERY", "kpi_ids": ["KPI-010"], "required_evidence": "KPI-010 satisfies its baseline comparison and all implementable operations, backup, restore, and DR controls PASS"},
+    {"id": "GATE-PILOT-ACCEPTANCE", "kpi_ids": ["KPI-007"], "required_evidence": "KPI-007 and all required pilot acceptance cases PASS"}
+  ],
+  "gate_aggregation": {
+    "policy_id": "gate-aggregation.v1",
+    "kpi_result_required_fields": [
+      "kpi_id",
+      "status",
+      "measured_value",
+      "comparison",
+      "threshold",
+      "evidence_uri",
+      "artifact_sha256",
+      "source_commit",
+      "executed_at_utc",
+      "expires_at_utc",
+      "acceptance_data_required"
+    ],
+    "implementable_kpi_rule": "A KPI with acceptance_data_required=false MUST be PASS, FAIL, or BLOCKED and MUST NOT be REQUIRES_ACCEPTANCE_DATA.",
+    "acceptance_kpi_rule": "A KPI with acceptance_data_required=true may be REQUIRES_ACCEPTANCE_DATA only when every implementable prerequisite test and data-contract check for that KPI is fresh PASS and the only absent input is an explicitly named external institution, expert, pilot, provider, or recovery acceptance record.",
+    "gate_reduce_order": [
+      "If any required non-KPI evidence or KPI result is FAIL, the gate is FAIL.",
+      "Else if any required evidence is BLOCKED, MISSING, or STALE, the gate is BLOCKED.",
+      "Else if every implementable KPI and prerequisite is fresh PASS and at least one acceptance-data KPI is REQUIRES_ACCEPTANCE_DATA, the gate is REQUIRES_ACCEPTANCE_DATA.",
+      "Else if every required evidence and KPI result is fresh PASS, the gate is PASS.",
+      "Else the gate is BLOCKED."
+    ],
+    "mixed_gate_invariant": "REQUIRES_ACCEPTANCE_DATA can never conceal an unexecuted, failed, blocked, missing, or stale implementable KPI or prerequisite.",
+    "empty_kpi_gate_rule": "A gate with kpi_ids=[] is reduced from its required non-KPI evidence by the same FAIL, BLOCKED/MISSING/STALE, PASS order."
+  },
+  "release_identifier_policy": {
+    "policy_id": "release-id.v1",
+    "regex": "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-(alpha|beta|rc)(0|[1-9][0-9]*))?$",
+    "examples_allowed": ["v1.0.0", "v1.0.0-rc1"],
+    "examples_denied": ["../v1.0.0", "v01.0.0", "v1.0", "v1.0.0/rc1", "v1.0.0-rc01"],
+    "path_rules": [
+      "release_id is one path segment and MUST NOT contain slash, backslash, colon, percent-encoding, NUL, dot-segments, trailing dot, or trailing space",
+      "resolve both docs/releases/ai-training-platform/{release_id} and dist/docs/{release_id} from canonical non-reparse roots and require each resolved child to remain strictly below its root",
+      "reject a root or child containing a symlink, junction, mount-point redirect, or Windows reparse point",
+      "never accept an absolute path in place of release_id"
+    ],
+    "tag_rule": "An ACCEPTED/public release requires immutable annotated refs/tags/{release_id} whose peeled commit equals document_snapshot_commit and whose attestation binds source_commit and SHA256SUMS.txt. A pending candidate records release_id and source_commit but MUST NOT fabricate or move a tag without human approval."
+  },
+  "signature_policy": {
+    "policy_id": "release-signature.v1",
+    "technical_signer_owner_ids": ["OWN-ARCH", "OWN-UX", "OWN-AI", "OWN-DOC", "OWN-SEC", "OWN-OPS", "OWN-QA"],
+    "pending_state_rule": "CODE_COMPLETE / ACCEPTANCE DATA PENDING requires every technical signature and detached artifact/checksum signature to verify. OWN-ACC must have a scoped record with status REQUIRES_ACCEPTANCE_DATA, missing_input_ids, owner, due_at_utc, and candidate hashes; that record is not MISSING and is not an acceptance signature.",
+    "accepted_state_rule": "ACCEPTED additionally requires OWN-ACC acceptance decision and signature plus the immutable annotated release tag attestation.",
+    "not_ready_rule": "A missing or invalid technical signature, missing scoped OWN-ACC pending record, failed gate, blocked evidence, or stale evidence makes the release NOT_READY."
+  },
+  "status_model": {
+    "evidence_statuses": [
+      "PASS",
+      "FAIL",
+      "BLOCKED",
+      "REQUIRES_ACCEPTANCE_DATA"
+    ],
+    "release_states": [
+      "NOT_READY",
+      "CODE_COMPLETE / ACCEPTANCE DATA PENDING",
+      "ACCEPTED"
+    ],
+    "blocking_evidence_conditions": [
+      "FAIL",
+      "BLOCKED",
+      "MISSING",
+      "STALE"
+    ],
+    "rules": [
+      {
+        "release_state": "NOT_READY",
+        "when": "any required gate is FAIL or BLOCKED, or any required evidence is missing or stale"
+      },
+      {
+        "release_state": "CODE_COMPLETE / ACCEPTANCE DATA PENDING",
+        "when": "all implementable KPI results, prerequisite tests, non-acceptance gates, technical signatures, and artifact signatures are fresh PASS; one or more acceptance-data KPIs are REQUIRES_ACCEPTANCE_DATA with a complete scoped OWN-ACC pending record; and no blocking evidence condition exists"
+      },
+      {
+        "release_state": "ACCEPTED",
+        "when": "every required gate is PASS with fresh evidence, including institution, expert, pilot, provider, and recovery acceptance inputs"
+      }
+    ],
+    "forbidden_release_aliases": [
+      "CONDITIONAL ACCEPTANCE"
+    ]
+  },
+  "data_policy_defaults": {
+    "unknown_teacher_free_text": "RESTRICTED",
+    "unclassified_raw_or_scanned_upload": "RESTRICTED",
+    "external_ai_egress_before_classification_and_policy_authorization": "DENY"
+  },
+  "launcher_policy": {
+    "sandbox": "workspace-write",
+    "approval_policy": "on-request",
+    "forbidden_flags": [
+      "--dangerously-bypass-approvals-and-sandbox",
+      "--yolo"
+    ]
+  },
+  "human_approval_boundaries": [
+    "main merge",
+    "release tag creation or movement",
+    "production deployment",
+    "paid-provider activation",
+    "destructive replacement"
+  ]
+}

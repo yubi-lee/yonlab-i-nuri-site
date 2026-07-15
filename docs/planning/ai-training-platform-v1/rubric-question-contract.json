@@ -1,0 +1,1607 @@
+{
+  "schema_version": "rubric-question-contract.v1",
+  "release_state": "NON_PRODUCTION_REQUIRES_PILOT_CALIBRATION",
+  "rubric_version": "teacher-competency-rubric.v1",
+  "question_bank_version": "teacher-diagnostic-question-bank.v1",
+  "scale": {
+    "levels": [
+      "L1",
+      "L2",
+      "L3",
+      "L4"
+    ],
+    "anchor_microunits": [
+      0,
+      333333,
+      666667,
+      1000000
+    ],
+    "interpretation": [
+      "기초 인식",
+      "부분 적용",
+      "일관 적용",
+      "상황 확장"
+    ]
+  },
+  "competencies": [
+    {
+      "competency_id": "COMP-01",
+      "name": "보육과정 실행",
+      "indicator_ids": [
+        "COMP-01-I01",
+        "COMP-01-I02",
+        "COMP-01-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-02",
+      "name": "영유아 발달 이해",
+      "indicator_ids": [
+        "COMP-02-I01",
+        "COMP-02-I02",
+        "COMP-02-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-03",
+      "name": "교사-영유아 상호작용",
+      "indicator_ids": [
+        "COMP-03-I01",
+        "COMP-03-I02",
+        "COMP-03-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-04",
+      "name": "관찰·기록·평가",
+      "indicator_ids": [
+        "COMP-04-I01",
+        "COMP-04-I02",
+        "COMP-04-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-05",
+      "name": "가정·지역사회 연계",
+      "indicator_ids": [
+        "COMP-05-I01",
+        "COMP-05-I02",
+        "COMP-05-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-06",
+      "name": "안전·권리·윤리",
+      "indicator_ids": [
+        "COMP-06-I01",
+        "COMP-06-I02",
+        "COMP-06-I03"
+      ]
+    },
+    {
+      "competency_id": "COMP-07",
+      "name": "전문성·학습운영",
+      "indicator_ids": [
+        "COMP-07-I01",
+        "COMP-07-I02",
+        "COMP-07-I03"
+      ]
+    }
+  ],
+  "indicators": [
+    {
+      "indicator_id": "COMP-01-I01",
+      "competency_id": "COMP-01",
+      "competency_name": "보육과정 실행",
+      "statement": "놀이 관찰을 목표와 연결한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "놀이 관찰을 목표와 연결한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "놀이 관찰을 목표와 연결한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 놀이 관찰을 목표와 연결한다",
+          "counterexample": "놀이 관찰을 목표와 연결한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 놀이 관찰을 목표와 연결한다",
+          "counterexample": "놀이 관찰을 목표와 연결한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 놀이 관찰을 목표와 연결한다",
+          "counterexample": "놀이 관찰을 목표와 연결한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-01-I02",
+      "competency_id": "COMP-01",
+      "competency_name": "보육과정 실행",
+      "statement": "영유아 반응에 따라 계획을 조정한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "영유아 반응에 따라 계획을 조정한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "영유아 반응에 따라 계획을 조정한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 영유아 반응에 따라 계획을 조정한다",
+          "counterexample": "영유아 반응에 따라 계획을 조정한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 영유아 반응에 따라 계획을 조정한다",
+          "counterexample": "영유아 반응에 따라 계획을 조정한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 영유아 반응에 따라 계획을 조정한다",
+          "counterexample": "영유아 반응에 따라 계획을 조정한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-01-I03",
+      "competency_id": "COMP-01",
+      "competency_name": "보육과정 실행",
+      "statement": "실행 결과를 다음 계획에 환류한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "실행 결과를 다음 계획에 환류한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "실행 결과를 다음 계획에 환류한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 실행 결과를 다음 계획에 환류한다",
+          "counterexample": "실행 결과를 다음 계획에 환류한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 실행 결과를 다음 계획에 환류한다",
+          "counterexample": "실행 결과를 다음 계획에 환류한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 실행 결과를 다음 계획에 환류한다",
+          "counterexample": "실행 결과를 다음 계획에 환류한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-02-I01",
+      "competency_id": "COMP-02",
+      "competency_name": "영유아 발달 이해",
+      "statement": "발달 차이를 관찰 근거로 설명한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "발달 차이를 관찰 근거로 설명한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "발달 차이를 관찰 근거로 설명한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 발달 차이를 관찰 근거로 설명한다",
+          "counterexample": "발달 차이를 관찰 근거로 설명한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 발달 차이를 관찰 근거로 설명한다",
+          "counterexample": "발달 차이를 관찰 근거로 설명한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 발달 차이를 관찰 근거로 설명한다",
+          "counterexample": "발달 차이를 관찰 근거로 설명한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-02-I02",
+      "competency_id": "COMP-02",
+      "competency_name": "영유아 발달 이해",
+      "statement": "개별 발달 수준에 맞는 지원을 선택한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "개별 발달 수준에 맞는 지원을 선택한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "개별 발달 수준에 맞는 지원을 선택한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 개별 발달 수준에 맞는 지원을 선택한다",
+          "counterexample": "개별 발달 수준에 맞는 지원을 선택한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 개별 발달 수준에 맞는 지원을 선택한다",
+          "counterexample": "개별 발달 수준에 맞는 지원을 선택한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 개별 발달 수준에 맞는 지원을 선택한다",
+          "counterexample": "개별 발달 수준에 맞는 지원을 선택한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-02-I03",
+      "competency_id": "COMP-02",
+      "competency_name": "영유아 발달 이해",
+      "statement": "발달 낙인 없이 강점과 필요를 함께 기록한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "발달 낙인 없이 강점과 필요를 함께 기록한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "발달 낙인 없이 강점과 필요를 함께 기록한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 발달 낙인 없이 강점과 필요를 함께 기록한다",
+          "counterexample": "발달 낙인 없이 강점과 필요를 함께 기록한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 발달 낙인 없이 강점과 필요를 함께 기록한다",
+          "counterexample": "발달 낙인 없이 강점과 필요를 함께 기록한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 발달 낙인 없이 강점과 필요를 함께 기록한다",
+          "counterexample": "발달 낙인 없이 강점과 필요를 함께 기록한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-03-I01",
+      "competency_id": "COMP-03",
+      "competency_name": "교사-영유아 상호작용",
+      "statement": "영유아 신호에 민감하게 반응한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "영유아 신호에 민감하게 반응한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "영유아 신호에 민감하게 반응한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 영유아 신호에 민감하게 반응한다",
+          "counterexample": "영유아 신호에 민감하게 반응한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 영유아 신호에 민감하게 반응한다",
+          "counterexample": "영유아 신호에 민감하게 반응한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 영유아 신호에 민감하게 반응한다",
+          "counterexample": "영유아 신호에 민감하게 반응한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-03-I02",
+      "competency_id": "COMP-03",
+      "competency_name": "교사-영유아 상호작용",
+      "statement": "열린 질문과 기다림으로 사고를 확장한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "열린 질문과 기다림으로 사고를 확장한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "열린 질문과 기다림으로 사고를 확장한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 열린 질문과 기다림으로 사고를 확장한다",
+          "counterexample": "열린 질문과 기다림으로 사고를 확장한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 열린 질문과 기다림으로 사고를 확장한다",
+          "counterexample": "열린 질문과 기다림으로 사고를 확장한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 열린 질문과 기다림으로 사고를 확장한다",
+          "counterexample": "열린 질문과 기다림으로 사고를 확장한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-03-I03",
+      "competency_id": "COMP-03",
+      "competency_name": "교사-영유아 상호작용",
+      "statement": "갈등을 권리 존중 방식으로 중재한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "갈등을 권리 존중 방식으로 중재한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "갈등을 권리 존중 방식으로 중재한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 갈등을 권리 존중 방식으로 중재한다",
+          "counterexample": "갈등을 권리 존중 방식으로 중재한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 갈등을 권리 존중 방식으로 중재한다",
+          "counterexample": "갈등을 권리 존중 방식으로 중재한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 갈등을 권리 존중 방식으로 중재한다",
+          "counterexample": "갈등을 권리 존중 방식으로 중재한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-04-I01",
+      "competency_id": "COMP-04",
+      "competency_name": "관찰·기록·평가",
+      "statement": "사실과 해석을 구분해 기록한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "사실과 해석을 구분해 기록한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "사실과 해석을 구분해 기록한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 사실과 해석을 구분해 기록한다",
+          "counterexample": "사실과 해석을 구분해 기록한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 사실과 해석을 구분해 기록한다",
+          "counterexample": "사실과 해석을 구분해 기록한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 사실과 해석을 구분해 기록한다",
+          "counterexample": "사실과 해석을 구분해 기록한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-04-I02",
+      "competency_id": "COMP-04",
+      "competency_name": "관찰·기록·평가",
+      "statement": "복수 시점의 근거를 종합한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "복수 시점의 근거를 종합한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "복수 시점의 근거를 종합한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 복수 시점의 근거를 종합한다",
+          "counterexample": "복수 시점의 근거를 종합한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 복수 시점의 근거를 종합한다",
+          "counterexample": "복수 시점의 근거를 종합한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 복수 시점의 근거를 종합한다",
+          "counterexample": "복수 시점의 근거를 종합한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-04-I03",
+      "competency_id": "COMP-04",
+      "competency_name": "관찰·기록·평가",
+      "statement": "기록을 지원 계획과 연결한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "기록을 지원 계획과 연결한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "기록을 지원 계획과 연결한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 기록을 지원 계획과 연결한다",
+          "counterexample": "기록을 지원 계획과 연결한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 기록을 지원 계획과 연결한다",
+          "counterexample": "기록을 지원 계획과 연결한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 기록을 지원 계획과 연결한다",
+          "counterexample": "기록을 지원 계획과 연결한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-05-I01",
+      "competency_id": "COMP-05",
+      "competency_name": "가정·지역사회 연계",
+      "statement": "보호자와 상호 존중 방식으로 소통한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "보호자와 상호 존중 방식으로 소통한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "보호자와 상호 존중 방식으로 소통한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 보호자와 상호 존중 방식으로 소통한다",
+          "counterexample": "보호자와 상호 존중 방식으로 소통한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 보호자와 상호 존중 방식으로 소통한다",
+          "counterexample": "보호자와 상호 존중 방식으로 소통한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 보호자와 상호 존중 방식으로 소통한다",
+          "counterexample": "보호자와 상호 존중 방식으로 소통한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-05-I02",
+      "competency_id": "COMP-05",
+      "competency_name": "가정·지역사회 연계",
+      "statement": "필요한 지역 자원을 적절히 연계한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "필요한 지역 자원을 적절히 연계한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "필요한 지역 자원을 적절히 연계한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 필요한 지역 자원을 적절히 연계한다",
+          "counterexample": "필요한 지역 자원을 적절히 연계한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 필요한 지역 자원을 적절히 연계한다",
+          "counterexample": "필요한 지역 자원을 적절히 연계한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 필요한 지역 자원을 적절히 연계한다",
+          "counterexample": "필요한 지역 자원을 적절히 연계한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-05-I03",
+      "competency_id": "COMP-05",
+      "competency_name": "가정·지역사회 연계",
+      "statement": "개인정보와 동의 경계를 지킨다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "개인정보와 동의 경계를 지킨다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "개인정보와 동의 경계를 지킨다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 개인정보와 동의 경계를 지킨다",
+          "counterexample": "개인정보와 동의 경계를 지킨다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 개인정보와 동의 경계를 지킨다",
+          "counterexample": "개인정보와 동의 경계를 지킨다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 개인정보와 동의 경계를 지킨다",
+          "counterexample": "개인정보와 동의 경계를 지킨다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-06-I01",
+      "competency_id": "COMP-06",
+      "competency_name": "안전·권리·윤리",
+      "statement": "위험을 사전에 식별하고 예방한다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "위험을 사전에 식별하고 예방한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "위험을 사전에 식별하고 예방한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 위험을 사전에 식별하고 예방한다",
+          "counterexample": "위험을 사전에 식별하고 예방한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 위험을 사전에 식별하고 예방한다",
+          "counterexample": "위험을 사전에 식별하고 예방한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 위험을 사전에 식별하고 예방한다",
+          "counterexample": "위험을 사전에 식별하고 예방한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-06-I02",
+      "competency_id": "COMP-06",
+      "competency_name": "안전·권리·윤리",
+      "statement": "아동권리와 신고 절차를 준수한다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "아동권리와 신고 절차를 준수한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "아동권리와 신고 절차를 준수한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 아동권리와 신고 절차를 준수한다",
+          "counterexample": "아동권리와 신고 절차를 준수한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 아동권리와 신고 절차를 준수한다",
+          "counterexample": "아동권리와 신고 절차를 준수한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 아동권리와 신고 절차를 준수한다",
+          "counterexample": "아동권리와 신고 절차를 준수한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-06-I03",
+      "competency_id": "COMP-06",
+      "competency_name": "안전·권리·윤리",
+      "statement": "안전사건 후 기록·보고·재발방지를 수행한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "안전사건 후 기록·보고·재발방지를 수행한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "안전사건 후 기록·보고·재발방지를 수행한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 안전사건 후 기록·보고·재발방지를 수행한다",
+          "counterexample": "안전사건 후 기록·보고·재발방지를 수행한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 안전사건 후 기록·보고·재발방지를 수행한다",
+          "counterexample": "안전사건 후 기록·보고·재발방지를 수행한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 안전사건 후 기록·보고·재발방지를 수행한다",
+          "counterexample": "안전사건 후 기록·보고·재발방지를 수행한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-07-I01",
+      "competency_id": "COMP-07",
+      "competency_name": "전문성·학습운영",
+      "statement": "실천을 성찰하고 개선 목표를 세운다",
+      "priority": 1,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "실천을 성찰하고 개선 목표를 세운다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "실천을 성찰하고 개선 목표를 세운다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 실천을 성찰하고 개선 목표를 세운다",
+          "counterexample": "실천을 성찰하고 개선 목표를 세운다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 실천을 성찰하고 개선 목표를 세운다",
+          "counterexample": "실천을 성찰하고 개선 목표를 세운다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 실천을 성찰하고 개선 목표를 세운다",
+          "counterexample": "실천을 성찰하고 개선 목표를 세운다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-07-I02",
+      "competency_id": "COMP-07",
+      "competency_name": "전문성·학습운영",
+      "statement": "동료와 근거 기반 피드백을 주고받는다",
+      "priority": 2,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "동료와 근거 기반 피드백을 주고받는다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "동료와 근거 기반 피드백을 주고받는다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 동료와 근거 기반 피드백을 주고받는다",
+          "counterexample": "동료와 근거 기반 피드백을 주고받는다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 동료와 근거 기반 피드백을 주고받는다",
+          "counterexample": "동료와 근거 기반 피드백을 주고받는다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 동료와 근거 기반 피드백을 주고받는다",
+          "counterexample": "동료와 근거 기반 피드백을 주고받는다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    },
+    {
+      "indicator_id": "COMP-07-I03",
+      "competency_id": "COMP-07",
+      "competency_name": "전문성·학습운영",
+      "statement": "디지털 도구를 안전하고 목적에 맞게 활용한다",
+      "priority": 3,
+      "minimum_distinct_turns": 2,
+      "anchors": [
+        {
+          "level": "L1",
+          "anchor_microunit": 0,
+          "observable_behavior": "디지털 도구를 안전하고 목적에 맞게 활용한다의 필요성을 인식하지만 구체적 실행 근거가 없다",
+          "counterexample": "디지털 도구를 안전하고 목적에 맞게 활용한다에 대해 의도나 일반론만 말하고 실제 행동을 제시하지 않는다"
+        },
+        {
+          "level": "L2",
+          "anchor_microunit": 333333,
+          "observable_behavior": "안내 또는 예시가 있을 때 디지털 도구를 안전하고 목적에 맞게 활용한다",
+          "counterexample": "디지털 도구를 안전하고 목적에 맞게 활용한다의 한 사례를 모든 상황에 그대로 적용한다"
+        },
+        {
+          "level": "L3",
+          "anchor_microunit": 666667,
+          "observable_behavior": "일상에서 근거를 확인하며 일관되게 디지털 도구를 안전하고 목적에 맞게 활용한다",
+          "counterexample": "디지털 도구를 안전하고 목적에 맞게 활용한다 뒤 상황 조정이나 결과 확인 없이 반복한다"
+        },
+        {
+          "level": "L4",
+          "anchor_microunit": 1000000,
+          "observable_behavior": "복합 상황에서 근거를 비교하고 동료와 성찰하며 디지털 도구를 안전하고 목적에 맞게 활용한다",
+          "counterexample": "디지털 도구를 안전하고 목적에 맞게 활용한다의 근거 없이 타인에게 적용을 강요하거나 예외를 무시한다"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "Q-COMP-01-I01-SIT",
+      "indicator_ids": [
+        "COMP-01-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘놀이 관찰을 목표와 연결한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-01-I01-REF",
+      "indicator_ids": [
+        "COMP-01-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘놀이 관찰을 목표와 연결한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-01-I02-SIT",
+      "indicator_ids": [
+        "COMP-01-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘영유아 반응에 따라 계획을 조정한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-01-I02-REF",
+      "indicator_ids": [
+        "COMP-01-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘영유아 반응에 따라 계획을 조정한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-01-I03-SIT",
+      "indicator_ids": [
+        "COMP-01-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘실행 결과를 다음 계획에 환류한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-01-I03-REF",
+      "indicator_ids": [
+        "COMP-01-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘실행 결과를 다음 계획에 환류한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-02-I01-SIT",
+      "indicator_ids": [
+        "COMP-02-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘발달 차이를 관찰 근거로 설명한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-02-I01-REF",
+      "indicator_ids": [
+        "COMP-02-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘발달 차이를 관찰 근거로 설명한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-02-I02-SIT",
+      "indicator_ids": [
+        "COMP-02-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘개별 발달 수준에 맞는 지원을 선택한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-02-I02-REF",
+      "indicator_ids": [
+        "COMP-02-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘개별 발달 수준에 맞는 지원을 선택한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-02-I03-SIT",
+      "indicator_ids": [
+        "COMP-02-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘발달 낙인 없이 강점과 필요를 함께 기록한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-02-I03-REF",
+      "indicator_ids": [
+        "COMP-02-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘발달 낙인 없이 강점과 필요를 함께 기록한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-03-I01-SIT",
+      "indicator_ids": [
+        "COMP-03-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘영유아 신호에 민감하게 반응한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-03-I01-REF",
+      "indicator_ids": [
+        "COMP-03-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘영유아 신호에 민감하게 반응한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-03-I02-SIT",
+      "indicator_ids": [
+        "COMP-03-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘열린 질문과 기다림으로 사고를 확장한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-03-I02-REF",
+      "indicator_ids": [
+        "COMP-03-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘열린 질문과 기다림으로 사고를 확장한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-03-I03-SIT",
+      "indicator_ids": [
+        "COMP-03-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘갈등을 권리 존중 방식으로 중재한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-03-I03-REF",
+      "indicator_ids": [
+        "COMP-03-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘갈등을 권리 존중 방식으로 중재한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-04-I01-SIT",
+      "indicator_ids": [
+        "COMP-04-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘사실과 해석을 구분해 기록한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-04-I01-REF",
+      "indicator_ids": [
+        "COMP-04-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘사실과 해석을 구분해 기록한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-04-I02-SIT",
+      "indicator_ids": [
+        "COMP-04-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘복수 시점의 근거를 종합한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-04-I02-REF",
+      "indicator_ids": [
+        "COMP-04-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘복수 시점의 근거를 종합한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-04-I03-SIT",
+      "indicator_ids": [
+        "COMP-04-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘기록을 지원 계획과 연결한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-04-I03-REF",
+      "indicator_ids": [
+        "COMP-04-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘기록을 지원 계획과 연결한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-05-I01-SIT",
+      "indicator_ids": [
+        "COMP-05-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘보호자와 상호 존중 방식으로 소통한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-05-I01-REF",
+      "indicator_ids": [
+        "COMP-05-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘보호자와 상호 존중 방식으로 소통한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-05-I02-SIT",
+      "indicator_ids": [
+        "COMP-05-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘필요한 지역 자원을 적절히 연계한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-05-I02-REF",
+      "indicator_ids": [
+        "COMP-05-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘필요한 지역 자원을 적절히 연계한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-05-I03-SIT",
+      "indicator_ids": [
+        "COMP-05-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘개인정보와 동의 경계를 지킨다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-05-I03-REF",
+      "indicator_ids": [
+        "COMP-05-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘개인정보와 동의 경계를 지킨다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-06-I01-SIT",
+      "indicator_ids": [
+        "COMP-06-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘위험을 사전에 식별하고 예방한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-06-I01-REF",
+      "indicator_ids": [
+        "COMP-06-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘위험을 사전에 식별하고 예방한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-06-I02-SIT",
+      "indicator_ids": [
+        "COMP-06-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘아동권리와 신고 절차를 준수한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-06-I02-REF",
+      "indicator_ids": [
+        "COMP-06-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘아동권리와 신고 절차를 준수한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-06-I03-SIT",
+      "indicator_ids": [
+        "COMP-06-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘안전사건 후 기록·보고·재발방지를 수행한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-06-I03-REF",
+      "indicator_ids": [
+        "COMP-06-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘안전사건 후 기록·보고·재발방지를 수행한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-07-I01-SIT",
+      "indicator_ids": [
+        "COMP-07-I01"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘실천을 성찰하고 개선 목표를 세운다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-07-I01-REF",
+      "indicator_ids": [
+        "COMP-07-I01"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘실천을 성찰하고 개선 목표를 세운다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-07-I02-SIT",
+      "indicator_ids": [
+        "COMP-07-I02"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘동료와 근거 기반 피드백을 주고받는다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-07-I02-REF",
+      "indicator_ids": [
+        "COMP-07-I02"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘동료와 근거 기반 피드백을 주고받는다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    },
+    {
+      "question_id": "Q-COMP-07-I03-SIT",
+      "indicator_ids": [
+        "COMP-07-I03"
+      ],
+      "question_form": "SITUATIONAL",
+      "prompt_ko": "최근 현장에서 ‘디지털 도구를 안전하고 목적에 맞게 활용한다’와 관련해 판단이 필요했던 한 장면을 사실과 행동 중심으로 설명해 주세요.",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 700000
+    },
+    {
+      "question_id": "Q-COMP-07-I03-REF",
+      "indicator_ids": [
+        "COMP-07-I03"
+      ],
+      "question_form": "REFLECTIVE",
+      "prompt_ko": "‘디지털 도구를 안전하고 목적에 맞게 활용한다’를 실행한 뒤 무엇을 확인했고, 다음에는 무엇을 다르게 하시겠습니까?",
+      "response_schema": "FREE_TEXT_NFC_20_TO_2000_CODEPOINTS",
+      "leading_language": "FORBIDDEN",
+      "sensitive_attribute_request": "FORBIDDEN",
+      "expected_information_gain_microunit": 500000
+    }
+  ],
+  "feature_dictionary": [
+    {
+      "feature_id": "context.return_after_leave",
+      "value_type": "BOOLEAN_MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_365_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "false=0,true=1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "context.career_band",
+      "value_type": "ENCODED_ENUM_MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_365_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "ENTRY_0_2=1000000,DEVELOPING_3_5=500000,EXPERIENCED_6_PLUS=0,NOT_PROVIDED=MISSING",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "context.region_resource_category",
+      "value_type": "ENCODED_ENUM_MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "LIMITED=1000000,PARTIAL=500000,ADEQUATE=0,NOT_PROVIDED=MISSING; exact location forbidden",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "experience.practice_context_breadth",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_APPROVED_TAXONOMY",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_365_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "approved IDs INFANT,EARLY_CHILDHOOD,MIXED_AGE,INCLUSIVE,LEAD_TEACHER,RETURNING; count/6 half-up",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "interest.keyword_id",
+      "value_type": "PROFILE_AFFINITY_MICROUNIT",
+      "source": "EXPLICIT_APPROVED_TAXONOMY",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "approved IDs KW-PLAY,KW-OBSERVATION,KW-SAFETY,KW-FAMILY,KW-DIGITAL,KW-COACHING; unknown reject; per-profile match 0 or 1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "constraint.time_pressure",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_90_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "constraint.low_bandwidth",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_90_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "preference.mentor_support",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "preference.examples_first",
+      "value_type": "MICROUNIT",
+      "source": "DIALOGUE_EVIDENCE",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "SESSION_OR_30_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "preference.small_steps",
+      "value_type": "MICROUNIT",
+      "source": "DIALOGUE_EVIDENCE",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "SESSION_OR_30_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "need.policy_change_refresh",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "need.digital_reentry",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "interest.advanced_cases",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "interest.peer_coaching",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_180_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "need.local_resource_alternative",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "UNTIL_WITHDRAWAL_OR_90_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "preference.human_support",
+      "value_type": "MICROUNIT",
+      "source": "EXPLICIT_USER_STATEMENT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "INTERNAL",
+      "retention": "SESSION_OR_30_DAYS",
+      "consent": "EXPLICIT_OR_DIALOGUE_CONFIRMATION",
+      "encoding": "integer 0..1000000",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "support.current_emotional_load",
+      "value_type": "ENCODED_ENUM_MICROUNIT",
+      "source": "EXPLICIT_SESSION_OPT_IN_SELF_REPORT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "RESTRICTED",
+      "retention": "SESSION_OR_24_HOURS",
+      "consent": "EXPLICIT_SESSION_OPT_IN",
+      "encoding": "NONE=0,LOW=333333,MODERATE=666667,HIGH=1000000; no inference",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    },
+    {
+      "feature_id": "support.encouragement_preference",
+      "value_type": "ENCODED_ENUM_MICROUNIT",
+      "source": "EXPLICIT_SESSION_OPT_IN_SELF_REPORT",
+      "missingness": "NEUTRAL_ZERO",
+      "data_class": "RESTRICTED",
+      "retention": "SESSION_OR_24_HOURS",
+      "consent": "EXPLICIT_SESSION_OPT_IN",
+      "encoding": "NONE=0,GENTLE=500000,ACTIVE=1000000; no inference",
+      "allowed_use": "PERSONA_CONTEXT_AND_RECOMMENDATION_ONLY",
+      "diagnosis_score_effect": "FORBIDDEN",
+      "user_control": "VIEW_CORRECT_WITHDRAW"
+    }
+  ],
+  "missingness_policy": {
+    "unknown_is_not_false": true,
+    "missing_value_encoding": "MISSING",
+    "persona_neutral_value_microunit": 0,
+    "missing_feature_ids_are_audited": true,
+    "maximum_missing_features_before_insufficient_context": 6,
+    "outcome": "INSUFFICIENT_CONTEXT"
+  },
+  "protected_attribute_policy": {
+    "forbidden_direct_features": [
+      "sex",
+      "gender_identity",
+      "age",
+      "disability",
+      "nationality",
+      "race",
+      "religion",
+      "union_membership",
+      "health",
+      "inferred_psychological_state"
+    ],
+    "forbidden_proxy_features": [
+      "postal_code",
+      "exact_region",
+      "school_name",
+      "device_price",
+      "native_language_inference",
+      "name_embedding",
+      "free_text_demographic_inference"
+    ],
+    "proxy_review_required_for_new_feature": true,
+    "competency_score_use": "FORBIDDEN",
+    "employment_or_medical_decision_use": "FORBIDDEN"
+  },
+  "evidence_pipeline": {
+    "stages": [
+      "RAW_DIALOGUE_MINIMIZATION",
+      "NFC_SPAN_EXTRACTION",
+      "INDICATOR_MAPPING",
+      "ANCHOR_CLASSIFICATION",
+      "DETERMINISTIC_SCORING",
+      "HUMAN_REVIEW_IF_REQUIRED"
+    ],
+    "raw_dialogue_retention": "SEPARATE_RESTRICTED_STORE_WITH_TTL",
+    "extracted_span_minimization": "REQUIRED",
+    "unknown_indicator": "REJECT",
+    "unknown_anchor": "REJECT",
+    "score_mutation_by_llm": "FORBIDDEN"
+  },
+  "release_gate": {
+    "required_evaluation_suite_id": "EVAL-DIAG-RAW-E2E",
+    "technical_pass_does_not_activate": true,
+    "pilot_calibration_owner_ids": [
+      "OWN-AI",
+      "OWN-ACC"
+    ],
+    "state_until_fresh_evidence": "NOT_READY"
+  }
+}

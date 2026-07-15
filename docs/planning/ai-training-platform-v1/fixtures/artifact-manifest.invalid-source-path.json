@@ -1,0 +1,59 @@
+{
+  "schema_version": "artifact-manifest.v1",
+  "release": "v1.0.0-rc1",
+  "release_state": "CODE_COMPLETE / ACCEPTANCE DATA PENDING",
+  "scope": "RELEASE",
+  "source_release_manifest_sha256": null,
+  "source_commit": "1111111111111111111111111111111111111111",
+  "source_tree_object_format": "sha1",
+  "source_tree": "2222222222222222222222222222222222222222",
+  "source_tree_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "baseline_id": "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1",
+  "baseline_version": "1.1",
+  "baseline_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "builder_image_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+  "source_date_epoch": 1783872000,
+  "tool_versions": {
+    "builder": "1.0.0"
+  },
+  "files": [
+    {
+      "path": "final-system-design.pdf",
+      "media_type": "application/pdf",
+      "size_bytes": 1,
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "owner_ids": [
+        "OWN-ARCH"
+      ],
+      "gate_ids": [
+        "GATE-DESIGN-INTEGRITY"
+      ],
+      "source_paths": [
+        "../backend"
+      ]
+    }
+  ],
+  "integrity_exclusions": [
+    {
+      "path": "artifact-manifest.json",
+      "reason": "self"
+    },
+    {
+      "path": "artifact-manifest.json.sig",
+      "reason": "detached signature"
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "reason": "checksum catalog"
+    },
+    {
+      "path": "SHA256SUMS.txt.sig",
+      "reason": "checksum signature"
+    }
+  ],
+  "generated_at_utc": "2026-07-13T00:00:00Z",
+  "signing_policy": {
+    "algorithm": "Ed25519",
+    "key_id": "release-key-1"
+  }
+}

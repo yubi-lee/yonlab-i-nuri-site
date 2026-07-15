@@ -1,0 +1,2022 @@
+{
+  "schema_version": "source-traceability-manifest.v1",
+  "trace_baseline_date": "2026-07-14",
+  "public_safety": {
+    "public_safe": true,
+    "contains_source_originals": false,
+    "contains_verbatim_excerpts": false,
+    "locator_only_policy": "Private source bodies are not copied; only titles, paraphrases, hashes, counts, and structural locators are published."
+  },
+  "hash_contract": {
+    "source_files": "SHA-256 over exact source file bytes",
+    "proposal_locator_text": "OPC_BODY_TEXT_NFC_WS_V1: concatenate XML descendant text, normalize Unicode NFC, collapse all whitespace to one U+0020, trim, hash UTF-8 bytes"
+  },
+  "sources": [
+    {
+      "source_id": "SRC-RFP-2026-05",
+      "source_role": "CONTRACTUAL_RFP",
+      "file_name": "(제안요청서)보육교사 맞춤형 연수혁신 AI 서비스 고도화-조달의견반영.pdf",
+      "media_type": "application/pdf",
+      "bytes": 2141467,
+      "sha256": "2d9e23088b3e2234af8cca49847c1226840695660780b39ad549381e51a5f959",
+      "page_count": {
+        "physical_pdf_pages": 74,
+        "authority": "PDF physical pages are one-based and authoritative for RFP locators."
+      },
+      "detail_locator_contract": {
+        "list_pages": [
+          9,
+          10
+        ],
+        "detail_physical_page_range": [
+          11,
+          38
+        ],
+        "requirement_count": 60
+      }
+    },
+    {
+      "source_id": "SRC-PROPOSAL-V04",
+      "source_role": "TECHNICAL_PROPOSAL",
+      "file_name": "와이온랩_보육교사 맞춤형 연수혁신 AI 서비스 고도화 제안서_v0.4_개발설계보강.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "bytes": 17475962,
+      "sha256": "53af230c1fbbd9f4efc504c749ed17810922080ff1b3d9d4efab423d9043da27",
+      "page_count": {
+        "docprops_declared_pages": 179,
+        "reference_rendered_pages": 135,
+        "reference_renderer": "LibreOfficeDev 26.8.0.0.alpha0 (X86_64)",
+        "authority": "OPC indices are authoritative; rendered page count is informative and layout-engine dependent."
+      },
+      "opc_inventory": {
+        "part": "word/document.xml",
+        "body_child_count": 1755,
+        "paragraph_count": 1489,
+        "table_count": 264
+      }
+    }
+  ],
+  "rfp_requirements": [
+    {
+      "requirement_id": "PLR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        11
+      ],
+      "printed_page_labels": [
+        "9"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "기획 요구사항(PLR)"
+      ],
+      "section_title": "기존 AI 연수시스템 분석 및 고도화 방향 수립",
+      "paraphrase": "최종 모듈·여정·품질 기준선",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PLANNING",
+      "acceptance_test_ids": [
+        "T-GOV-001"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "REQ-BASELINE-001",
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PLR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        11,
+        12
+      ],
+      "printed_page_labels": [
+        "9",
+        "10"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "기획 요구사항(PLR)"
+      ],
+      "section_title": "AI 기반 보육교사 역량진단 및 맞춤형 연수 추천 체계 기획",
+      "paraphrase": "역량체계·진단·추천·경로",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PLANNING",
+      "acceptance_test_ids": [
+        "T-AI-001",
+        "T-AI-002",
+        "T-AI-003",
+        "T-AI-004",
+        "T-AI-005",
+        "T-AI-006",
+        "T-AI-007",
+        "T-AI-008",
+        "T-KPI-005"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "REQ-BASELINE-001",
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PLR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        12
+      ],
+      "printed_page_labels": [
+        "10"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "기획 요구사항(PLR)"
+      ],
+      "section_title": "Document AI 및 HWP RAG 기반 문서 활용 서비스 고도화 기획",
+      "paraphrase": "HWP DocumentGraph·RAG·초안",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PLANNING",
+      "acceptance_test_ids": [
+        "T-DOC-001",
+        "T-DOC-002",
+        "T-DOC-003",
+        "T-DOC-004",
+        "T-DOC-005",
+        "T-DOC-006",
+        "T-DOC-007",
+        "T-DOC-008",
+        "T-DOC-009",
+        "T-DOC-010",
+        "T-DOC-011",
+        "T-DOC-012"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "REQ-BASELINE-001",
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PLR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        13
+      ],
+      "printed_page_labels": [
+        "11"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "기획 요구사항(PLR)"
+      ],
+      "section_title": "사용자 피드백 기반 UI/UX 개선 기획",
+      "paraphrase": "역할별 IA·접근성·사용성",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PLANNING",
+      "acceptance_test_ids": [
+        "T-UX-001",
+        "T-UX-002",
+        "T-UX-003",
+        "T-UX-004",
+        "T-UX-005",
+        "T-UX-006",
+        "T-UX-007",
+        "T-UX-008",
+        "T-A11Y-001",
+        "T-A11Y-002",
+        "T-A11Y-003",
+        "T-A11Y-004",
+        "T-A11Y-005",
+        "T-A11Y-006",
+        "T-A11Y-007",
+        "T-A11Y-008"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "REQ-BASELINE-001",
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "ECR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        13
+      ],
+      "printed_page_labels": [
+        "11"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "시스템장비 요구사항(ECR)"
+      ],
+      "section_title": "연수시스템 고도화 운영 인프라 환경 구성",
+      "paraphrase": "Hybrid 인프라·AI serving·storage",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "ENVIRONMENT_PROVISIONING",
+      "acceptance_test_ids": [
+        "T-OPS-001",
+        "T-OPS-002",
+        "T-OPS-003",
+        "T-OPS-004",
+        "T-OPS-005",
+        "T-OPS-006",
+        "T-PERF-001",
+        "T-PERF-002",
+        "T-PERF-003",
+        "T-PERF-004",
+        "T-PERF-005"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "ECR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        14
+      ],
+      "printed_page_labels": [
+        "12"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "시스템장비 요구사항(ECR)"
+      ],
+      "section_title": "개발 및 테스트 환경 구축",
+      "paraphrase": "dev/test/stage/prod 분리",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "ENVIRONMENT_PROVISIONING",
+      "acceptance_test_ids": [
+        "T-DEP-001",
+        "T-DEP-002",
+        "T-DEP-003",
+        "T-DEP-004"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "DER-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        14
+      ],
+      "printed_page_labels": [
+        "12"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "AI 기반 보육교사 역량 진단 도구(챗봇) 고도화",
+      "paraphrase": "대화형 역량진단 engine",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-AI-001",
+        "T-AI-002",
+        "T-AI-003",
+        "T-AI-004",
+        "T-KPI-005"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        15
+      ],
+      "printed_page_labels": [
+        "13"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "교사 페르소나 기반 역량진단 개별화",
+      "paraphrase": "6개 대표 family·12개 versioned operational profile",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-AI-005",
+        "T-AI-006",
+        "T-AI-007",
+        "T-AI-008"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        15
+      ],
+      "printed_page_labels": [
+        "13"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "개인 맞춤형 학습 매칭 및 연수 추천 고도화",
+      "paraphrase": "맞춤 추천·학습경로",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-REC-001",
+        "T-REC-002",
+        "T-REC-003",
+        "T-REC-004",
+        "T-REC-005",
+        "T-REC-006",
+        "T-REC-007"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        15
+      ],
+      "printed_page_labels": [
+        "13"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "학습 성과 분석 및 리포트 연계",
+      "paraphrase": "개인·기관 성과 리포트",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-RPT-001",
+        "T-RPT-002",
+        "T-RPT-003",
+        "T-RPT-004",
+        "T-RPT-005"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        16
+      ],
+      "printed_page_labels": [
+        "14"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "포털 특화 문서 지능(Document AI) 및 HWP RAG 고도화",
+      "paraphrase": "Document AI·HWP RAG",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-DOC-001",
+        "T-DOC-002",
+        "T-DOC-003",
+        "T-DOC-004",
+        "T-DOC-005",
+        "T-DOC-006",
+        "T-DOC-007",
+        "T-DOC-008",
+        "T-DOC-009",
+        "T-DOC-010",
+        "T-DOC-011",
+        "T-DOC-012",
+        "T-KPI-005"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-006",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        16
+      ],
+      "printed_page_labels": [
+        "14"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "AI 연수UI/UX 개선",
+      "paraphrase": "교사·관리자 반응형 UI",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-UX-001",
+        "T-UX-002",
+        "T-UX-003",
+        "T-UX-004",
+        "T-UX-005",
+        "T-UX-006",
+        "T-UX-007",
+        "T-UX-008",
+        "T-A11Y-001",
+        "T-A11Y-002",
+        "T-A11Y-003",
+        "T-A11Y-004",
+        "T-A11Y-005",
+        "T-A11Y-006",
+        "T-A11Y-007",
+        "T-A11Y-008"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-007",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        17
+      ],
+      "printed_page_labels": [
+        "15"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "시범운영 데이터 축적 및 개선사항 반영",
+      "paraphrase": "cohort·설문·FGI·개선추적",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-PILOT-001",
+        "T-PILOT-002",
+        "T-PILOT-003",
+        "T-PILOT-004",
+        "T-PILOT-005",
+        "T-PILOT-006"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "DER-008",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        17
+      ],
+      "printed_page_labels": [
+        "15"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "개발 요구사항(DER)"
+      ],
+      "section_title": "연수시스템 고도화 모듈화 설계",
+      "paraphrase": "독립 모듈·표준 계약",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "FUNCTIONAL_DELIVERY",
+      "acceptance_test_ids": [
+        "T-ARCH-001",
+        "T-ARCH-002",
+        "T-ARCH-003",
+        "T-ARCH-004",
+        "T-ARCH-005"
+      ],
+      "design_ids": [
+        "AI-DIAG-004",
+        "DOC-AI-005",
+        "ARCH-CDR-003"
+      ]
+    },
+    {
+      "requirement_id": "SIR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        18
+      ],
+      "printed_page_labels": [
+        "16"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "인터페이스 요구사항(SIR)"
+      ],
+      "section_title": "교사/관리자용 대시보드용 데이터 API 제공",
+      "paraphrase": "교사·관리자 dashboard API",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "INTERFACE_DELIVERY",
+      "acceptance_test_ids": [
+        "T-API-001",
+        "T-API-002",
+        "T-API-003",
+        "T-API-004"
+      ],
+      "design_ids": [
+        "UX-IA-002",
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "SIR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        18
+      ],
+      "printed_page_labels": [
+        "16"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "인터페이스 요구사항(SIR)"
+      ],
+      "section_title": "AI 진단·연수추천·Document AI 연계 인터페이스 제공",
+      "paraphrase": "진단·추천·문서·성과 API/event",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "INTERFACE_DELIVERY",
+      "acceptance_test_ids": [
+        "T-API-005",
+        "T-API-006",
+        "T-API-007",
+        "T-API-008",
+        "T-API-009",
+        "T-API-010"
+      ],
+      "design_ids": [
+        "UX-IA-002",
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "SIR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        18
+      ],
+      "printed_page_labels": [
+        "16"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "인터페이스 요구사항(SIR)"
+      ],
+      "section_title": "접근성 및 사용자 편의성 확보",
+      "paraphrase": "접근성·키보드·읽기 쉬운 UI",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "INTERFACE_DELIVERY",
+      "acceptance_test_ids": [
+        "T-A11Y-001",
+        "T-A11Y-002",
+        "T-A11Y-003",
+        "T-A11Y-004",
+        "T-A11Y-005",
+        "T-A11Y-006",
+        "T-A11Y-007",
+        "T-A11Y-008"
+      ],
+      "design_ids": [
+        "UX-IA-002",
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        19
+      ],
+      "printed_page_labels": [
+        "17"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 표준 수립 및 상위표준 준수",
+      "paraphrase": "명명·코드·UTC·상위표준",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-001"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        19
+      ],
+      "printed_page_labels": [
+        "17"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 표준 관리",
+      "paraphrase": "데이터 사전·변경이력",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-002"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        19
+      ],
+      "printed_page_labels": [
+        "17"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 구조 설계",
+      "paraphrase": "논리·물리 모델·index·partition",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-003"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        20
+      ],
+      "printed_page_labels": [
+        "18"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 구조 검증",
+      "paraphrase": "모델 완전성·무결성 검증",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-004"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        20
+      ],
+      "printed_page_labels": [
+        "18"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 구조 관리",
+      "paraphrase": "migration·version·승인",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-005"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-006",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        20
+      ],
+      "printed_page_labels": [
+        "18"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 값 검증",
+      "paraphrase": "값·참조·범위·중복 검증",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-006"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "DAR-007",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        21
+      ],
+      "printed_page_labels": [
+        "19"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "데이터 요구사항(DAR)"
+      ],
+      "section_title": "데이터 개방 및 메타데이터 관리체계",
+      "paraphrase": "메타데이터·lineage·개방 API",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "DATA_GOVERNANCE",
+      "acceptance_test_ids": [
+        "T-DATA-007"
+      ],
+      "design_ids": [
+        "DATA-ICD-007"
+      ]
+    },
+    {
+      "requirement_id": "TER-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        21
+      ],
+      "printed_page_labels": [
+        "19"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "테스트 요구사항(TER)"
+      ],
+      "section_title": "단위 테스트(Unit Test)",
+      "paraphrase": "자동 단위시험",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "VERIFICATION",
+      "acceptance_test_ids": [
+        "T-GATE-001"
+      ],
+      "design_ids": [
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "TER-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        22
+      ],
+      "printed_page_labels": [
+        "20"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "테스트 요구사항(TER)"
+      ],
+      "section_title": "개발 테스트(Development Test)",
+      "paraphrase": "모듈 통합·provider stub",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "VERIFICATION",
+      "acceptance_test_ids": [
+        "T-GATE-002"
+      ],
+      "design_ids": [
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "TER-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        23
+      ],
+      "printed_page_labels": [
+        "21"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "테스트 요구사항(TER)"
+      ],
+      "section_title": "통합 테스트(System Integration Test)",
+      "paraphrase": "전체 시스템·부하·보안",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "VERIFICATION",
+      "acceptance_test_ids": [
+        "T-GATE-003",
+        "T-PERF-001",
+        "T-PERF-002",
+        "T-PERF-003",
+        "T-PERF-004",
+        "T-PERF-005",
+        "T-SEC-006"
+      ],
+      "design_ids": [
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "TER-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        23
+      ],
+      "printed_page_labels": [
+        "21"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "테스트 요구사항(TER)"
+      ],
+      "section_title": "시범운영 및 사용자 검증 테스트",
+      "paraphrase": "200명×2회 사용자 검증",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "VERIFICATION",
+      "acceptance_test_ids": [
+        "T-PILOT-001",
+        "T-PILOT-002",
+        "T-PILOT-003",
+        "T-PILOT-004",
+        "T-PILOT-005",
+        "T-PILOT-006"
+      ],
+      "design_ids": [
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "SER-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        24
+      ],
+      "printed_page_labels": [
+        "22"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "보안관리 기본사항",
+      "paraphrase": "보안 거버넌스·책임·점검",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-001"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        25
+      ],
+      "printed_page_labels": [
+        "23"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "보안지침 준수",
+      "paraphrase": "법령·지침·개발보안 준수",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-002"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        26
+      ],
+      "printed_page_labels": [
+        "24"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "사업장 보안관리(원격지 개발장소 포함)",
+      "paraphrase": "개발장소·원격접속 통제",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-003"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        27
+      ],
+      "printed_page_labels": [
+        "25"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "사업수행에 관한 보안사항",
+      "paraphrase": "월간점검·자료반출·종료보안",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-004"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        27
+      ],
+      "printed_page_labels": [
+        "25"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "하드웨어 및 장비",
+      "paraphrase": "장비·IP·계정·행위 감사",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-005"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-006",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        28
+      ],
+      "printed_page_labels": [
+        "26"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "소프트웨어 개발보안 및 웹 취약점 대응",
+      "paraphrase": "SAST·DAST·dependency·웹취약점",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-006"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-007",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        28
+      ],
+      "printed_page_labels": [
+        "26"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "개인정보 보호",
+      "paraphrase": "개인정보 동의·가명·파기",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-PRIV-001",
+        "T-PRIV-002",
+        "T-PRIV-003",
+        "T-PRIV-004",
+        "T-PRIV-005",
+        "T-PRIV-006"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "SER-008",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        28
+      ],
+      "printed_page_labels": [
+        "26"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "보안 요구사항(SER)"
+      ],
+      "section_title": "응용프로그램 보안활동 지원",
+      "paraphrase": "취약점 조치·관리수준 진단",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SECURITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-SEC-007"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "NORM-CONTRACT-015"
+      ]
+    },
+    {
+      "requirement_id": "QUR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        29
+      ],
+      "printed_page_labels": [
+        "27"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "품질 요구사항(QUR)"
+      ],
+      "section_title": "표준화",
+      "paraphrase": "코딩·API·문서·데이터 표준",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "QUALITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-QUAL-001"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "QUR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        29
+      ],
+      "printed_page_labels": [
+        "27"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "품질 요구사항(QUR)"
+      ],
+      "section_title": "품질관리",
+      "paraphrase": "품질계획·요구추적·AI 품질",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "QUALITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-QUAL-002",
+        "T-KPI-005"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "QUR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        30
+      ],
+      "printed_page_labels": [
+        "28"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "품질 요구사항(QUR)"
+      ],
+      "section_title": "시스템 운용성, 확장성",
+      "paraphrase": "확장·상호운용·유지보수",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "QUALITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-ARCH-001",
+        "T-ARCH-002",
+        "T-ARCH-003",
+        "T-ARCH-004",
+        "T-ARCH-005"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "QUR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        30
+      ],
+      "printed_page_labels": [
+        "28"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "품질 요구사항(QUR)"
+      ],
+      "section_title": "기능구현 정확성",
+      "paraphrase": "요구별 기능 정확성",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "QUALITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-ACC-001"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "QUR-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        30
+      ],
+      "printed_page_labels": [
+        "28"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "품질 요구사항(QUR)"
+      ],
+      "section_title": "시스템 신뢰, 이해 용이성",
+      "paraphrase": "오류·설명·도움말·신뢰성",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "QUALITY_CONTROL",
+      "acceptance_test_ids": [
+        "T-UX-007",
+        "T-RES-001"
+      ],
+      "design_ids": [
+        "ARCH-CDR-003",
+        "VER-ATP-009"
+      ]
+    },
+    {
+      "requirement_id": "COR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        31
+      ],
+      "printed_page_labels": [
+        "29"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "공통 규정 준수",
+      "paraphrase": "공통 규정 준수대장",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-GOV-002"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "COR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        31
+      ],
+      "printed_page_labels": [
+        "29"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "자원활용 및 호환성 확보",
+      "paraphrase": "기존 자원·표준·호환 adapter",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-INT-001",
+        "T-INT-002",
+        "T-INT-003",
+        "T-INT-004"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "COR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        31
+      ],
+      "printed_page_labels": [
+        "29"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "과업심의위원회",
+      "paraphrase": "과업 변경 심의·승인 이력",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-GOV-003"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "COR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        32
+      ],
+      "printed_page_labels": [
+        "30"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "정보시스템 업무수행 영향도 측정 방안 마련",
+      "paraphrase": "업무 영향도·연속성 계획",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-BCP-001"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "COR-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        32
+      ],
+      "printed_page_labels": [
+        "30"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "손해배상",
+      "paraphrase": "손해·책임·보험 관련 산출물",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-GOV-004"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "COR-006",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        33
+      ],
+      "printed_page_labels": [
+        "31"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "제약사항(COR)"
+      ],
+      "section_title": "하도급 사전 승인",
+      "paraphrase": "하도급 승인·산출물 통제",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "CONTRACTUAL_CONSTRAINT",
+      "acceptance_test_ids": [
+        "T-GOV-005"
+      ],
+      "design_ids": [
+        "SRC-CDR-000",
+        "PLAN-180D-010",
+        "SEC-OPS-008"
+      ]
+    },
+    {
+      "requirement_id": "PMR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        33
+      ],
+      "printed_page_labels": [
+        "31"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "추진일정",
+      "paraphrase": "180일 WBS·milestone",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-PM-001"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        34
+      ],
+      "printed_page_labels": [
+        "32"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "업무보고",
+      "paraphrase": "주간·월간·이슈 보고",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-PM-002"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        34
+      ],
+      "printed_page_labels": [
+        "32"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "사업수행 계획서 작성 및 제출",
+      "paraphrase": "착수·수행계획 기준선",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-PM-003"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        34
+      ],
+      "printed_page_labels": [
+        "32"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "사업수행장소(작업장소)",
+      "paraphrase": "장소·장비·접근권한 계획",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-PM-004"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        35
+      ],
+      "printed_page_labels": [
+        "33"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "산출물 현행화 및 제출",
+      "paraphrase": "산출물 현행화·형상관리",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-DOCS-001"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-006",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        36
+      ],
+      "printed_page_labels": [
+        "34"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "위험관리방안",
+      "paraphrase": "위험대장·완화·escalation",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-PM-005"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-007",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        36
+      ],
+      "printed_page_labels": [
+        "34"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "SW사업정보 저장소 데이터 작성 및 제출",
+      "paraphrase": "SW사업정보 저장소 제출",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-GOV-006"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PMR-008",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        37
+      ],
+      "printed_page_labels": [
+        "35"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업관리 요구사항(PMR)"
+      ],
+      "section_title": "사전협의 이행결과 수행",
+      "paraphrase": "사전협의 조치 추적",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "PROJECT_MANAGEMENT",
+      "acceptance_test_ids": [
+        "T-GOV-007"
+      ],
+      "design_ids": [
+        "PLAN-180D-010"
+      ]
+    },
+    {
+      "requirement_id": "PSR-001",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        37
+      ],
+      "printed_page_labels": [
+        "35"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업지원 요구사항(PSR)"
+      ],
+      "section_title": "교육지원",
+      "paraphrase": "역할별 교육계획·이수증적",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SERVICE_SUPPORT",
+      "acceptance_test_ids": [
+        "T-TRN-001"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "DEL-CONTRACT-014"
+      ]
+    },
+    {
+      "requirement_id": "PSR-002",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        37
+      ],
+      "printed_page_labels": [
+        "35"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업지원 요구사항(PSR)"
+      ],
+      "section_title": "운영자, 관리자, 사용자 매뉴얼",
+      "paraphrase": "사용자·관리자·운영 매뉴얼",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SERVICE_SUPPORT",
+      "acceptance_test_ids": [
+        "T-DOCS-002"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "DEL-CONTRACT-014"
+      ]
+    },
+    {
+      "requirement_id": "PSR-003",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        38
+      ],
+      "printed_page_labels": [
+        "36"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업지원 요구사항(PSR)"
+      ],
+      "section_title": "기술이전",
+      "paraphrase": "소스·설계·운영 기술이전",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SERVICE_SUPPORT",
+      "acceptance_test_ids": [
+        "T-TRN-002"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "DEL-CONTRACT-014"
+      ]
+    },
+    {
+      "requirement_id": "PSR-004",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        38
+      ],
+      "printed_page_labels": [
+        "36"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업지원 요구사항(PSR)"
+      ],
+      "section_title": "무상하자보수",
+      "paraphrase": "하자보수·SLA·접수절차",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SERVICE_SUPPORT",
+      "acceptance_test_ids": [
+        "T-SUP-001"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "DEL-CONTRACT-014"
+      ]
+    },
+    {
+      "requirement_id": "PSR-005",
+      "source_id": "SRC-RFP-2026-05",
+      "physical_pages": [
+        38
+      ],
+      "printed_page_labels": [
+        "36"
+      ],
+      "section_path": [
+        "Ⅲ. 제안 요청 내용",
+        "3. 세부요구 사항",
+        "사업지원 요구사항(PSR)"
+      ],
+      "section_title": "백업 및 장애복구",
+      "paraphrase": "백업·복구·장애대응",
+      "obligation_level": "MANDATORY",
+      "obligation_type": "SERVICE_SUPPORT",
+      "acceptance_test_ids": [
+        "T-DR-001",
+        "T-DR-002",
+        "T-DR-003",
+        "T-DR-004",
+        "T-DR-005"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "DEL-CONTRACT-014"
+      ]
+    }
+  ],
+  "proposal_topics": [
+    {
+      "topic_id": "PROPOSAL-DIAGNOSIS",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "대화형 상태 기반 역량진단, 루브릭, 근거와 신뢰도 설계",
+      "requirement_ids": [
+        "PLR-002",
+        "DER-001"
+      ],
+      "design_ids": [
+        "AI-DIAG-004"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 398,
+          "element_type": "paragraph",
+          "paragraph_index": 342,
+          "normalized_text_sha256": "52876564199d233939ed57af529ddfb345aaba13dcf694b45ccc4efc9d6ff223",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 401,
+          "element_type": "table",
+          "table_index": 55,
+          "normalized_text_sha256": "b7bb325a5365434525a4e648efea47cf5714fe1195548599408cadec76dbe016",
+          "purpose": "IMPLEMENTATION_SUMMARY"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-PERSONA",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "대표 교사 페르소나와 안전한 개별화 정책 설계",
+      "requirement_ids": [
+        "PLR-002",
+        "DER-002"
+      ],
+      "design_ids": [
+        "AI-DIAG-004"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 510,
+          "element_type": "paragraph",
+          "paragraph_index": 436,
+          "normalized_text_sha256": "14738849b70ff4507406892d5cf37034ed7404f767c5040ac1b569772261907a",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 518,
+          "element_type": "table",
+          "table_index": 74,
+          "normalized_text_sha256": "50e41018c4b387ef7c8e2b443bd682e9f1fb8974f20ab7c04e65bae0e521dc62",
+          "purpose": "PERSONA_POLICY_TABLE"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-RECOMMENDATION",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "진단·페르소나·콘텐츠 메타데이터 기반 추천과 학습경로 설계",
+      "requirement_ids": [
+        "PLR-002",
+        "DER-003"
+      ],
+      "design_ids": [
+        "AI-DIAG-004"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 544,
+          "element_type": "paragraph",
+          "paragraph_index": 465,
+          "normalized_text_sha256": "8f00d95dc25c12529e84b1c0d53f5c55a29c095faa38f882a181ea153a245ce8",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 547,
+          "element_type": "table",
+          "table_index": 78,
+          "normalized_text_sha256": "5230c5e90e390ebdeadedcdb89ab2eb3c5651585d9287b7f14bdaeb6bab62847",
+          "purpose": "IMPLEMENTATION_SUMMARY"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-HWP-RAG",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "HWP 구조 보존형 문서 처리, 검색, 근거 응답과 초안 설계",
+      "requirement_ids": [
+        "PLR-003",
+        "DER-005"
+      ],
+      "design_ids": [
+        "DOC-AI-005"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 645,
+          "element_type": "paragraph",
+          "paragraph_index": 548,
+          "normalized_text_sha256": "0fa745c2a13fce94cc8fa9e5b824b540ef3d164cf1e4588875a799ddbbdb73ac",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 647,
+          "element_type": "table",
+          "table_index": 96,
+          "normalized_text_sha256": "22139563c07a97982cf47adbc1dded2ea97861f5983dc64bd32321b4cb8763af",
+          "purpose": "IMPLEMENTATION_SUMMARY"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-AI-GATEWAY",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "모델 라우팅, 개인정보 차단, 응답 검증과 감사 통제 지점 설계",
+      "requirement_ids": [
+        "DER-008",
+        "SIR-002"
+      ],
+      "design_ids": [
+        "AI-GW-006"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 320,
+          "element_type": "paragraph",
+          "paragraph_index": 278,
+          "normalized_text_sha256": "7d73f93431c401ad608a78b6389a13b0f9431fd84d0ac8fcf1421c04645b52bd",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 323,
+          "element_type": "table",
+          "table_index": 41,
+          "normalized_text_sha256": "e77d2f5e9ff2cd8c6da7cd544773321f57e77329f60b88fbe5b9ed89e3fa0706",
+          "purpose": "GATEWAY_CONTROL_TABLE"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-UI",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "교사 연속 여정, 관리자 화면, 접근성과 반응형 UI 설계",
+      "requirement_ids": [
+        "PLR-004",
+        "DER-006",
+        "SIR-003"
+      ],
+      "design_ids": [
+        "UX-IA-002",
+        "UX-VIS-012"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1131,
+          "element_type": "paragraph",
+          "paragraph_index": 967,
+          "normalized_text_sha256": "6899dbfa72d977bf90c90b32cd53fe30e3717a18c4a4e8011c45b403739ca466",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1134,
+          "element_type": "table",
+          "table_index": 163,
+          "normalized_text_sha256": "8614d42eff1fa3bd6b58316b58be2e41d6ad080305ca1cf13364ebebc1238cfd",
+          "purpose": "IMPLEMENTATION_SUMMARY"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-PILOT",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "교사 200명 대상 2회 검증, 피드백과 재검증 운영 설계",
+      "requirement_ids": [
+        "DER-007",
+        "TER-004"
+      ],
+      "design_ids": [
+        "PLAN-180D-010",
+        "VER-ATP-009"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1205,
+          "element_type": "paragraph",
+          "paragraph_index": 1030,
+          "normalized_text_sha256": "62df739e7bd61217a2c03e74836055f5480e7ce8dcb533e0a49a1ae201223c4e",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1207,
+          "element_type": "table",
+          "table_index": 174,
+          "normalized_text_sha256": "9e03deabe133db661f86c785f611c3b869847120b53cd4474a04c3f670f8f86a",
+          "purpose": "IMPLEMENTATION_SUMMARY"
+        }
+      ]
+    },
+    {
+      "topic_id": "PROPOSAL-OPERATIONS",
+      "source_id": "SRC-PROPOSAL-V04",
+      "summary": "운영전환, 역할별 교육, 품질·보안·문서 패키지 인계 설계",
+      "requirement_ids": [
+        "ECR-001",
+        "PSR-001",
+        "PSR-002",
+        "PSR-003",
+        "PSR-005"
+      ],
+      "design_ids": [
+        "SEC-OPS-008",
+        "DEL-CONTRACT-014"
+      ],
+      "locators": [
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1694,
+          "element_type": "paragraph",
+          "paragraph_index": 1440,
+          "normalized_text_sha256": "63fe004f9181d1006040f462a485608d65ed76d3410262a1a4f69d301903e89b",
+          "purpose": "SECTION_HEADING"
+        },
+        {
+          "opc_part": "word/document.xml",
+          "body_child_index": 1698,
+          "element_type": "table",
+          "table_index": 253,
+          "normalized_text_sha256": "60a0ad020b6b56c2bc2559cb2c89cc5eb98b8ef6cb18fda0fcf48470ae801661",
+          "purpose": "TRANSITION_TABLE"
+        }
+      ]
+    }
+  ],
+  "accuracy_limitations": [
+    "RFP physical pages were extracted from the exact hashed 74-page PDF; page 11/12 and all category transitions were visually spot-checked.",
+    "PLR-002 is the only mapped requirement whose detailed block spans two physical pages (11 and 12).",
+    "Proposal page numbers vary by rendering engine; OPC body, paragraph, and table indices plus normalized text hashes are normative.",
+    "Paraphrases are engineering trace labels, not legal quotations or a substitute for review of the exact hashed private source.",
+    "A future source revision requires a new source ID, digest, locator review, and checker constants; hashes must never be silently replaced."
+  ]
+}

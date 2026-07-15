@@ -1,0 +1,8 @@
+{
+  "schema_version": "evidence-index.v1",
+  "release": "v1.0.0-rc1",
+  "source_commit": "1111111111111111111111111111111111111111",
+  "generated_at_utc": "2026-07-13T00:00:00Z",
+  "overall_status": "PASS",
+  "evidence": [{"evidence_id": "EVD-AI-001", "requirement_ids": ["SYS-F-001"], "test_ids": ["T-AI-001"], "gate_ids": ["GATE-AI-KPI"], "status": "PASS", "freshness": "FRESH", "artifact_path": "docs/qa/ai-training-platform/evidence/ai-001.json", "artifact_sha256": "2222222222222222222222222222222222222222222222222222222222222222", "source_commit": "1111111111111111111111111111111111111111", "executed_at_utc": "2026-07-13T00:00:00Z", "expires_at_utc": "2026-08-12T00:00:00Z", "owner_ids": ["OWN-AI", "OWN-QA"], "candidate_bound": true, "dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333"}]
+}

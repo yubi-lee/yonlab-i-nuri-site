@@ -1,0 +1,50 @@
+{
+  "schema_version": "ai-gateway-safeguarding-decision-v1",
+  "canonical_decisions": [
+    "STANDARD",
+    "CHILD_SAFEGUARDING",
+    "IMMINENT_DANGER",
+    "SECURITY_EXFILTRATION",
+    "POLICY_BLOCK"
+  ],
+  "positive_cases": [
+    {
+      "case_id": "SAFEGUARD-STANDARD",
+      "decision": "STANDARD",
+      "expected_schema_valid": true,
+      "expected_route_action": "MODEL_ROUTE_POLICY_EVALUATION"
+    },
+    {
+      "case_id": "SAFEGUARD-CHILD",
+      "decision": "CHILD_SAFEGUARDING",
+      "expected_schema_valid": true,
+      "expected_route_action": "SAFEGUARDING_QUEUE_NO_EXTERNAL_AI"
+    },
+    {
+      "case_id": "SAFEGUARD-IMMINENT",
+      "decision": "IMMINENT_DANGER",
+      "expected_schema_valid": true,
+      "expected_route_action": "SAFEGUARDING_QUEUE_NO_EXTERNAL_AI"
+    },
+    {
+      "case_id": "SAFEGUARD-EXFILTRATION",
+      "decision": "SECURITY_EXFILTRATION",
+      "expected_schema_valid": true,
+      "expected_route_action": "SECURITY_EVENT_BLOCK_TOOL_AND_EGRESS"
+    },
+    {
+      "case_id": "SAFEGUARD-POLICY-BLOCK",
+      "decision": "POLICY_BLOCK",
+      "expected_schema_valid": true,
+      "expected_route_action": "BLOCK_MODEL_AND_TOOL_ROUTE"
+    }
+  ],
+  "negative_cases": [
+    {
+      "case_id": "SAFEGUARD-UNKNOWN",
+      "decision": "UNKNOWN",
+      "expected_schema_valid": false,
+      "expected_fail_closed_decision": "POLICY_BLOCK"
+    }
+  ]
+}

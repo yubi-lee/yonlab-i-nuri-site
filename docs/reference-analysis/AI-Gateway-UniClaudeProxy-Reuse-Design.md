@@ -261,7 +261,7 @@ Frontend / Diagnosis / Recommendation / Document AI / RAG
   "task_type": "diagnosis_evidence_extraction",
   "tenant_id": "tenant-ref",
   "subject_ref": "pseudonymous-ref",
-  "data_class": "personal",
+  "data_class": "CONFIDENTIAL",
   "consent_scope": ["ai_diagnosis"],
   "quality_tier": "high",
   "schema_id": "diagnosis-evidence-v3",
@@ -349,14 +349,14 @@ gpt-oss-20b는 주 학습 언어 특성상 한국어 보육 도메인 검증을 
 
 | 데이터 등급 | 예시 | 외부 OpenAI | 내부 sLLM |
 |---|---|---|---|
-| Public | 공개 승인 교육자료 | 허용 | 허용 |
-| Internal | 내부 운영지침 | 계약·정책 승인 시 | 허용 |
-| Personal | 교사 경력·관심·대화 | 비식별·동의·정책 충족 시 최소 전송 | 허용된 환경에서만 |
-| Restricted | 식별정보 포함 원문·민감 상담 내용 | 금지 | 격리된 내부 deployment만 |
+| PUBLIC | 공개 승인 교육자료 | 허용 | 허용 |
+| INTERNAL | 내부 운영지침 | 계약·정책 승인 시 | 허용 |
+| CONFIDENTIAL | 비식별·최소화된 교사 맥락·학습이력 | field redaction·동의·signed policy authorization 후 승인 route | 허용 |
+| RESTRICTED | 식별정보 포함 원문·민감 상담 내용 | 금지 | 격리된 내부 deployment만 |
 
 필수 규칙:
 
-- Restricted 요청은 cloud fallback을 금지한다.
+- `RESTRICTED` 요청은 cloud fallback을 금지한다.
 - 비식별화가 실패하면 fail closed한다.
 - fallback으로 인해 데이터가 더 낮은 보안 등급의 provider로 이동하지 않는다.
 - 외부 전송은 purpose, provider, data class, consent version을 감사 기록한다.
@@ -452,7 +452,7 @@ RAG POC에서 재사용할 요소:
 ### 12.1 골든셋
 
 - 교사 대화 300건 이상
-- 5~6개 페르소나별 균형 표본
+- 6개 family·12 operational profile별 균형 표본
 - 모호·상충·불완전 응답
 - 휴직 복귀, 의욕적인 초임, 경력 전환, 지역·기관 차이
 - 개인정보·민감정보·동의 철회 사례
@@ -464,16 +464,18 @@ RAG POC에서 재사용할 요소:
 
 | 항목 | 최소 기준 |
 |---|---|
-| 전문가 진단 일치도 | 0.80 이상 |
-| 추천 적합도 | 85% 이상 |
-| RAG Top-5 정확도 | 90% 이상 |
+| 전문가 진단 일치도 | 0.85 이상 |
+| 추천 적합도 | 0.90 이상 |
+| RAG Top-5 정확도 | 0.95 이상 |
 | 출처 제시율 | 95% 이상 |
-| structured output schema 성공률 | 99.5% 이상 |
+| structured output schema 성공률 | 0.998 이상 |
 | Restricted data 외부 전송 | 0건 |
 | 필수 주장의 citation 검증 | 100% 수행 |
 | 모델 변경 rollback | 검증된 이전 revision으로 복구 가능 |
 
 추가로 persona별 성능 차이, 근거 추출 F1, no-answer 정확도, p95 latency, cost/request, GPU utilization, queue time, fallback rate를 측정한다.
+
+구현 후보의 owner·기한·필수 평가입력·승격 gate와 `RESTRICTED` local-only 규칙은 [provider-decision-registry.json](yonlab-ai-training-platform-design/provider-decision-registry.json)으로 관리한다. OpenAI, sLLM, OCR, embedding/reranker, GPU·converter hardware, HWP binary가 이 registry의 fresh PASS 없이 production route에 들어갈 수 없다.
 
 ### 12.3 승격 흐름
 

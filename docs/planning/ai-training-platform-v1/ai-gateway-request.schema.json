@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:yonlab:canonical-ai-request-envelope:1.0.0",
+  "title": "YOnLab Canonical AI Gateway request envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["headers", "body"],
+  "properties": {
+    "headers": {"$ref": "#/$defs/headers"},
+    "body": {"$ref": "#/$defs/body"}
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "version": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*\\.v[0-9]+$"},
+    "headers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_type", "idempotency_key", "x_request_id", "traceparent", "workload_spiffe_id"],
+      "properties": {
+        "content_type": {"const": "application/json"},
+        "idempotency_key": {"$ref": "#/$defs/uuid"},
+        "x_request_id": {"$ref": "#/$defs/uuid"},
+        "traceparent": {"type": "string", "pattern": "^00-[0-9a-f]{32}-[0-9a-f]{16}-0[01]$"},
+        "workload_spiffe_id": {
+          "type": "string",
+          "pattern": "^spiffe://yonlab/(local|test|stage|production)/(application-api|document-worker)$"
+        }
+      }
+    },
+    "policyVersions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "routing",
+        "prompt",
+        "model_registry",
+        "schema_registry",
+        "data_use",
+        "consent_authorization",
+        "tenant_isolation",
+        "safeguarding_routing"
+      ],
+      "properties": {
+        "routing": {"$ref": "#/$defs/version"},
+        "prompt": {"$ref": "#/$defs/version"},
+        "model_registry": {"$ref": "#/$defs/version"},
+        "schema_registry": {"$ref": "#/$defs/version"},
+        "data_use": {"$ref": "#/$defs/version"},
+        "consent_authorization": {"$ref": "#/$defs/version"},
+        "tenant_isolation": {"$ref": "#/$defs/version"},
+        "safeguarding_routing": {"$ref": "#/$defs/version"}
+      }
+    },
+    "dataUsePolicyVersions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "DataUsePolicyVersion",
+        "ConsentAuthorizationPolicyVersion",
+        "TenantIsolationPolicyVersion",
+        "SafeguardingRoutingPolicyVersion"
+      ],
+      "properties": {
+        "DataUsePolicyVersion": {"const": "data-use.v1"},
+        "ConsentAuthorizationPolicyVersion": {"const": "consent-authz.v1"},
+        "TenantIsolationPolicyVersion": {"const": "tenant-isolation.v1"},
+        "SafeguardingRoutingPolicyVersion": {"const": "safeguarding-routing.v1"}
+      }
+    },
+    "dataUsePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "context_id",
+        "tenant_id",
+        "subject_pseudonym",
+        "purpose",
+        "task",
+        "data_class",
+        "field_categories",
+        "allowed_destination",
+        "consent_basis",
+        "consent_epoch",
+        "acl_version",
+        "safeguarding_decision",
+        "policy_versions",
+        "payload_sha256",
+        "issuer",
+        "audience",
+        "issued_at",
+        "expires_at",
+        "trace_id"
+      ],
+      "properties": {
+        "schema": {"const": "DataUseContext.v1"},
+        "context_id": {"$ref": "#/$defs/uuid"},
+        "tenant_id": {"$ref": "#/$defs/uuid"},
+        "subject_pseudonym": {"type": ["string", "null"], "maxLength": 128},
+        "purpose": {"enum": ["diagnosis_support", "recommendation_support", "document_retrieval", "document_draft", "evaluation"]},
+        "task": {"$ref": "#/$defs/task"},
+        "data_class": {"enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]},
+        "field_categories": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "allowed_destination": {"enum": ["INTERNAL_SLLM", "EXTERNAL_OPENAI"]},
+        "consent_basis": {"enum": ["CONSENT", "CONTRACT", "LEGAL_OBLIGATION", "PUBLIC_TASK", "PUBLICATION_RIGHTS"]},
+        "consent_epoch": {"type": "integer", "minimum": 0},
+        "acl_version": {"type": "integer", "minimum": 0},
+        "safeguarding_decision": {
+          "enum": [
+            "STANDARD",
+            "CHILD_SAFEGUARDING",
+            "IMMINENT_DANGER",
+            "SECURITY_EXFILTRATION",
+            "POLICY_BLOCK"
+          ]
+        },
+        "policy_versions": {"$ref": "#/$defs/dataUsePolicyVersions"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "issuer": {"type": "string", "pattern": "^spiffe://yonlab/(local|test|stage|production)/identity-consent$"},
+        "audience": {"type": "string", "pattern": "^spiffe://yonlab/(local|test|stage|production)/ai-gateway$"},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "trace_id": {"$ref": "#/$defs/uuid"}
+      }
+    },
+    "dataUseContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["payload", "signature", "canonicalization"],
+      "properties": {
+        "payload": {"$ref": "#/$defs/dataUsePayload"},
+        "signature": {"type": "string", "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"},
+        "canonicalization": {"const": "JCS"}
+      }
+    },
+    "task": {
+      "enum": [
+        "diagnosis.evidence.extract",
+        "diagnosis.next_question.compose",
+        "persona.explanation.compose",
+        "recommendation.explanation.compose",
+        "document.query.rewrite",
+        "document.rerank",
+        "document.grounded_answer",
+        "draft.hwpx.section.compose",
+        "document.metadata.tag"
+      ]
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task", "tenant_id", "input", "response_schema_id", "policy_versions", "latency_budget_ms", "data_use_context"],
+      "properties": {
+        "task": {"$ref": "#/$defs/task"},
+        "tenant_id": {"$ref": "#/$defs/uuid"},
+        "input": {"type": "object", "minProperties": 1},
+        "response_schema_id": {"$ref": "#/$defs/version"},
+        "policy_versions": {"$ref": "#/$defs/policyVersions"},
+        "latency_budget_ms": {"type": "integer", "minimum": 100, "maximum": 120000},
+        "data_use_context": {"$ref": "#/$defs/dataUseContext"}
+      }
+    }
+  },
+  "x-wire-contract": {
+    "endpoint": "POST /internal/ai/v1/responses",
+    "header_mapping": {
+      "content_type": "Content-Type",
+      "idempotency_key": "Idempotency-Key",
+      "x_request_id": "X-Request-ID",
+      "traceparent": "traceparent",
+      "workload_spiffe_id": "mTLS peer certificate SAN URI"
+    },
+    "body_unknown_properties": "REJECT",
+    "provider_fields": "FORBIDDEN",
+    "idempotency_and_trace_fields_are_headers_only": true
+  },
+  "x-signed-binding-contract": {
+    "input_digest_projection": "body.input",
+    "input_digest_canonicalization": "RFC8785-JCS",
+    "input_digest_algorithm": "SHA-256",
+    "input_digest_target": "body.data_use_context.payload.payload_sha256",
+    "body_payload_equal_fields": ["task", "tenant_id"],
+    "body_payload_policy_mapping": {
+      "data_use": "DataUsePolicyVersion",
+      "consent_authorization": "ConsentAuthorizationPolicyVersion",
+      "tenant_isolation": "TenantIsolationPolicyVersion",
+      "safeguarding_routing": "SafeguardingRoutingPolicyVersion"
+    },
+    "mismatch_result": "POLICY_VERSION_MISMATCH_OR_DATA_USE_CONTEXT_INVALID"
+  },
+  "x-fixture-contract": {
+    "positive": "fixtures/ai-gateway-request.valid.json",
+    "negative": "fixtures/ai-gateway-request.invalid.json",
+    "negative_must_fail_keyword": "additionalProperties"
+  }
+}

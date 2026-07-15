@@ -1,0 +1,123 @@
+{
+  "schema_id": "urn:yonlab:document-graph:1.0.0",
+  "schema_version": "document-graph.v1",
+  "locator_policy_version": "source-locator.v1",
+  "tenant_id": "00000000-0000-4000-8000-000000000001",
+  "document_id": "00000000-0000-4000-8000-000000000002",
+  "document_version_id": "00000000-0000-4000-8000-000000000003",
+  "source_format": "HWPX",
+  "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "converter_artifact": {
+    "image_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "tool_name": "yonlab-hwpx-parser",
+    "tool_version": "1.0.0"
+  },
+  "root_node_id": "2a24974f-0782-5ac8-b3c4-8862a750622b",
+  "nodes": [
+    {
+      "node_id": "2a24974f-0782-5ac8-b3c4-8862a750622b",
+      "parent_id": null,
+      "order": 0,
+      "type": "DOCUMENT",
+      "text": "",
+      "style_ref": null,
+      "source_locator": {
+        "locator_type": "HWPX",
+        "package_part": "/Contents/section0.xml",
+        "element_path": "/Q{urn:yonlab:hwpx}section[1]",
+        "text_range": {
+          "start_codepoint": 0,
+          "end_codepoint": 0
+        }
+      },
+      "confidence_ppm": 1000000,
+      "children": [
+        "00000000-0000-5000-8000-000000000000"
+      ],
+      "provenance": {
+        "source_artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "tool_name": "yonlab-hwpx-parser",
+        "tool_version": "1.0.0",
+        "transform_step": "structure-parse"
+      }
+    },
+    {
+      "node_id": "77057130-f64a-5405-857d-53db13632589",
+      "parent_id": "2a24974f-0782-5ac8-b3c4-8862a750622b",
+      "order": 0,
+      "type": "TABLE",
+      "text": "표",
+      "style_ref": "table-default",
+      "source_locator": {
+        "locator_type": "HWPX",
+        "package_part": "/Contents/section0.xml",
+        "element_path": "/Q{urn:yonlab:hwpx}section[1]/Q{urn:yonlab:hwpx}table[1]",
+        "text_range": {
+          "start_codepoint": 0,
+          "end_codepoint": 0
+        }
+      },
+      "confidence_ppm": 1000000,
+      "children": [
+        "fb589fb4-2989-57b5-9d95-0b9ad90d9694"
+      ],
+      "provenance": {
+        "source_artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "tool_name": "yonlab-hwpx-parser",
+        "tool_version": "1.0.0",
+        "transform_step": "structure-parse"
+      },
+      "table": {
+        "row_count": 2,
+        "column_count": 2
+      }
+    },
+    {
+      "node_id": "fb589fb4-2989-57b5-9d95-0b9ad90d9694",
+      "parent_id": "77057130-f64a-5405-857d-53db13632589",
+      "order": 0,
+      "type": "CELL",
+      "text": "셀",
+      "style_ref": "cell-default",
+      "source_locator": {
+        "locator_type": "TABLE",
+        "table_node_id": "77057130-f64a-5405-857d-53db13632589",
+        "row_start": 0,
+        "row_end": 1,
+        "column_start": 0,
+        "column_end": 1,
+        "source_anchor": {
+          "locator_type": "HWPX",
+          "package_part": "/Contents/section0.xml",
+          "element_path": "/Q{urn:yonlab:hwpx}section[1]/Q{urn:yonlab:hwpx}table[1]",
+          "text_range": {
+            "start_codepoint": 0,
+            "end_codepoint": 0
+          }
+        }
+      },
+      "confidence_ppm": 1000000,
+      "children": [],
+      "provenance": {
+        "source_artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "tool_name": "yonlab-hwpx-parser",
+        "tool_version": "1.0.0",
+        "transform_step": "structure-parse"
+      },
+      "cell": {
+        "table_node_id": "77057130-f64a-5405-857d-53db13632589",
+        "row_start": 0,
+        "row_end": 1,
+        "column_start": 0,
+        "column_end": 1,
+        "header_scope": "COLUMN",
+        "nested_table_ids": []
+      }
+    }
+  ],
+  "validation": {
+    "status": "PASS",
+    "report_sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+  }
+}

@@ -1,0 +1,599 @@
+{
+  "schema_version": "diagnosis-golden-vectors.v1",
+  "normative_policy": "ScoringPolicyVersion=diagnosis-scoring.v1",
+  "policy_versions": [
+    "ScoringPolicyVersion=diagnosis-scoring.v1",
+    "PersonaInferencePolicyVersion=persona-inference.v1",
+    "RecommendationPolicyVersion=recommendation-ranking.v1"
+  ],
+  "scale": 1000000,
+  "canonicalization": "JCS",
+  "evidence_span_contract": {
+    "required": [
+      "evidence_id",
+      "turn_id",
+      "turn_sequence",
+      "indicator_id",
+      "anchor",
+      "anchor_count",
+      "confidence_decimal",
+      "span_start_codepoint",
+      "span_end_codepoint",
+      "quoted_span",
+      "schema_version"
+    ],
+    "span_semantics": "NFC Unicode code point 0-based half-open",
+    "confidence_semantics": "fixed-six decimal string in [0,1]"
+  },
+  "vectors": [
+    {
+      "id": "GV-SCORE-001",
+      "input": {
+        "dimension_weight_decimal": "1.000000",
+        "indicator_weight_decimal": "1.000000",
+        "anchor_count": 5,
+        "evidence": [
+          {
+            "evidence_id": "00000000-0000-4000-8000-000000000001",
+            "turn_id": "00000000-0000-4000-8000-000000000010",
+            "turn_sequence": 1,
+            "indicator_id": "COMP-04-I02",
+            "anchor": 3,
+            "anchor_count": 5,
+            "confidence_decimal": "0.800000",
+            "span_start_codepoint": 0,
+            "span_end_codepoint": 2,
+            "quoted_span": "관찰",
+            "schema_version": "evidence.v1"
+          }
+        ]
+      },
+      "expected": {
+        "dimension_score_microunit": 75000000,
+        "dimension_score_decimal": "75.000000",
+        "overall_score_microunit": 75000000,
+        "overall_score_decimal": "75.000000"
+      }
+    },
+    {
+      "id": "GV-SCORE-DEDUP-001",
+      "input": {
+        "dimension_weight_decimal": "1.000000",
+        "indicator_weight_decimal": "1.000000",
+        "anchor_count": 5,
+        "evidence": [
+          {
+            "evidence_id": "00000000-0000-4000-8000-000000000002",
+            "turn_id": "00000000-0000-4000-8000-000000000010",
+            "turn_sequence": 1,
+            "indicator_id": "COMP-04-I02",
+            "anchor": 1,
+            "anchor_count": 5,
+            "confidence_decimal": "0.700000",
+            "span_start_codepoint": 0,
+            "span_end_codepoint": 2,
+            "quoted_span": "관찰",
+            "schema_version": "evidence.v1"
+          },
+          {
+            "evidence_id": "00000000-0000-4000-8000-000000000001",
+            "turn_id": "00000000-0000-4000-8000-000000000010",
+            "turn_sequence": 1,
+            "indicator_id": "COMP-04-I02",
+            "anchor": 3,
+            "anchor_count": 5,
+            "confidence_decimal": "0.800000",
+            "span_start_codepoint": 0,
+            "span_end_codepoint": 2,
+            "quoted_span": "관찰",
+            "schema_version": "evidence.v1"
+          }
+        ]
+      },
+      "expected": {
+        "selected_evidence_id": "00000000-0000-4000-8000-000000000001",
+        "dimension_score_microunit": 75000000,
+        "overall_score_microunit": 75000000
+      }
+    },
+    {
+      "id": "GV-SCORE-INVALID-001",
+      "input": {
+        "anchor_count": 4,
+        "anchor": 4,
+        "confidence_decimal": "0.800000"
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "numeric_score_present": false
+      }
+    },
+    {
+      "id": "GV-PERSONA-001",
+      "input": {
+        "profile_order": [
+          "P-01-A",
+          "P-01-B",
+          "P-02-A",
+          "P-02-B",
+          "P-03-A",
+          "P-03-B",
+          "P-04-A",
+          "P-04-B",
+          "P-05-A",
+          "P-05-B",
+          "P-06-A",
+          "P-06-B"
+        ],
+        "logit_decimal": [
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000",
+          "0.000000000000"
+        ]
+      },
+      "expected": {
+        "profile_probability_microunit": [
+          83334,
+          83334,
+          83334,
+          83334,
+          83333,
+          83333,
+          83333,
+          83333,
+          83333,
+          83333,
+          83333,
+          83333
+        ],
+        "family_probability_microunit": [
+          166668,
+          166668,
+          166666,
+          166666,
+          166666,
+          166666
+        ],
+        "family_classification": "MIXED_OR_UNDETERMINED",
+        "probability_sum": 1000000
+      }
+    },
+    {
+      "id": "GV-PERSONA-002",
+      "input": {
+        "family_order": [
+          "P-01",
+          "P-02",
+          "P-03",
+          "P-04",
+          "P-05",
+          "P-06"
+        ],
+        "family_probability_microunit": [
+          450000,
+          110000,
+          110000,
+          110000,
+          110000,
+          110000
+        ]
+      },
+      "expected": {
+        "family_classification": "P-01",
+        "mixed": false,
+        "probability_sum": 1000000
+      }
+    },
+    {
+      "id": "GV-REC-001",
+      "input": {
+        "feature_microunit": [
+          1000000,
+          1000000,
+          1000000,
+          1000000,
+          1000000,
+          1000000
+        ],
+        "selected_tags": []
+      },
+      "expected": {
+        "base_microunit": 1000000,
+        "novelty_microunit": 1000000,
+        "selection_score_microunit": 1000000
+      }
+    },
+    {
+      "id": "GV-REC-002",
+      "input": {
+        "feature_microunit": [
+          500000,
+          1000000,
+          0,
+          1000000,
+          0,
+          0
+        ],
+        "maximum_jaccard_microunit": 500000
+      },
+      "expected": {
+        "base_microunit": 500000,
+        "novelty_microunit": 500000,
+        "selection_score_microunit": 500000
+      }
+    },
+    {
+      "id": "GV-TIE-001",
+      "input": {
+        "candidates": [
+          {
+            "content_id": "00000000-0000-4000-8000-000000000002",
+            "selection_score_microunit": 500000,
+            "base_microunit": 500000,
+            "duration_minutes": 30
+          },
+          {
+            "content_id": "00000000-0000-4000-8000-000000000001",
+            "selection_score_microunit": 500000,
+            "base_microunit": 500000,
+            "duration_minutes": 30
+          }
+        ]
+      },
+      "expected": {
+        "ordered_content_ids": [
+          "00000000-0000-4000-8000-000000000001",
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      }
+    }
+  ],
+  "decision_contract": {
+    "policy_version": "diagnosis-decision.v1",
+    "invalid_evidence_rule": "INVALID_EVIDENCE is evaluated first when score is outside 0..100000000, confidence/conflict is outside 0..1000000, a numeric field is bool/non-integer, or required_indicators_satisfied is non-boolean",
+    "score_range_microunit": [
+      0,
+      100000000
+    ],
+    "level_boundaries": [
+      {
+        "level": "L1",
+        "minimum_score_microunit": 0,
+        "maximum_score_microunit": 24999999
+      },
+      {
+        "level": "L2",
+        "minimum_score_microunit": 25000000,
+        "maximum_score_microunit": 49999999
+      },
+      {
+        "level": "L3",
+        "minimum_score_microunit": 50000000,
+        "maximum_score_microunit": 74999999
+      },
+      {
+        "level": "L4",
+        "minimum_score_microunit": 75000000,
+        "maximum_score_microunit": 100000000
+      }
+    ],
+    "confidence_threshold_microunit": 600000,
+    "dimension_confidence_formula": "div_half_up(sum(indicator_weight_microunit * confidence_microunit), sum(indicator_weight_microunit))",
+    "overall_confidence_formula": "div_half_up(sum(dimension_weight_microunit * dimension_confidence_microunit), sum(dimension_weight_microunit))",
+    "conflict_formula": "max(div_half_up(SCALE * abs(anchor_a - anchor_b), anchor_count - 1)) for selected evidence pairs on the same indicator with distinct turn_sequence and confidence >= 600000",
+    "conflict_threshold_microunit": 500000,
+    "required_indicator_minimum_distinct_turns": 2,
+    "required_indicator_minimum_confidence_microunit": 600000,
+    "result_precedence": [
+      "INVALID_EVIDENCE",
+      "INSUFFICIENT_EVIDENCE",
+      "HUMAN_REVIEW_REQUIRED",
+      "ADDITIONAL_CONFIRMATION_REQUIRED",
+      "LEVEL_ASSIGNED"
+    ],
+    "next_question_order": [
+      "required_indicator_satisfied=false",
+      "coverage_count ascending",
+      "rubric_priority ascending",
+      "question_id NFC UTF-8 bytewise ascending"
+    ]
+  },
+  "decision_vectors": [
+    {
+      "id": "GV-LEVEL-L1-MIN",
+      "input": {
+        "overall_score_microunit": 0,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L1"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L1-MAX",
+      "input": {
+        "overall_score_microunit": 24999999,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L1"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L2-MIN",
+      "input": {
+        "overall_score_microunit": 25000000,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L2"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L2-MAX",
+      "input": {
+        "overall_score_microunit": 49999999,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L2"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L3-MIN",
+      "input": {
+        "overall_score_microunit": 50000000,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L3"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L3-MAX",
+      "input": {
+        "overall_score_microunit": 74999999,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L3"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L4-MIN",
+      "input": {
+        "overall_score_microunit": 75000000,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L4"
+      }
+    },
+    {
+      "id": "GV-LEVEL-L4-MAX",
+      "input": {
+        "overall_score_microunit": 100000000,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L4"
+      }
+    },
+    {
+      "id": "GV-CONFIDENCE-BELOW",
+      "input": {
+        "overall_score_microunit": 75000000,
+        "overall_confidence_microunit": 599999,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "ADDITIONAL_CONFIRMATION_REQUIRED",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-CONFIDENCE-AT",
+      "input": {
+        "overall_score_microunit": 75000000,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L4"
+      }
+    },
+    {
+      "id": "GV-CONFLICT-BELOW",
+      "input": {
+        "overall_score_microunit": 50000000,
+        "overall_confidence_microunit": 900000,
+        "conflict_microunit": 499999,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "LEVEL_ASSIGNED",
+        "level": "L3"
+      }
+    },
+    {
+      "id": "GV-CONFLICT-AT",
+      "input": {
+        "overall_score_microunit": 50000000,
+        "overall_confidence_microunit": 900000,
+        "conflict_microunit": 500000,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "HUMAN_REVIEW_REQUIRED",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-INVALID-BELOW-RANGE",
+      "input": {
+        "overall_score_microunit": -1,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-INVALID-ABOVE-RANGE",
+      "input": {
+        "overall_score_microunit": 100000001,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-INVALID-WITH-INSUFFICIENT",
+      "input": {
+        "overall_score_microunit": -1,
+        "overall_confidence_microunit": 600000,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": false
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-INVALID-WITH-CONFLICT",
+      "input": {
+        "overall_score_microunit": 100000001,
+        "overall_confidence_microunit": 900000,
+        "conflict_microunit": 500000,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-INVALID-WITH-LOW-CONFIDENCE",
+      "input": {
+        "overall_score_microunit": -1,
+        "overall_confidence_microunit": 599999,
+        "conflict_microunit": 0,
+        "required_indicators_satisfied": true
+      },
+      "expected": {
+        "status": "INVALID_EVIDENCE",
+        "level": null
+      }
+    },
+    {
+      "id": "GV-REQUIRED-COVERAGE-ONE",
+      "input": {
+        "coverage_turn_sequences": [
+          1
+        ],
+        "confidence_microunit": [
+          900000
+        ]
+      },
+      "expected": {
+        "required_indicator_satisfied": false,
+        "coverage_count": 1
+      }
+    },
+    {
+      "id": "GV-REQUIRED-COVERAGE-TWO",
+      "input": {
+        "coverage_turn_sequences": [
+          1,
+          2
+        ],
+        "confidence_microunit": [
+          600000,
+          900000
+        ]
+      },
+      "expected": {
+        "required_indicator_satisfied": true,
+        "coverage_count": 2
+      }
+    },
+    {
+      "id": "GV-NEXT-QUESTION-ORDER",
+      "input": {
+        "candidates": [
+          {
+            "question_id": "Q-003",
+            "required_indicator_satisfied": false,
+            "coverage_count": 1,
+            "rubric_priority": 1
+          },
+          {
+            "question_id": "Q-002",
+            "required_indicator_satisfied": false,
+            "coverage_count": 0,
+            "rubric_priority": 2
+          },
+          {
+            "question_id": "Q-001",
+            "required_indicator_satisfied": false,
+            "coverage_count": 0,
+            "rubric_priority": 2
+          },
+          {
+            "question_id": "Q-000",
+            "required_indicator_satisfied": true,
+            "coverage_count": 0,
+            "rubric_priority": 0
+          }
+        ]
+      },
+      "expected": {
+        "selected_question_id": "Q-001"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1032 @@
+{
+  "schema_version": "entity-catalog.v1",
+  "entity_count": 58,
+  "classification_vocabulary": [
+    "PUBLIC",
+    "INTERNAL",
+    "CONFIDENTIAL",
+    "RESTRICTED"
+  ],
+  "tenant_scope_vocabulary": [
+    "GLOBAL",
+    "TENANT"
+  ],
+  "unknown_classification_default": "RESTRICTED",
+  "ingress_default_policy": {
+    "unknown_teacher_free_text": {
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT"
+    },
+    "raw_or_scanned_upload": {
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT"
+    },
+    "public_promotion": "EXPLICIT_RIGHTS_REVIEW_AND_PUBLICATION_DECISION_REQUIRED"
+  },
+  "reverse_link_rule": "The catalog entity IDs exactly equal all requirements-test-registry data_entity_ids; requirement_ids and owner_ids are the ordered reverse unions of those requirement rows.",
+  "entities": [
+    {
+      "entity_id": "AccessibilityEvidence",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-EVIDENCE-1Y",
+      "owner_ids": [
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:accessibility-evidence:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-003"
+      ]
+    },
+    {
+      "entity_id": "AdapterContract",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:adapter-contract:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-008"
+      ]
+    },
+    {
+      "entity_id": "ApiOperation",
+      "domain": "PORTAL_REPORTING",
+      "classification": "PUBLIC",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:api-operation:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SIR-001",
+        "SIR-002",
+        "SIR-003",
+        "SYS-NF-010"
+      ]
+    },
+    {
+      "entity_id": "Artifact",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:artifact:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-009"
+      ]
+    },
+    {
+      "entity_id": "AuditEvent",
+      "domain": "PORTAL_REPORTING",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-AUDIT-7Y",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-PROD",
+        "OWN-UX",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:audit-event:v1",
+      "deletion_policy": "IMMUTABLE_APPEND_ONLY",
+      "requirement_ids": [
+        "SER-001",
+        "SER-002",
+        "SER-003",
+        "SER-004",
+        "SER-005",
+        "SER-006",
+        "SER-007",
+        "SER-008",
+        "SYS-F-015",
+        "SYS-F-018",
+        "SYS-NF-001",
+        "SYS-NF-014"
+      ]
+    },
+    {
+      "entity_id": "BackupManifest",
+      "domain": "OPERATIONS",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-RECOVERY-1Y",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:backup-manifest:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-012"
+      ]
+    },
+    {
+      "entity_id": "Chunk",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:chunk:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-010"
+      ]
+    },
+    {
+      "entity_id": "Citation",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:citation:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-011"
+      ]
+    },
+    {
+      "entity_id": "CleanRoomEvidence",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:clean-room-evidence:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-015"
+      ]
+    },
+    {
+      "entity_id": "CompetencyScore",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:competency-score:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-003"
+      ]
+    },
+    {
+      "entity_id": "ConsentRecord",
+      "domain": "IDENTITY_CONSENT",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:consent-record:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-NF-002"
+      ]
+    },
+    {
+      "entity_id": "DataDictionaryEntry",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-DATA"
+      ],
+      "schema_id": "urn:yonlab:entity:data-dictionary-entry:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "DAR-001",
+        "DAR-002",
+        "DAR-003",
+        "DAR-004",
+        "DAR-005",
+        "DAR-006",
+        "DAR-007"
+      ]
+    },
+    {
+      "entity_id": "DataQualityResult",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DATA",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:data-quality-result:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-011"
+      ]
+    },
+    {
+      "entity_id": "DeploymentProfile",
+      "domain": "OPERATIONS",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "schema_id": "urn:yonlab:entity:deployment-profile:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "ECR-001",
+        "ECR-002",
+        "SYS-NF-005"
+      ]
+    },
+    {
+      "entity_id": "DiagnosisSession",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:diagnosis-session:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-001"
+      ]
+    },
+    {
+      "entity_id": "DialogueTurn",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:dialogue-turn:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-001"
+      ]
+    },
+    {
+      "entity_id": "DocumentNode",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:document-node:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-008"
+      ]
+    },
+    {
+      "entity_id": "DocumentVersion",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:document-version:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-007"
+      ]
+    },
+    {
+      "entity_id": "DomainAggregate",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-AI",
+        "OWN-DOC"
+      ],
+      "schema_id": "urn:yonlab:entity:domain-aggregate:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "DER-001",
+        "DER-002",
+        "DER-003",
+        "DER-004",
+        "DER-005",
+        "DER-006",
+        "DER-007",
+        "DER-008"
+      ]
+    },
+    {
+      "entity_id": "EmbeddingRecord",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:embedding-record:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-010"
+      ]
+    },
+    {
+      "entity_id": "EvidenceSpan",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:evidence-span:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-001",
+        "SYS-F-003"
+      ]
+    },
+    {
+      "entity_id": "Feedback",
+      "domain": "PORTAL_REPORTING",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:feedback:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-016"
+      ]
+    },
+    {
+      "entity_id": "FileObject",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:file-object:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-007"
+      ]
+    },
+    {
+      "entity_id": "GeneratedDraft",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:generated-draft:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-012"
+      ]
+    },
+    {
+      "entity_id": "GovernanceRecord",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-SEC"
+      ],
+      "schema_id": "urn:yonlab:entity:governance-record:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "COR-001",
+        "COR-002",
+        "COR-003",
+        "COR-004",
+        "COR-005",
+        "COR-006"
+      ]
+    },
+    {
+      "entity_id": "HandoverArtifact",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-OPS"
+      ],
+      "schema_id": "urn:yonlab:entity:handover-artifact:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "PSR-001",
+        "PSR-002",
+        "PSR-003",
+        "PSR-004",
+        "PSR-005"
+      ]
+    },
+    {
+      "entity_id": "IndexSnapshot",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:index-snapshot:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-010"
+      ]
+    },
+    {
+      "entity_id": "Inquiry",
+      "domain": "PORTAL_REPORTING",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "schema_id": "urn:yonlab:entity:inquiry:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-014"
+      ]
+    },
+    {
+      "entity_id": "LearningPath",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:learning-path:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-005"
+      ]
+    },
+    {
+      "entity_id": "LearningPathStep",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:learning-path-step:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-005"
+      ]
+    },
+    {
+      "entity_id": "Migration",
+      "domain": "OPERATIONS",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:migration:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-010"
+      ]
+    },
+    {
+      "entity_id": "ModelDeployment",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:model-deployment:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-013"
+      ]
+    },
+    {
+      "entity_id": "ModelRun",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-EVIDENCE-1Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH",
+        "OWN-AI",
+        "OWN-SEC",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:model-run:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-011",
+        "SYS-F-013",
+        "SYS-F-018"
+      ]
+    },
+    {
+      "entity_id": "Notification",
+      "domain": "PORTAL_REPORTING",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "schema_id": "urn:yonlab:entity:notification:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-014"
+      ]
+    },
+    {
+      "entity_id": "OutboxEvent",
+      "domain": "OPERATIONS",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-OPS"
+      ],
+      "schema_id": "urn:yonlab:entity:outbox-event:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-017"
+      ]
+    },
+    {
+      "entity_id": "PerformanceEvidence",
+      "domain": "OPERATIONS",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-EVIDENCE-1Y",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:performance-evidence:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-006"
+      ]
+    },
+    {
+      "entity_id": "Permission",
+      "domain": "IDENTITY_CONSENT",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "schema_id": "urn:yonlab:entity:permission:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-015"
+      ]
+    },
+    {
+      "entity_id": "PersonaAssessment",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:persona-assessment:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-002"
+      ]
+    },
+    {
+      "entity_id": "PilotCohort",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:pilot-cohort:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-016"
+      ]
+    },
+    {
+      "entity_id": "ProcessingJob",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:processing-job:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-009"
+      ]
+    },
+    {
+      "entity_id": "ProjectControl",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-PROD"
+      ],
+      "schema_id": "urn:yonlab:entity:project-control:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "PMR-001",
+        "PMR-002",
+        "PMR-003",
+        "PMR-004",
+        "PMR-005",
+        "PMR-006",
+        "PMR-007",
+        "PMR-008"
+      ]
+    },
+    {
+      "entity_id": "QualityGate",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:quality-gate:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "QUR-001",
+        "QUR-002",
+        "QUR-003",
+        "QUR-004",
+        "QUR-005"
+      ]
+    },
+    {
+      "entity_id": "Recommendation",
+      "domain": "AI_DIAGNOSIS",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:recommendation:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-004"
+      ]
+    },
+    {
+      "entity_id": "RecoveryEvidence",
+      "domain": "OPERATIONS",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-RECOVERY-1Y",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:recovery-evidence:v1",
+      "deletion_policy": "IMMUTABLE_APPEND_ONLY",
+      "requirement_ids": [
+        "SYS-NF-012"
+      ]
+    },
+    {
+      "entity_id": "ReportSnapshot",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:report-snapshot:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-006"
+      ]
+    },
+    {
+      "entity_id": "RequirementTrace",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:requirement-trace:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "PLR-001",
+        "PLR-002",
+        "PLR-003",
+        "PLR-004"
+      ]
+    },
+    {
+      "entity_id": "Role",
+      "domain": "IDENTITY_CONSENT",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "schema_id": "urn:yonlab:entity:role:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-015"
+      ]
+    },
+    {
+      "entity_id": "RoutingPolicy",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:routing-policy:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-013"
+      ]
+    },
+    {
+      "entity_id": "SecurityControl",
+      "domain": "PORTAL_REPORTING",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-SEC",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:security-control:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SER-001",
+        "SER-002",
+        "SER-003",
+        "SER-004",
+        "SER-005",
+        "SER-006",
+        "SER-007",
+        "SER-008",
+        "SYS-NF-001"
+      ]
+    },
+    {
+      "entity_id": "ServiceHealth",
+      "domain": "OPERATIONS",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:service-health:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-004"
+      ]
+    },
+    {
+      "entity_id": "SourceDocument",
+      "domain": "DOCUMENT_RAG",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:source-document:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-007"
+      ]
+    },
+    {
+      "entity_id": "TableCell",
+      "domain": "DOCUMENT_RAG",
+      "classification": "INTERNAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:table-cell:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-008"
+      ]
+    },
+    {
+      "entity_id": "TeacherContext",
+      "domain": "IDENTITY_CONSENT",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-AI",
+        "OWN-ARCH",
+        "OWN-SEC",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:teacher-context:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-002",
+        "SYS-NF-002"
+      ]
+    },
+    {
+      "entity_id": "TelemetrySignal",
+      "domain": "OPERATIONS",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-OPS",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:telemetry-signal:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-007"
+      ]
+    },
+    {
+      "entity_id": "TemplateVersion",
+      "domain": "DOCUMENT_RAG",
+      "classification": "PUBLIC",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-DOMAIN-3Y",
+      "owner_ids": [
+        "OWN-DOC",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:template-version:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-F-012"
+      ]
+    },
+    {
+      "entity_id": "TestEvidence",
+      "domain": "QUALITY_GOVERNANCE",
+      "classification": "CONFIDENTIAL",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-EVIDENCE-1Y",
+      "owner_ids": [
+        "OWN-QA",
+        "OWN-ARCH"
+      ],
+      "schema_id": "urn:yonlab:entity:test-evidence:v1",
+      "deletion_policy": "IMMUTABLE_APPEND_ONLY",
+      "requirement_ids": [
+        "TER-001",
+        "TER-002",
+        "TER-003",
+        "TER-004",
+        "SYS-NF-013"
+      ]
+    },
+    {
+      "entity_id": "User",
+      "domain": "IDENTITY_CONSENT",
+      "classification": "RESTRICTED",
+      "tenant_scope": "TENANT",
+      "retention_policy_id": "RET-PII-3Y-OR-WITHDRAWAL",
+      "owner_ids": [
+        "OWN-PROD",
+        "OWN-UX"
+      ],
+      "schema_id": "urn:yonlab:entity:user:v1",
+      "deletion_policy": "CRYPTO_ERASE_OR_TOMBSTONE",
+      "requirement_ids": [
+        "SYS-F-014"
+      ]
+    },
+    {
+      "entity_id": "VersionManifest",
+      "domain": "PORTAL_REPORTING",
+      "classification": "INTERNAL",
+      "tenant_scope": "GLOBAL",
+      "retention_policy_id": "RET-CONFIG-SUPERSEDED-3Y",
+      "owner_ids": [
+        "OWN-ARCH",
+        "OWN-QA"
+      ],
+      "schema_id": "urn:yonlab:entity:version-manifest:v1",
+      "deletion_policy": "VERSIONED_DELETE",
+      "requirement_ids": [
+        "SYS-NF-009"
+      ]
+    }
+  ]
+}

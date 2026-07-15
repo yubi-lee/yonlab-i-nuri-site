@@ -1,0 +1,878 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:yonlab:document-graph:1.0.0",
+  "title": "YOnLab DocumentGraph",
+  "description": "Immutable canonical DocumentGraph contract for document-graph.v1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "locator_policy_version",
+    "tenant_id",
+    "document_id",
+    "document_version_id",
+    "source_format",
+    "source_sha256",
+    "converter_artifact",
+    "root_node_id",
+    "nodes",
+    "validation"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "urn:yonlab:document-graph:1.0.0"
+    },
+    "schema_version": {
+      "const": "document-graph.v1"
+    },
+    "locator_policy_version": {
+      "const": "source-locator.v1"
+    },
+    "tenant_id": {
+      "$ref": "#/$defs/uuid"
+    },
+    "document_id": {
+      "$ref": "#/$defs/uuid"
+    },
+    "document_version_id": {
+      "$ref": "#/$defs/uuid"
+    },
+    "source_format": {
+      "enum": [
+        "HWPX",
+        "PDF",
+        "IMAGE",
+        "DOCX"
+      ]
+    },
+    "source_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "converter_artifact": {
+      "$ref": "#/$defs/converterArtifact"
+    },
+    "root_node_id": {
+      "$ref": "#/$defs/uuidV5"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "styles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/styleDefinition"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/resourceDefinition"
+      }
+    },
+    "losses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lossRecord"
+      }
+    },
+    "active_content_findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/activeContentFinding"
+      }
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "uuidV5": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "imageDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "textRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_codepoint",
+        "end_codepoint"
+      ],
+      "properties": {
+        "start_codepoint": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_codepoint": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "normalizedBoundingBox": {
+      "type": "object",
+      "description": "Top-left-origin normalized coordinates as integer micro-units: 0 through 1000000.",
+      "additionalProperties": false,
+      "required": [
+        "x0_microunit",
+        "y0_microunit",
+        "x1_microunit",
+        "y1_microunit"
+      ],
+      "properties": {
+        "x0_microunit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "y0_microunit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "x1_microunit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "y1_microunit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      }
+    },
+    "hwpxLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locator_type",
+        "package_part",
+        "element_path",
+        "text_range"
+      ],
+      "properties": {
+        "locator_type": {
+          "const": "HWPX"
+        },
+        "package_part": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^/[^\\\\\\u0000]+$"
+        },
+        "element_path": {
+          "type": "string",
+          "pattern": "^/Q\\{[^{}]+\\}[A-Za-z_][A-Za-z0-9._-]*\\[[0-9]+\\](?:/Q\\{[^{}]+\\}[A-Za-z_][A-Za-z0-9._-]*\\[[0-9]+\\])*$"
+        },
+        "text_range": {
+          "$ref": "#/$defs/textRange"
+        }
+      }
+    },
+    "pageLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locator_type",
+        "page_number",
+        "page_render_sha256",
+        "bbox"
+      ],
+      "properties": {
+        "locator_type": {
+          "const": "PAGE"
+        },
+        "page_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page_render_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bbox": {
+          "$ref": "#/$defs/normalizedBoundingBox"
+        },
+        "text_range": {
+          "$ref": "#/$defs/textRange"
+        }
+      }
+    },
+    "sourceAnchor": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hwpxLocator"
+        },
+        {
+          "$ref": "#/$defs/pageLocator"
+        }
+      ]
+    },
+    "tableLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locator_type",
+        "table_node_id",
+        "row_start",
+        "row_end",
+        "column_start",
+        "column_end",
+        "source_anchor"
+      ],
+      "properties": {
+        "locator_type": {
+          "const": "TABLE"
+        },
+        "table_node_id": {
+          "$ref": "#/$defs/uuidV5"
+        },
+        "row_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "row_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "column_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_anchor": {
+          "$ref": "#/$defs/sourceAnchor"
+        }
+      }
+    },
+    "sourceLocator": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hwpxLocator"
+        },
+        {
+          "$ref": "#/$defs/pageLocator"
+        },
+        {
+          "$ref": "#/$defs/tableLocator"
+        }
+      ]
+    },
+    "tableData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row_count",
+        "column_count"
+      ],
+      "properties": {
+        "row_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "cellData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table_node_id",
+        "row_start",
+        "row_end",
+        "column_start",
+        "column_end",
+        "header_scope",
+        "nested_table_ids"
+      ],
+      "properties": {
+        "table_node_id": {
+          "$ref": "#/$defs/uuidV5"
+        },
+        "row_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "row_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "column_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "header_scope": {
+          "enum": [
+            "NONE",
+            "ROW",
+            "COLUMN",
+            "BOTH"
+          ]
+        },
+        "nested_table_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uuidV5"
+          }
+        },
+        "border_ref": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._-]{0,63}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "nodeIdArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/uuidV5"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_artifact_sha256",
+        "tool_name",
+        "tool_version",
+        "transform_step"
+      ],
+      "properties": {
+        "source_artifact_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "tool_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transform_step": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_id",
+        "parent_id",
+        "order",
+        "type",
+        "text",
+        "style_ref",
+        "source_locator",
+        "confidence_ppm",
+        "children",
+        "provenance"
+      ],
+      "properties": {
+        "node_id": {
+          "$ref": "#/$defs/uuidV5"
+        },
+        "parent_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uuidV5"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "type": {
+          "enum": [
+            "DOCUMENT",
+            "SECTION",
+            "PARAGRAPH",
+            "LIST",
+            "LIST_ITEM",
+            "TABLE",
+            "ROW",
+            "CELL",
+            "IMAGE",
+            "CAPTION",
+            "FOOTNOTE",
+            "HEADER",
+            "FOOTER",
+            "PAGE_BREAK",
+            "FIELD"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "style_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_locator": {
+          "$ref": "#/$defs/sourceLocator"
+        },
+        "confidence_ppm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "children": {
+          "$ref": "#/$defs/nodeIdArray"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "table": {
+          "$ref": "#/$defs/tableData"
+        },
+        "cell": {
+          "$ref": "#/$defs/cellData"
+        },
+        "image": {
+          "$ref": "#/$defs/imageData"
+        },
+        "field": {
+          "$ref": "#/$defs/fieldData"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "TABLE"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "table"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "table"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "CELL"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "cell"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "cell"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "converterArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image_digest",
+        "config_sha256",
+        "tool_name",
+        "tool_version"
+      ],
+      "properties": {
+        "image_digest": {
+          "$ref": "#/$defs/imageDigest"
+        },
+        "config_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "tool_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "report_sha256"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "REVIEW_REQUIRED",
+            "FAILED"
+          ]
+        },
+        "report_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "styleDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style_id",
+        "style_type",
+        "canonical_properties_sha256",
+        "source_style_name"
+      ],
+      "properties": {
+        "style_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{0,63}$"
+        },
+        "style_type": {
+          "enum": [
+            "PARAGRAPH",
+            "CHARACTER",
+            "TABLE",
+            "CELL",
+            "BORDER",
+            "NUMBERING"
+          ]
+        },
+        "canonical_properties_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_style_name": {
+          "type": "string"
+        }
+      }
+    },
+    "resourceDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource_id",
+        "resource_type",
+        "sha256",
+        "media_type",
+        "size_bytes"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "pattern": "^res-[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "resource_type": {
+          "enum": [
+            "IMAGE",
+            "FONT",
+            "EMBEDDED_FILE_QUARANTINED"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 3
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lossRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loss_id",
+        "category",
+        "severity",
+        "source_locator",
+        "action",
+        "review_required"
+      ],
+      "properties": {
+        "loss_id": {
+          "$ref": "#/$defs/uuidV5"
+        },
+        "category": {
+          "enum": [
+            "STYLE_SUBSTITUTION",
+            "BORDER_DEGRADATION",
+            "IMAGE_ALT_MISSING",
+            "FIELD_FLATTENED",
+            "FONT_SUBSTITUTION",
+            "LAYOUT_SHIFT",
+            "MACRO_QUARANTINED",
+            "OLE_QUARANTINED",
+            "UNSUPPORTED_OBJECT"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "WARNING",
+            "BLOCKING"
+          ]
+        },
+        "source_locator": {
+          "$ref": "#/$defs/sourceLocator"
+        },
+        "action": {
+          "enum": [
+            "PRESERVED_WITH_SUBSTITUTION",
+            "REVIEW_REQUIRED",
+            "QUARANTINED",
+            "REJECTED"
+          ]
+        },
+        "review_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "activeContentFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "kind",
+        "source_sha256",
+        "action",
+        "executed"
+      ],
+      "properties": {
+        "finding_id": {
+          "$ref": "#/$defs/uuidV5"
+        },
+        "kind": {
+          "enum": [
+            "MACRO",
+            "SCRIPT",
+            "OLE",
+            "EXTERNAL_LINK"
+          ]
+        },
+        "source_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "action": {
+          "const": "QUARANTINED"
+        },
+        "executed": {
+          "const": false
+        }
+      }
+    },
+    "imageData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource_id",
+        "alt_text",
+        "decorative",
+        "caption_node_id"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "pattern": "^res-[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "alt_text": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "decorative": {
+          "type": "boolean"
+        },
+        "caption_node_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/uuidV5"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fieldData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_type",
+        "field_name",
+        "display_text",
+        "locked"
+      ],
+      "properties": {
+        "field_type": {
+          "enum": [
+            "BOOKMARK",
+            "DATE",
+            "PAGE_NUMBER",
+            "MERGE_FIELD",
+            "FORM_TEXT"
+          ]
+        },
+        "field_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "display_text": {
+          "type": "string"
+        },
+        "locked": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "x-semantic-contract": {
+    "canonicalization": "RFC8785-compatible JCS integer/string subset",
+    "uuid_v5_namespace": "document_version_id UUID bytes",
+    "uuid_v5_name": "UTF-8('document-graph.v1' || 0x0A || node.type || 0x0A || base10(node.order) || 0x0A) || UTF-8(JCS(source_locator))",
+    "topology": [
+      "one root matching root_node_id",
+      "connected acyclic parent/children inverse edges",
+      "nodes array root-first preorder",
+      "sibling order is contiguous 0..n-1",
+      "every CELL nested_table_ids member resolves to a TABLE descendant whose nearest CELL ancestor is that CELL",
+      "nested-table annotation edges are complete and acyclic"
+    ],
+    "ranges": [
+      "text start <= end",
+      "bbox x0 < x1 and y0 < y1",
+      "table/cell half-open start < end within table bounds",
+      "CELL source locator equals cell topology",
+      "CELL rectangles cover every table grid coordinate exactly once; merged rectangles are allowed but overlaps and gaps are forbidden"
+    ],
+    "fixtures": {
+      "valid": "fixtures/document-graph.valid.json",
+      "invalid": [
+        {
+          "path": "fixtures/document-graph.invalid-topology.json",
+          "error_code": "TOPOLOGY"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-uuid.json",
+          "error_code": "UUIDV5"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-range.json",
+          "error_code": "RANGE"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-nested-dangling.json",
+          "error_code": "NESTED_TABLE_REFERENCE"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-nested-cycle.json",
+          "error_code": "NESTED_TABLE_CYCLE"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-cell-overlap.json",
+          "error_code": "CELL_COVERAGE"
+        },
+        {
+          "path": "fixtures/document-graph.invalid-cell-gap.json",
+          "error_code": "CELL_COVERAGE"
+        }
+      ]
+    },
+    "production_profile_required_properties": [
+      "styles",
+      "resources",
+      "losses",
+      "active_content_findings"
+    ],
+    "resource_integrity": [
+      "every non-null style_ref resolves to exactly one styles[].style_id",
+      "every non-null CELL border_ref resolves to exactly one BORDER styles[].style_id",
+      "every IMAGE image.resource_id resolves to exactly one IMAGE resources[].resource_id",
+      "every non-decorative IMAGE has non-empty alt_text and every decorative IMAGE has empty alt_text",
+      "every image caption_node_id resolves to a CAPTION node when non-null",
+      "every FIELD has field data and FIELD data is absent on non-FIELD nodes"
+    ],
+    "loss_taxonomy": [
+      "STYLE_SUBSTITUTION",
+      "BORDER_DEGRADATION",
+      "IMAGE_ALT_MISSING",
+      "FIELD_FLATTENED",
+      "FONT_SUBSTITUTION",
+      "LAYOUT_SHIFT",
+      "MACRO_QUARANTINED",
+      "OLE_QUARANTINED",
+      "UNSUPPORTED_OBJECT"
+    ],
+    "active_content_policy": {
+      "macro_ole_action": "QUARANTINE_AND_NEVER_EXECUTE",
+      "finding_executed_must_equal": false,
+      "missing_scan_receipt": "REJECT",
+      "blocking_finding_release_state": "BLOCKED"
+    }
+  }
+}

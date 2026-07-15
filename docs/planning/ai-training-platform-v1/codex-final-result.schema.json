@@ -1,0 +1,1626 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yonlab.example/schemas/codex-final-result.v1.json",
+  "title": "YOnLab AI Training Platform Codex final result",
+  "description": "Fail-closed machine-readable handoff produced by the guarded Codex implementation run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "baseline_id",
+    "run_id",
+    "release_id",
+    "generated_at",
+    "release_state",
+    "candidate_phase",
+    "summary",
+    "repository",
+    "gates",
+    "kpi_results",
+    "acceptance_data",
+    "blockers",
+    "generated_documents",
+    "commits",
+    "verification_commands",
+    "release_attestation",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "codex-final-result.v1"
+    },
+    "baseline_id": {
+      "const": "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{7,95}$"
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+-(rc|RC)[0-9]+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{1,9})?Z$"
+    },
+    "release_state": {
+      "const": "NOT_READY"
+    },
+    "candidate_phase": {
+      "type": "string",
+      "enum": [
+        "IMPLEMENTATION_BLOCKED",
+        "UNSIGNED_CANDIDATE / REVIEW PENDING"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "remote",
+        "branch",
+        "baseline_commit",
+        "implementation_commit",
+        "implementation_tree",
+        "implementation_tree_sha256",
+        "release_snapshot_commit",
+        "worktree_clean",
+        "push_status",
+        "pull_request_url"
+      ],
+      "properties": {
+        "root": {
+          "const": "D:\\Views\\yonlab-inuri-site"
+        },
+        "remote": {
+          "const": "https://github.com/yubi-lee/yonlab-i-nuri-site.git"
+        },
+        "branch": {
+          "const": "feat/ai-training-platform-v1"
+        },
+        "baseline_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "implementation_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "implementation_tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "implementation_tree_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "release_snapshot_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "worktree_clean": {
+          "type": "boolean"
+        },
+        "push_status": {
+          "type": "string",
+          "enum": [
+            "PUSHED",
+            "NOT_PUSHED",
+            "BLOCKED"
+          ]
+        },
+        "pull_request_url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://github\\.com/yubi-lee/yonlab-i-nuri-site/pull/[0-9]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "properties": {
+        "GATE-DESIGN-INTEGRITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-CODE-QUALITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-SECURITY-PRIVACY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-AI-KPI": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-DOCUMENT-KPI": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-UX-ACCESSIBILITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-OPERATIONS-RECOVERY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-PILOT-ACCEPTANCE": {
+          "$ref": "#/$defs/gate_result"
+        }
+      }
+    },
+    "kpi_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "KPI-001",
+        "KPI-002",
+        "KPI-003",
+        "KPI-004",
+        "KPI-005",
+        "KPI-006",
+        "KPI-007",
+        "KPI-008",
+        "KPI-009",
+        "KPI-010"
+      ],
+      "properties": {
+        "KPI-001": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-002": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-003": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-004": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-005": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-006": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-007": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-008": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-009": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-010": {
+          "$ref": "#/$defs/kpi_result"
+        }
+      }
+    },
+    "acceptance_data": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acceptance_item"
+      },
+      "uniqueItems": true
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      },
+      "uniqueItems": true
+    },
+    "generated_documents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(docs|dist/docs)/[^\\\\]+$"
+      },
+      "uniqueItems": true
+    },
+    "commits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hash",
+          "subject"
+        ],
+        "properties": {
+          "hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        }
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "command",
+          "status",
+          "exit_code",
+          "finished_at",
+          "acceptance_id",
+          "evidence_path"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED",
+              "REQUIRES_ACCEPTANCE_DATA"
+            ]
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 255
+          },
+          "finished_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{1,9})?Z$"
+          },
+          "acceptance_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Z][A-Z0-9-]{2,63}$"
+          },
+          "evidence_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "exit_code": {
+                  "const": 0
+                },
+                "acceptance_id": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "FAIL"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "exit_code": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "acceptance_id": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "BLOCKED"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "exit_code": {
+                  "type": "null"
+                },
+                "acceptance_id": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "REQUIRES_ACCEPTANCE_DATA"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "exit_code": {
+                  "type": "null"
+                },
+                "acceptance_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "release_attestation": {
+      "$ref": "#/$defs/release_attestation"
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "description",
+        "command"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RESUME",
+            "HUMAN_REVIEW",
+            "HUMAN_ACCEPTANCE",
+            "REMEDIATE"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "command": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        }
+      }
+    }
+  },
+  "$defs": {
+    "kpi_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "freshness",
+        "value",
+        "comparison",
+        "threshold",
+        "auxiliary_value",
+        "acceptance_id",
+        "evidence_paths"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "freshness": {
+          "type": "string",
+          "enum": [
+            "FRESH",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "comparison": {
+          "type": "string",
+          "enum": [
+            ">=",
+            "<="
+          ]
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "auxiliary_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "acceptance_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Z][A-Z0-9-]{2,63}$"
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "REQUIRES_ACCEPTANCE_DATA"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "freshness": {
+                "const": "FRESH"
+              },
+              "evidence_paths": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "acceptance_id": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "REQUIRES_ACCEPTANCE_DATA"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "null"
+              },
+              "acceptance_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "gate_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "freshness",
+        "summary",
+        "evidence_paths"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "freshness": {
+          "type": "string",
+          "enum": [
+            "FRESH",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "REQUIRES_ACCEPTANCE_DATA"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "freshness": {
+                "const": "FRESH"
+              },
+              "evidence_paths": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "acceptance_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "gate_id",
+        "kpi_id",
+        "owner_id",
+        "status",
+        "required_evidence",
+        "missing_input_ids",
+        "due_at_utc",
+        "candidate_commit",
+        "candidate_source_tree_sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9-]{2,63}$"
+        },
+        "gate_id": {
+          "type": "string",
+          "enum": [
+            "GATE-AI-KPI",
+            "GATE-UX-ACCESSIBILITY",
+            "GATE-OPERATIONS-RECOVERY",
+            "GATE-PILOT-ACCEPTANCE"
+          ]
+        },
+        "kpi_id": {
+          "type": "string",
+          "enum": [
+            "KPI-001",
+            "KPI-002",
+            "KPI-006",
+            "KPI-007",
+            "KPI-010"
+          ]
+        },
+        "owner_id": {
+          "const": "OWN-ACC"
+        },
+        "status": {
+          "const": "REQUIRES_ACCEPTANCE_DATA"
+        },
+        "required_evidence": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "missing_input_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]{2,63}$"}
+        },
+        "due_at_utc": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{1,9})?Z$"
+        },
+        "candidate_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "candidate_source_tree_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "description",
+        "owner",
+        "recovery"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9-]{2,63}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "FAIL",
+            "BLOCKED",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "recovery": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    "technical_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_id",
+        "scope_id",
+        "decision",
+        "subject_commit",
+        "signature_path",
+        "signature_sha256",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "owner_id": {
+          "type": "string",
+          "enum": [
+            "OWN-ARCH",
+          "OWN-UX",
+          "OWN-AI",
+          "OWN-DOC",
+          "OWN-SEC",
+          "OWN-OPS",
+          "OWN-QA"
+          ]
+        },
+        "scope_id": {
+          "type": "string",
+          "enum": [
+            "ARCHITECTURE",
+          "UX-ACCESSIBILITY",
+          "AI",
+          "DOCUMENT-AI",
+          "SECURITY-PRIVACY",
+          "OPERATIONS",
+          "QUALITY"
+          ]
+        },
+        "decision": {
+          "const": "APPROVED"
+        },
+        "subject_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "signature_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "artifact_scope_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_path",
+        "manifest_signature_path",
+        "checksums_path",
+        "checksums_signature_path",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "manifest_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "manifest_signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "checksums_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "checksums_signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "artifact_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release",
+        "distribution"
+      ],
+      "properties": {
+        "release": {
+          "$ref": "#/$defs/artifact_scope_integrity"
+        },
+        "distribution": {
+          "$ref": "#/$defs/artifact_scope_integrity"
+        }
+      }
+    },
+    "acceptance_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_id",
+        "scope_id",
+        "decision",
+        "subject_commit",
+        "signature_path",
+        "signature_sha256",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "owner_id": {
+          "const": "OWN-ACC"
+        },
+        "scope_id": {
+          "const": "FINAL-ACCEPTANCE"
+        },
+        "decision": {
+          "const": "ACCEPTED"
+        },
+        "subject_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "signature_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "annotated_tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "object_type",
+        "tag_object_sha",
+        "target_commit",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+-(rc|RC)[0-9]+$"
+        },
+        "object_type": {
+          "const": "tag"
+        },
+        "tag_object_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "target_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "release_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technical_approvals",
+        "artifact_integrity",
+        "acceptance_approval",
+        "annotated_tag"
+      ],
+      "properties": {
+        "technical_approvals": {
+          "type": "array",
+        "maxItems": 7,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/technical_approval"
+          }
+        },
+        "artifact_integrity": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifact_integrity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "acceptance_approval": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/acceptance_approval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "annotated_tag": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/annotated_tag"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "release_state": {
+            "const": "NOT_READY"
+          },
+          "candidate_phase": {
+            "const": "IMPLEMENTATION_BLOCKED"
+          }
+        },
+        "required": [
+          "release_state",
+          "candidate_phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "blockers": {
+            "minItems": 1
+          },
+          "next_action": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "RESUME",
+                  "REMEDIATE"
+                ]
+              },
+              "command": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "candidate_phase": {
+            "const": "UNSIGNED_CANDIDATE / REVIEW PENDING"
+          }
+        },
+        "required": [
+          "candidate_phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "repository": {
+            "properties": {
+              "worktree_clean": { "const": true },
+              "push_status": { "const": "PUSHED" },
+              "pull_request_url": { "type": "string" }
+            }
+          },
+          "blockers": { "maxItems": 0 },
+          "generated_documents": { "minItems": 1 },
+          "commits": { "minItems": 2 },
+          "release_attestation": {
+            "properties": {
+              "technical_approvals": { "maxItems": 0 },
+              "artifact_integrity": { "type": "null" },
+              "acceptance_approval": { "type": "null" },
+              "annotated_tag": { "type": "null" }
+            }
+          },
+          "next_action": {
+            "properties": {
+              "kind": { "const": "HUMAN_REVIEW" },
+              "command": { "type": "null" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "release_state": {
+            "const": "ACCEPTED"
+          }
+        },
+        "required": [
+          "release_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "repository": {
+            "properties": {
+              "worktree_clean": {
+                "const": true
+              },
+              "push_status": {
+                "const": "PUSHED"
+              },
+              "pull_request_url": {
+                "type": "string"
+              }
+            }
+          },
+          "gates": {
+            "patternProperties": {
+              "^GATE-": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  },
+                  "freshness": {
+                    "const": "FRESH"
+                  }
+                }
+              }
+            }
+          },
+          "kpi_results": {
+            "patternProperties": {
+              "^KPI-": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  },
+                  "freshness": {
+                    "const": "FRESH"
+                  }
+                }
+              }
+            }
+          },
+          "acceptance_data": {
+            "maxItems": 0
+          },
+          "blockers": {
+            "maxItems": 0
+          },
+          "generated_documents": {
+            "minItems": 1
+          },
+          "commits": {
+            "minItems": 1
+          },
+          "next_action": {
+            "properties": {
+              "kind": {
+                "const": "NONE"
+              },
+              "command": {
+                "type": "null"
+              }
+            }
+          },
+          "verification_commands": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              }
+            }
+          },
+          "release_attestation": {
+            "properties": {
+              "technical_approvals": {
+              "minItems": 7,
+              "maxItems": 7,
+                "allOf": [
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-ARCH"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-UX"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-AI"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-DOC"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-SEC"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-QA"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-OPS"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                ]
+              },
+              "artifact_integrity": {
+                "$ref": "#/$defs/artifact_integrity"
+              },
+              "acceptance_approval": {
+                "$ref": "#/$defs/acceptance_approval"
+              },
+              "annotated_tag": {
+                "$ref": "#/$defs/annotated_tag"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "release_state": {
+            "const": "CODE_COMPLETE / ACCEPTANCE DATA PENDING"
+          }
+        },
+        "required": [
+          "release_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "repository": {
+            "properties": {
+              "worktree_clean": {
+                "const": true
+              },
+              "push_status": {
+                "const": "PUSHED"
+              },
+              "pull_request_url": {
+                "type": "string"
+              }
+            }
+          },
+          "acceptance_data": {
+            "minItems": 1
+          },
+          "blockers": {
+            "maxItems": 0
+          },
+          "generated_documents": {
+            "minItems": 1
+          },
+          "commits": {
+            "minItems": 1
+          },
+          "next_action": {
+            "properties": {
+              "kind": {
+                "const": "HUMAN_ACCEPTANCE"
+              },
+              "command": {
+                "type": "null"
+              }
+            }
+          },
+          "verification_commands": {
+            "items": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "REQUIRES_ACCEPTANCE_DATA"
+                  ]
+                }
+              }
+            }
+          },
+          "kpi_results": {
+            "patternProperties": {
+              "^KPI-": {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "REQUIRES_ACCEPTANCE_DATA"
+                    ]
+                  },
+                  "freshness": {
+                    "const": "FRESH"
+                  }
+                }
+              }
+            },
+            "properties": {
+              "KPI-003": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "KPI-004": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "KPI-005": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "KPI-008": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "KPI-009": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              }
+            }
+          },
+          "gates": {
+            "patternProperties": {
+              "^GATE-": {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "REQUIRES_ACCEPTANCE_DATA"
+                    ]
+                  },
+                  "freshness": {
+                    "const": "FRESH"
+                  }
+                }
+              }
+            },
+            "anyOf": [
+              {
+                "properties": {
+                  "GATE-AI-KPI": {
+                    "properties": {
+                      "status": {
+                        "const": "REQUIRES_ACCEPTANCE_DATA"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "GATE-UX-ACCESSIBILITY": {
+                    "properties": {
+                      "status": {
+                        "const": "REQUIRES_ACCEPTANCE_DATA"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "GATE-OPERATIONS-RECOVERY": {
+                    "properties": {
+                      "status": {
+                        "const": "REQUIRES_ACCEPTANCE_DATA"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "GATE-PILOT-ACCEPTANCE": {
+                    "properties": {
+                      "status": {
+                        "const": "REQUIRES_ACCEPTANCE_DATA"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "GATE-DESIGN-INTEGRITY": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "GATE-CODE-QUALITY": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "GATE-SECURITY-PRIVACY": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              },
+              "GATE-DOCUMENT-KPI": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  }
+                }
+              }
+            }
+          },
+          "release_attestation": {
+            "properties": {
+              "technical_approvals": {
+              "minItems": 7,
+              "maxItems": 7,
+                "allOf": [
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-ARCH"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-UX"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-AI"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-DOC"
+                      }
+                    },
+                    "required": [
+                      "owner_id"
+                    ]
+                  },
+                  "minContains": 1,
+                  "maxContains": 1
+                },
+                {
+                  "contains": {
+                    "properties": {
+                      "owner_id": {
+                        "const": "OWN-SEC"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-QA"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "owner_id": {
+                          "const": "OWN-OPS"
+                        }
+                      },
+                      "required": [
+                        "owner_id"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                ]
+              },
+              "artifact_integrity": {
+                "$ref": "#/$defs/artifact_integrity"
+              },
+              "acceptance_approval": {
+                "type": "null"
+              },
+              "annotated_tag": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

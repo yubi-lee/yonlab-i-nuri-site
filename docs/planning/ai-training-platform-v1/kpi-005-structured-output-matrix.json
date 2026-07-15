@@ -1,0 +1,82 @@
+{
+  "schema_version": "kpi-005-matrix.v1",
+  "kpi_id": "KPI-005",
+  "metric": "structured_output_success",
+  "denominator_rule": "Every production-equivalent request whose task contract declares a response_schema_id is counted once at the initial attempt. It remains one denominator item when one schema repair is used; provider retries do not create new denominator items.",
+  "numerator_rule": "A denominator item counts once only when its initial output or its single permitted repair validates against the exact immutable response schema and all task semantic validators before the latency budget expires.",
+  "attempt_policy": {
+    "initial_attempts": 1,
+    "maximum_schema_repairs": 1,
+    "repair_requires_new_data_use_context": true,
+    "second_repair_result": "FAIL",
+    "missing_or_unknown_schema_result": "FAIL"
+  },
+  "coverage_axes": {
+    "provider_paths": ["INTERNAL_SLLM", "EXTERNAL_OPENAI", "APPROVED_MODEL_FALLBACK"],
+    "fallback_classes": ["PRIMARY", "CROSS_PROVIDER_FALLBACK"],
+    "data_classes": ["PUBLIC", "INTERNAL", "PERSONAL_REDACTED", "RESTRICTED_INTERNAL_ONLY"],
+    "required_negative_classes": ["schema_invalid_initial", "schema_invalid_repair", "provider_timeout", "route_denied", "policy_version_mismatch"]
+  },
+  "sample_policy": {
+    "minimum_requests_per_task_provider_path": 1000,
+    "minimum_total_requests": 27000,
+    "dataset_partition": "immutable stratified golden and adversarial set with no train/evaluation overlap",
+    "required_slices": ["long_korean", "empty_optional_fields", "maximum_cardinality", "unicode_nfc", "policy_denial", "repair_required"]
+  },
+  "acceptance": {
+    "overall_minimum": 0.998,
+    "per_task_provider_path_minimum": 0.995,
+    "unknown_or_unexecuted_cell_status": "BLOCKED",
+    "formula": "successful denominator items / all denominator items",
+    "evidence_fields": ["task", "provider_path", "fallback_class", "schema_id", "dataset_sha256", "initial_valid", "repair_used", "final_valid", "latency_ms", "run_id", "trace_id"]
+  },
+  "tasks": [
+    {"task": "diagnosis.evidence.extract", "schema_id": "evidence.v1", "fallback_output": "structured_question.v1"},
+    {"task": "diagnosis.next_question.compose", "schema_id": "question-with-policy-flags.v1", "fallback_output": "template_question.v1"},
+    {"task": "persona.explanation.compose", "schema_id": "persona-explanation.v1", "fallback_output": "persona-template.v1"},
+    {"task": "recommendation.explanation.compose", "schema_id": "recommendation-explanation.v1", "fallback_output": "feature-template.v1"},
+    {"task": "document.query.rewrite", "schema_id": "query-list.v1", "fallback_output": "original-query.v1"},
+    {"task": "document.rerank", "schema_id": "relevance-scores.v1", "fallback_output": "rrf-ranking.v1"},
+    {"task": "document.grounded_answer", "schema_id": "grounded-answer.v1", "fallback_output": "no-answer.v1"},
+    {"task": "draft.hwpx.section.compose", "schema_id": "template-fields.v1", "fallback_output": "human-authoring-required.v1"},
+    {"task": "document.metadata.tag", "schema_id": "document-metadata.v1", "fallback_output": "manual-review.v1"}
+  ],
+  "coverage_cell_defaults": {
+    "denominator": 1000,
+    "minimum_success_rate": 0.995,
+    "initial_attempts": 1,
+    "maximum_schema_repairs": 1,
+    "required_status": "PASS"
+  },
+  "coverage_cells": [
+    {"cell_id": "KPI005-C001", "task": "diagnosis.evidence.extract", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C002", "task": "diagnosis.evidence.extract", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C003", "task": "diagnosis.evidence.extract", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C004", "task": "diagnosis.next_question.compose", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C005", "task": "diagnosis.next_question.compose", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C006", "task": "diagnosis.next_question.compose", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C007", "task": "persona.explanation.compose", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C008", "task": "persona.explanation.compose", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C009", "task": "persona.explanation.compose", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C010", "task": "recommendation.explanation.compose", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C011", "task": "recommendation.explanation.compose", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C012", "task": "recommendation.explanation.compose", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C013", "task": "document.query.rewrite", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C014", "task": "document.query.rewrite", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C015", "task": "document.query.rewrite", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C016", "task": "document.rerank", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C017", "task": "document.rerank", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C018", "task": "document.rerank", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C019", "task": "document.grounded_answer", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C020", "task": "document.grounded_answer", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C021", "task": "document.grounded_answer", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C022", "task": "draft.hwpx.section.compose", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C023", "task": "draft.hwpx.section.compose", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C024", "task": "draft.hwpx.section.compose", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"},
+    {"cell_id": "KPI005-C025", "task": "document.metadata.tag", "provider_path": "INTERNAL_SLLM", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C026", "task": "document.metadata.tag", "provider_path": "EXTERNAL_OPENAI", "fallback_class": "PRIMARY"},
+    {"cell_id": "KPI005-C027", "task": "document.metadata.tag", "provider_path": "APPROVED_MODEL_FALLBACK", "fallback_class": "CROSS_PROVIDER_FALLBACK"}
+  ],
+  "matrix_rule": "For each tasks[] item, execute INTERNAL_SLLM PRIMARY, EXTERNAL_OPENAI PRIMARY, and APPROVED_MODEL_FALLBACK CROSS_PROVIDER_FALLBACK cells. A policy-prohibited data-class/provider combination is tested as a required denial but excluded from the success-rate denominator; an enabled route cell may not be skipped.",
+  "required_case_count": 27
+}

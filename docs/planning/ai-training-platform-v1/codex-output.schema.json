@@ -1,0 +1,783 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "baseline_id",
+    "run_id",
+    "release_id",
+    "generated_at",
+    "release_state",
+    "candidate_phase",
+    "summary",
+    "repository",
+    "gates",
+    "kpi_results",
+    "acceptance_data",
+    "blockers",
+    "generated_documents",
+    "commits",
+    "verification_commands",
+    "release_attestation",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "codex-final-result.v1"
+      ]
+    },
+    "baseline_id": {
+      "type": "string",
+      "enum": [
+        "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1"
+      ]
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "release_id": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "release_state": {
+      "type": "string",
+      "enum": [
+        "NOT_READY"
+      ]
+    },
+    "candidate_phase": {
+      "type": "string",
+      "enum": [
+        "IMPLEMENTATION_BLOCKED",
+        "UNSIGNED_CANDIDATE / REVIEW PENDING"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "GATE-DESIGN-INTEGRITY",
+        "GATE-CODE-QUALITY",
+        "GATE-SECURITY-PRIVACY",
+        "GATE-AI-KPI",
+        "GATE-DOCUMENT-KPI",
+        "GATE-UX-ACCESSIBILITY",
+        "GATE-OPERATIONS-RECOVERY",
+        "GATE-PILOT-ACCEPTANCE"
+      ],
+      "properties": {
+        "GATE-DESIGN-INTEGRITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-CODE-QUALITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-SECURITY-PRIVACY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-AI-KPI": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-DOCUMENT-KPI": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-UX-ACCESSIBILITY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-OPERATIONS-RECOVERY": {
+          "$ref": "#/$defs/gate_result"
+        },
+        "GATE-PILOT-ACCEPTANCE": {
+          "$ref": "#/$defs/gate_result"
+        }
+      }
+    },
+    "kpi_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "KPI-001",
+        "KPI-002",
+        "KPI-003",
+        "KPI-004",
+        "KPI-005",
+        "KPI-006",
+        "KPI-007",
+        "KPI-008",
+        "KPI-009",
+        "KPI-010"
+      ],
+      "properties": {
+        "KPI-001": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-002": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-003": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-004": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-005": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-006": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-007": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-008": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-009": {
+          "$ref": "#/$defs/kpi_result"
+        },
+        "KPI-010": {
+          "$ref": "#/$defs/kpi_result"
+        }
+      }
+    },
+    "acceptance_data": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acceptance_item"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "generated_documents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/commit"
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/verification_command"
+      }
+    },
+    "release_attestation": {
+      "$ref": "#/$defs/release_attestation"
+    },
+    "next_action": {
+      "$ref": "#/$defs/next_action"
+    }
+  },
+  "$defs": {
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "remote",
+        "branch",
+        "baseline_commit",
+        "implementation_commit",
+        "implementation_tree",
+        "implementation_tree_sha256",
+        "release_snapshot_commit",
+        "worktree_clean",
+        "push_status",
+        "pull_request_url"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "enum": [
+            "D:\\Views\\yonlab-inuri-site"
+          ]
+        },
+        "remote": {
+          "type": "string",
+          "enum": [
+            "https://github.com/yubi-lee/yonlab-i-nuri-site.git"
+          ]
+        },
+        "branch": {
+          "type": "string",
+          "enum": [
+            "feat/ai-training-platform-v1"
+          ]
+        },
+        "baseline_commit": {
+          "type": "string"
+        },
+        "implementation_commit": {
+          "type": "string"
+        },
+        "implementation_tree": {
+          "type": "string"
+        },
+        "implementation_tree_sha256": {
+          "type": "string"
+        },
+        "release_snapshot_commit": {
+          "type": "string"
+        },
+        "worktree_clean": {
+          "type": "boolean"
+        },
+        "push_status": {
+          "type": "string",
+          "enum": [
+            "PUSHED",
+            "NOT_PUSHED",
+            "BLOCKED"
+          ]
+        },
+        "pull_request_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "gate_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "freshness",
+        "summary",
+        "evidence_paths"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "freshness": {
+          "type": "string",
+          "enum": [
+            "FRESH",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kpi_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "freshness",
+        "value",
+        "comparison",
+        "threshold",
+        "auxiliary_value",
+        "acceptance_id",
+        "evidence_paths"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "freshness": {
+          "type": "string",
+          "enum": [
+            "FRESH",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "comparison": {
+          "type": "string",
+          "enum": [
+            ">=",
+            "<="
+          ]
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "auxiliary_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "acceptance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "acceptance_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "gate_id",
+        "kpi_id",
+        "owner_id",
+        "status",
+        "required_evidence",
+        "missing_input_ids",
+        "due_at_utc",
+        "candidate_commit",
+        "candidate_source_tree_sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "gate_id": {
+          "type": "string",
+          "enum": [
+            "GATE-AI-KPI",
+            "GATE-UX-ACCESSIBILITY",
+            "GATE-OPERATIONS-RECOVERY",
+            "GATE-PILOT-ACCEPTANCE"
+          ]
+        },
+        "kpi_id": {
+          "type": "string",
+          "enum": [
+            "KPI-001",
+            "KPI-002",
+            "KPI-006",
+            "KPI-007",
+            "KPI-010"
+          ]
+        },
+        "owner_id": {
+          "type": "string"
+          ,"enum": ["OWN-ACC"]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "required_evidence": {
+          "type": "string"
+        },
+        "missing_input_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "due_at_utc": {"type": "string"},
+        "candidate_commit": {"type": "string"},
+        "candidate_source_tree_sha256": {"type": "string"}
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "description",
+        "owner",
+        "recovery"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "FAIL",
+            "BLOCKED",
+            "MISSING",
+            "STALE"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "recovery": {
+          "type": "string"
+        }
+      }
+    },
+    "commit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hash",
+        "subject"
+      ],
+      "properties": {
+        "hash": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        }
+      }
+    },
+    "verification_command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "status",
+        "exit_code",
+        "finished_at",
+        "acceptance_id",
+        "evidence_path"
+      ],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "REQUIRES_ACCEPTANCE_DATA"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "finished_at": {
+          "type": "string"
+        },
+        "acceptance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_path": {
+          "type": "string"
+        }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "description",
+        "command"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RESUME",
+            "HUMAN_REVIEW",
+            "HUMAN_ACCEPTANCE",
+            "REMEDIATE"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "command": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "technical_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_id",
+        "scope_id",
+        "decision",
+        "subject_commit",
+        "signature_path",
+        "signature_sha256",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "owner_id": {
+          "type": "string",
+          "enum": [
+            "OWN-ARCH",
+          "OWN-UX",
+          "OWN-AI",
+          "OWN-DOC",
+          "OWN-SEC",
+          "OWN-OPS",
+          "OWN-QA"
+          ]
+        },
+        "scope_id": {
+          "type": "string",
+          "enum": [
+            "ARCHITECTURE",
+          "UX-ACCESSIBILITY",
+          "AI",
+          "DOCUMENT-AI",
+          "SECURITY-PRIVACY",
+          "OPERATIONS",
+          "QUALITY"
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "APPROVED"
+          ]
+        },
+        "subject_commit": {
+          "type": "string"
+        },
+        "signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "signature_sha256": {
+          "type": "string"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "artifact_scope_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_path",
+        "manifest_signature_path",
+        "checksums_path",
+        "checksums_signature_path",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "manifest_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "manifest_signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "checksums_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "checksums_signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "artifact_integrity": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "release",
+        "distribution"
+      ],
+      "properties": {
+        "release": {
+          "$ref": "#/$defs/artifact_scope_integrity"
+        },
+        "distribution": {
+          "$ref": "#/$defs/artifact_scope_integrity"
+        }
+      }
+    },
+    "acceptance_approval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "owner_id",
+        "scope_id",
+        "decision",
+        "subject_commit",
+        "signature_path",
+        "signature_sha256",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "owner_id": {
+          "type": "string",
+          "enum": [
+            "OWN-ACC"
+          ]
+        },
+        "scope_id": {
+          "type": "string",
+          "enum": [
+            "FINAL-ACCEPTANCE"
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "ACCEPTED"
+          ]
+        },
+        "subject_commit": {
+          "type": "string"
+        },
+        "signature_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "signature_sha256": {
+          "type": "string"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "annotated_tag": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "object_type",
+        "tag_object_sha",
+        "target_commit",
+        "verification_receipt_path"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "object_type": {
+          "type": "string",
+          "enum": [
+            "tag"
+          ]
+        },
+        "tag_object_sha": {
+          "type": "string"
+        },
+        "target_commit": {
+          "type": "string"
+        },
+        "verification_receipt_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "release_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technical_approvals",
+        "artifact_integrity",
+        "acceptance_approval",
+        "annotated_tag"
+      ],
+      "properties": {
+        "technical_approvals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/technical_approval"
+          }
+        },
+        "artifact_integrity": {
+          "$ref": "#/$defs/artifact_integrity"
+        },
+        "acceptance_approval": {
+          "$ref": "#/$defs/acceptance_approval"
+        },
+        "annotated_tag": {
+          "$ref": "#/$defs/annotated_tag"
+        }
+      }
+    }
+  }
+}
