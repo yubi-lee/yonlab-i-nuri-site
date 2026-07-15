@@ -373,7 +373,7 @@ function Get-ProtectedPathChainObservation([string]$Path, [string]$ProtectedRoot
             try { $sid=$rule.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value } catch { Stop-Launcher $Code "$Label ACL contains an unresolvable principal: $current" }
             $allowAces.Add([pscustomobject]@{sid=$sid;rights=[int64]$rule.FileSystemRights;inherit_only=(($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly) -ne 0)})
         }
-        $nodes.Add([pscustomobject]@{path=$current;scope=$(if($insideProtectedRoot){"PROTECTED_CONTENT"}else{"ANCESTOR_REPLACEMENT"});has_reparse_point=$hasReparse;owner_sid=$ownerSid;allow_aces=@($allowAces)})
+        $nodes.Add([pscustomobject]@{path=$current;scope=$(if($insideProtectedRoot){"PROTECTED_CONTENT"}else{"ANCESTOR_REPLACEMENT"});has_reparse_point=$hasReparse;owner_sid=$ownerSid;allow_aces=$allowAces.ToArray()})
         if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$volumeRoot)) { break }
         if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$resolvedRoot)) { $insideProtectedRoot=$false; $crossedRoot=$true }
         $parent=[IO.Directory]::GetParent($current)
@@ -2437,5 +2437,6 @@ Write-Host "CANDIDATE_RESULT: $finalResult"
 Write-Host "CANDIDATE_RESULT_SHA256: $resultSha256"
 Write-Host "NEXT: copy the result to the protected attestation root, collect external signatures, then run -Mode VerifyCandidate"
 exit 5
+
 
 
