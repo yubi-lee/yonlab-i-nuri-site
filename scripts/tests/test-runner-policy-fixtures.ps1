@@ -108,6 +108,31 @@ try {
         )
     }
     Invoke-Policy "protected-root-chain-exact" $protectedPath $true "POLICY-PROTECTED-PATH"
+    $readOnlyRights = [ordered]@{
+        "read-data" = 1
+        "read-execute" = 1179817
+        "synchronize" = 1048576
+    }
+    foreach ($entry in $readOnlyRights.GetEnumerator()) {
+        $readOnlyAce = Copy-Fixture $protectedPath
+        $readOnlyAce.nodes[0].allow_aces=@([ordered]@{sid="S-1-5-11";rights=[int64]$entry.Value;inherit_only=$false})
+        Invoke-Policy ("allow-untrusted-" + $entry.Key) $readOnlyAce $true "POLICY-PROTECTED-PATH"
+    }
+    $mutationRights = [ordered]@{
+        "write-data" = 2
+        "append-data" = 4
+        "write-extended-attributes" = 16
+        "write-attributes" = 256
+        "delete" = 65536
+        "delete-child" = 64
+        "change-permissions" = 262144
+        "take-ownership" = 524288
+    }
+    foreach ($entry in $mutationRights.GetEnumerator()) {
+        $mutationAce = Copy-Fixture $protectedPath
+        $mutationAce.nodes[0].allow_aces=@([ordered]@{sid="S-1-5-11";rights=[int64]$entry.Value;inherit_only=$false})
+        Invoke-Policy ("reject-untrusted-" + $entry.Key) $mutationAce $false "POLICY-PROTECTED-PATH"
+    }
     $badAboveAnchor = Copy-Fixture $protectedPath
     $badAboveAnchor.nodes=@($badAboveAnchor.nodes + [ordered]@{path="C:\ProgramData";scope="PROTECTED_CONTENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()})
     Invoke-Policy "reject-path-above-YOnLab-anchor" $badAboveAnchor $false "POLICY-PROTECTED-PATH"
