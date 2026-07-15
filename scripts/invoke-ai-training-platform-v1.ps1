@@ -394,7 +394,7 @@ function Assert-ProtectedPathAcl([string]$Path, [string]$Code, [string]$Label) {
     # Assert-ProtectedRootPathChain so all intermediate children are content-scoped.
     Assert-ProtectedRootPathChain $Path $Path $Code $Label
 }
-function Assert-ReleaseTrustAcl([string]$Path) { Assert-ProtectedRootPathChain $Path $Path "PRE-TRUST" "release trust" }
+function Assert-ReleaseTrustAcl([string]$Path) { Assert-ProtectedRootPathChain $Path (Split-Path -Parent $Path) "PRE-TRUST" "release trust" }
 
 function Get-ProtectedRootSnapshot([string]$Path, [string]$ProtectedRoot, [string]$Code, [string]$Label) {
     Assert-ProtectedRootPathChain $Path $ProtectedRoot $Code $Label
@@ -2126,7 +2126,7 @@ if ($ReleaseTrustPath.IndexOf(':', 2) -ge 0 -or $ReleaseTrustPath -match '(^|[\/
 Assert-NoReparseComponent $ReleaseTrustPath "PRE-TRUST"
 $resolvedTrustPath = Canonical (Resolve-Path -LiteralPath $ReleaseTrustPath).Path
 if ($resolvedTrustPath.StartsWith($resolvedRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { Stop-Launcher "PRE-TRUST" "release trust store must be outside the Codex workspace" }
-Assert-ProtectedRootPathChain $resolvedTrustPath $resolvedTrustPath "PRE-TRUST" "release trust"
+Assert-ProtectedRootPathChain $resolvedTrustPath (Split-Path -Parent $resolvedTrustPath) "PRE-TRUST" "release trust"
 Assert-ReleaseTrustAcl $resolvedTrustPath
 $releaseTrustBytes = [IO.File]::ReadAllBytes($resolvedTrustPath); $releaseTrustSha256 = Bytes-Sha256 $releaseTrustBytes
 try { $releaseTrustText = $strictUtf8.GetString($releaseTrustBytes) } catch { Stop-Launcher "PRE-TRUST" "release trust must be strict UTF-8" }
