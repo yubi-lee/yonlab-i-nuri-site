@@ -381,7 +381,7 @@ function Get-ProtectedPathChainObservation([string]$Path, [string]$ProtectedRoot
         $current=$parent.FullName
     }
     if (-not $crossedRoot) { Stop-Launcher $Code "$Label protected root was not encountered in its path chain" 6 }
-    return [pscustomobject]@{trusted_owner_sids=@($TrustedProtectionOwnerSids);nodes=@($nodes)}
+    return [pscustomobject]@{trusted_owner_sids=@($TrustedProtectionOwnerSids);nodes=$nodes.ToArray()}
 }
 
 function Assert-ProtectedRootPathChain([string]$Path, [string]$ProtectedRoot, [string]$Code, [string]$Label) {
@@ -408,7 +408,7 @@ function Get-ProtectedRootSnapshot([string]$Path, [string]$ProtectedRoot, [strin
         Assert-ProtectedRootPathChain $entry $root $Code $Label
         $item=Get-Item -LiteralPath $entry -Force
         try { $acl=Get-Acl -LiteralPath $entry -ErrorAction Stop; $sddl=$acl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Owner -bor [Security.AccessControl.AccessControlSections]::Group -bor [Security.AccessControl.AccessControlSections]::Access) } catch { Stop-Launcher $Code "$Label security descriptor cannot be snapshotted: $entry" 6 }
-        $relative=$(if([StringComparer]::OrdinalIgnoreCase.Equals($entry,$resolved)){"."}else{$entry.Substring($resolved.Length).TrimStart('\','/').Replace('\','/')})
+        $relative=$(if([StringComparer]::OrdinalIgnoreCase.Equals($entry,$resolved)){"."}else{$entry.Substring($resolved.Length).TrimStart([char[]]@('\','/')).Replace('\','/')})
         if ($item.PSIsContainer) { $records.Add([pscustomobject]@{path=$relative;kind="directory";sddl=$sddl;length=0;sha256=""}) }
         else {
             $length=[long]$item.Length; $total += $length
@@ -417,7 +417,7 @@ function Get-ProtectedRootSnapshot([string]$Path, [string]$ProtectedRoot, [strin
         }
     }
     $chain=Get-ProtectedPathChainObservation $root $root $Code "$Label root chain"
-    return String-Sha256 (([ordered]@{root=$root;chain=$chain;entries=@($records)} | ConvertTo-Json -Depth 12 -Compress))
+    return String-Sha256 (([ordered]@{root=$root;chain=$chain;entries=$records.ToArray()} | ConvertTo-Json -Depth 12 -Compress))
 }
 
 function Get-ProtectedTrustRootsSnapshot([string]$TrustPath, [string]$HooksPath, [string]$GpgHome, [string]$AttestationRoot) {
@@ -1114,7 +1114,7 @@ function Get-GitControlPlaneSnapshot([string]$GitDirectory, [string]$CommonDirec
             if ($candidate.recursive) {
                 $children = @(Get-NoFollowTreeEntries $path "GIT-CONTROL" "Git control tree $label")
                 foreach ($child in $children) {
-                    $relative = $child.Substring($path.Length).TrimStart('\','/').Replace('\','/')
+                    $relative = $child.Substring($path.Length).TrimStart([char[]]@('\','/')).Replace('\','/')
                     $item = Get-Item -LiteralPath $child -Force
                     if ($item.PSIsContainer) { $entries.Add([ordered]@{label=$label;kind="directory";relative=$relative;length=0;sha256=$null}); continue }
                     $bytes = [IO.File]::ReadAllBytes($child)
@@ -1170,7 +1170,7 @@ function Get-GitReferenceSnapshot([string]$GitDirectory, [string]$CommonDirector
             $entries.Add([ordered]@{label=[string]$candidate.label;kind="directory";relative="";length=0;sha256=$null})
             $children=@(Get-NoFollowTreeEntries $path "GIT-REFS" "Git reference tree $($candidate.label)")
             foreach ($child in $children) {
-                $relative=$child.Substring($path.Length).TrimStart('\','/').Replace('\','/')
+                $relative=$child.Substring($path.Length).TrimStart([char[]]@('\','/')).Replace('\','/')
                 $item=Get-Item -LiteralPath $child -Force
                 if ($item.PSIsContainer) { $entries.Add([ordered]@{label=[string]$candidate.label;kind="directory";relative=$relative;length=0;sha256=$null}); continue }
                 $bytes=[IO.File]::ReadAllBytes($child)
@@ -1570,7 +1570,7 @@ function Assert-ArtifactManifestAndChecksums($Artifact, [string]$ExpectedScope, 
     $actualContent = @{}; $totalBytes = 0L
     $allRootFiles = @(Get-NoFollowTreeEntries $artifactRoot "POST-ARTIFACT" "$ExpectedScope artifact root" | Where-Object { -not (Get-Item -LiteralPath $_ -Force).PSIsContainer })
     foreach ($full in $allRootFiles) {
-        $relative = $full.Substring($artifactRoot.Length).TrimStart('\','/').Replace('\','/').Normalize([Text.NormalizationForm]::FormC)
+        $relative = $full.Substring($artifactRoot.Length).TrimStart([char[]]@('\','/')).Replace('\','/').Normalize([Text.NormalizationForm]::FormC)
         $repoRelative = ($ExpectedRootRelative.TrimEnd('/') + "/" + $relative)
         Assert-TrackedRepositoryFile $GitCommand $Root $repoRelative "$ExpectedScope artifact content"
         $item = Get-Item -LiteralPath $full -Force; $totalBytes += [long]$item.Length
@@ -2437,6 +2437,4 @@ Write-Host "CANDIDATE_RESULT: $finalResult"
 Write-Host "CANDIDATE_RESULT_SHA256: $resultSha256"
 Write-Host "NEXT: copy the result to the protected attestation root, collect external signatures, then run -Mode VerifyCandidate"
 exit 5
-
-
 
