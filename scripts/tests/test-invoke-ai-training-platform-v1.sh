@@ -75,22 +75,36 @@ assert_fixed "return '!\"' + \$GhCommand.Replace(" 'quoted fixed gh credential h
 assert_fixed "return '\"' + \$GpgCommand.Replace(" 'quoted fixed gpg.program is missing'
 pass 'release-trust.v2 seven-tool hash/ACL/conditional-Authenticode policy'
 
-# Every external root of trust must defend the leaf/subtree and the complete
-# parent chain. A self-owned leaf is not sufficient when DELETE_CHILD or ACL
-# control on an ancestor can replace that leaf.
+# Every external root of trust is bounded from its leaf through the canonical
+# YOnLab anchor. C:\ProgramData and the volume root are outside this policy.
 for token in \
   'Assert-ProtectedRootPathChain' 'Assert-ProtectedPathChainObservation' \
-  '$TrustedProtectionOwnerSids' 'PROTECTED_CONTENT' 'ANCESTOR_REPLACEMENT' \
+  '$TrustedProtectionOwnerSids' '$ProtectedTrustRoot' 'PROTECTED_CONTENT' \
   'DeleteSubdirectoriesAndFiles' 'ChangePermissions' 'TakeOwnership' \
   'protected trust roots changed during execution'; do
   assert_fixed "$token" "external root-of-trust chain contract missing: $token"
 done
-assert_fixed 'Assert-ProtectedRootPathChain $resolvedTrustPath $resolvedTrustPath' 'release trust file does not validate its full parent chain'
-assert_fixed 'Assert-ProtectedRootPathChain $resolved $resolved' 'hooks/GPG protected roots do not validate their full parent chain'
+assert_fixed 'protected_root=$resolvedRoot' 'protected chain does not record its canonical YOnLab anchor'
+assert_fixed 'path chain extends beyond the YOnLab anchor' 'protected chain does not reject nodes above the YOnLab anchor'
+assert_fixed 'if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$resolvedRoot)) { $reachedProtectedRoot=$true; break }' 'protected chain does not stop at the YOnLab anchor'
+python3 - "$RUNNER" <<'PY'
+import re, sys
+text=open(sys.argv[1], encoding='utf-8-sig').read()
+m=re.search(r'function Get-ProtectedPathChainObservation\(.*?\n}\n\nfunction Assert-ProtectedRootPathChain', text, re.S)
+if not m:
+    raise SystemExit('FAIL: protected path-chain function is missing')
+block=m.group(0)
+for forbidden in ('GetPathRoot', 'volumeRoot', 'ANCESTOR_REPLACEMENT'):
+    if forbidden in block:
+        raise SystemExit(f'FAIL: protected path-chain still inspects volume ancestry: {forbidden}')
+print('PASS: protected path-chain is bounded at the YOnLab anchor')
+PY
+assert_fixed 'Assert-ProtectedRootPathChain $resolvedTrustPath $resolvedTrustPath' 'release trust file does not validate its YOnLab-bounded chain'
+assert_fixed 'Assert-ProtectedRootPathChain $resolved $resolved' 'hooks/GPG protected roots do not validate their YOnLab-bounded chain'
 assert_fixed 'Assert-ProtectedRootPathChain $full $AttestationRoot' 'attestation leaf does not validate root/intermediate/leaf ACLs'
 assert_fixed 'Get-ProtectedRootSnapshot' 'protected roots have no byte/ACL snapshot for TOCTOU revalidation'
 assert_fixed 'Assert-ProtectedTrustRootsUnchanged' 'protected roots are not revalidated after use'
-pass 'external release trust, hooks, GPG, and attestation roots resist parent replacement and TOCTOU'
+pass 'external release trust, hooks, GPG, and attestation roots are bounded at the YOnLab anchor and resist TOCTOU'
 
 # Every recursive security traversal must inspect a node before descending.
 assert_fixed 'function Get-NoFollowTreeEntries' 'shared no-follow BFS is missing'

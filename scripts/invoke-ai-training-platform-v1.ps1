@@ -22,6 +22,7 @@ $ExpectedReleaseTrustPath = "C:\ProgramData\YOnLab\release-trust.json"
 $CanonicalRunnerHost = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 $CanonicalRunnerPath = "D:\Views\yonlab-inuri-site\scripts\invoke-ai-training-platform-v1.ps1"
 $ProtectedHooksPath = "C:\ProgramData\YOnLab\empty-git-hooks"
+$ProtectedTrustRoot = "C:\ProgramData\YOnLab"
 $ProtectedGpgHome = "C:\ProgramData\YOnLab\gnupg"
 $PlanningRelative = "docs/planning/ai-training-platform-v1"
 $BaselineRelative = "$PlanningRelative/design-baseline.json"
@@ -318,13 +319,6 @@ function Get-ProtectedContentWriteMask {
         [Security.AccessControl.FileSystemRights]::WriteExtendedAttributes)
 }
 
-function Get-ProtectedAncestorReplacementMask {
-    # DELETE_CHILD on any parent can replace an otherwise perfectly protected
-    # child. DELETE/control on an ancestor can replace the whole subtree.
-    return [int64]([Security.AccessControl.FileSystemRights]::FullControl -bor [Security.AccessControl.FileSystemRights]::Delete -bor
-        [Security.AccessControl.FileSystemRights]::DeleteSubdirectoriesAndFiles -bor [Security.AccessControl.FileSystemRights]::ChangePermissions -bor
-        [Security.AccessControl.FileSystemRights]::TakeOwnership)
-}
 
 function Assert-ProtectedPathChainObservation($Observation, [string]$Code = "POLICY-PROTECTED-PATH", [string]$Label = "protected path") {
     $expectedOwners=@($TrustedProtectionOwnerSids)
@@ -332,36 +326,33 @@ function Assert-ProtectedPathChainObservation($Observation, [string]$Code = "POL
     if ($observedOwners.Count -ne $expectedOwners.Count -or @(Compare-Object -ReferenceObject $expectedOwners -DifferenceObject $observedOwners).Count -ne 0) {
         Stop-Launcher $Code "$Label trusted owner set differs from SYSTEM/Administrators/TrustedInstaller" 6
     }
+    $protectedRoot=[string]$Observation.protected_root
     $nodes=@($Observation.nodes)
-    if ($nodes.Count -lt 2) { Stop-Launcher $Code "$Label path chain must include the protected object and volume root" 6 }
-    $seenAncestor=$false
+    if ([string]::IsNullOrWhiteSpace($protectedRoot) -or $nodes.Count -lt 1) { Stop-Launcher $Code "$Label path chain must include the protected object and YOnLab anchor" 6 }
+    if (-not [StringComparer]::OrdinalIgnoreCase.Equals([string]$nodes[$nodes.Count - 1].path, $protectedRoot)) { Stop-Launcher $Code "$Label path chain extends beyond the YOnLab anchor" 6 }
     foreach ($node in $nodes) {
-        if ([string]::IsNullOrWhiteSpace([string]$node.path) -or @("PROTECTED_CONTENT","ANCESTOR_REPLACEMENT") -cnotcontains [string]$node.scope) { Stop-Launcher $Code "$Label path-chain node is malformed" 6 }
-        if ([string]$node.scope -ceq "ANCESTOR_REPLACEMENT") { $seenAncestor=$true } elseif ($seenAncestor) { Stop-Launcher $Code "$Label protected-content scope reappears above its root" 6 }
+        if ([string]::IsNullOrWhiteSpace([string]$node.path) -or [string]$node.scope -cne "PROTECTED_CONTENT") { Stop-Launcher $Code "$Label path-chain node is outside the protected YOnLab anchor" 6 }
         if ($node.has_reparse_point -ne $false) { Stop-Launcher $Code "$Label contains a reparse-point component: $($node.path)" 6 }
         if ($expectedOwners -cnotcontains [string]$node.owner_sid) { Stop-Launcher $Code "$Label has an untrusted ACL owner: $($node.owner_sid) ($($node.path))" 6 }
-        $forbiddenMask=$(if ([string]$node.scope -ceq "PROTECTED_CONTENT") { Get-ProtectedContentWriteMask } else { Get-ProtectedAncestorReplacementMask })
+        $forbiddenMask=Get-ProtectedContentWriteMask
         foreach ($ace in @($node.allow_aces)) {
             if ($ace.inherit_only -eq $true -or (([int64]$ace.rights -band $forbiddenMask) -eq 0)) { continue }
             if ($expectedOwners -cnotcontains [string]$ace.sid) { Stop-Launcher $Code "$Label grants write/delete-child/replacement/control to an untrusted principal: $($ace.sid) ($($node.path))" 6 }
         }
     }
-    if (-not $seenAncestor) { Stop-Launcher $Code "$Label path chain never crossed the protected-root boundary" 6 }
 }
 
 function Get-ProtectedPathChainObservation([string]$Path, [string]$ProtectedRoot, [string]$Code, [string]$Label) {
     if ($env:OS -cne "Windows_NT") { Stop-Launcher $Code "$Label ACL verification requires Windows" }
     try {
         $resolved=Canonical (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
-        $resolvedRoot=Canonical (Resolve-Path -LiteralPath $ProtectedRoot -ErrorAction Stop).Path
+        $resolvedRoot=Canonical (Resolve-Path -LiteralPath $ProtectedTrustRoot -ErrorAction Stop).Path
     } catch { Stop-Launcher $Code "$Label path cannot be resolved: $($_.Exception.Message)" }
     if (-not [StringComparer]::OrdinalIgnoreCase.Equals($resolved,$resolvedRoot) -and -not $resolved.StartsWith($resolvedRoot + [IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) {
         Stop-Launcher $Code "$Label target escapes its protected root" 6
     }
-    $volumeRoot=[IO.Path]::GetPathRoot($resolved)
-    if ([string]::IsNullOrWhiteSpace($volumeRoot)) { Stop-Launcher $Code "$Label has no volume root" 6 }
     $nodes=New-Object Collections.Generic.List[object]
-    $current=$resolved; $insideProtectedRoot=$true; $crossedRoot=$false
+    $current=$resolved; $reachedProtectedRoot=$false
     while ($true) {
         Assert-NoReparseComponent $current $Code
         try { $item=Get-Item -LiteralPath $current -Force -ErrorAction Stop; $acl=Get-Acl -LiteralPath $current -ErrorAction Stop } catch { Stop-Launcher $Code "$Label path/ACL cannot be read: $current" }
@@ -373,15 +364,14 @@ function Get-ProtectedPathChainObservation([string]$Path, [string]$ProtectedRoot
             try { $sid=$rule.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value } catch { Stop-Launcher $Code "$Label ACL contains an unresolvable principal: $current" }
             $allowAces.Add([pscustomobject]@{sid=$sid;rights=[int64]$rule.FileSystemRights;inherit_only=(($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly) -ne 0)})
         }
-        $nodes.Add([pscustomobject]@{path=$current;scope=$(if($insideProtectedRoot){"PROTECTED_CONTENT"}else{"ANCESTOR_REPLACEMENT"});has_reparse_point=$hasReparse;owner_sid=$ownerSid;allow_aces=$allowAces.ToArray()})
-        if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$volumeRoot)) { break }
-        if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$resolvedRoot)) { $insideProtectedRoot=$false; $crossedRoot=$true }
+        $nodes.Add([pscustomobject]@{path=$current;scope="PROTECTED_CONTENT";has_reparse_point=$hasReparse;owner_sid=$ownerSid;allow_aces=$allowAces.ToArray()})
+        if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$resolvedRoot)) { $reachedProtectedRoot=$true; break }
         $parent=[IO.Directory]::GetParent($current)
-        if ($null -eq $parent) { Stop-Launcher $Code "$Label path chain did not terminate at its volume root" 6 }
+        if ($null -eq $parent) { Stop-Launcher $Code "$Label path chain did not reach the protected YOnLab anchor" 6 }
         $current=$parent.FullName
     }
-    if (-not $crossedRoot) { Stop-Launcher $Code "$Label protected root was not encountered in its path chain" 6 }
-    return [pscustomobject]@{trusted_owner_sids=@($TrustedProtectionOwnerSids);nodes=$nodes.ToArray()}
+    if (-not $reachedProtectedRoot) { Stop-Launcher $Code "$Label protected YOnLab anchor was not encountered in its path chain" 6 }
+    return [pscustomobject]@{protected_root=$resolvedRoot;trusted_owner_sids=@($TrustedProtectionOwnerSids);nodes=$nodes.ToArray()}
 }
 
 function Assert-ProtectedRootPathChain([string]$Path, [string]$ProtectedRoot, [string]$Code, [string]$Label) {

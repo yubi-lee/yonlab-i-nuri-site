@@ -210,6 +210,27 @@ launcher는 다음 의미의 pinned Codex 호출을 구성하고 11번 문서 �
 Codex 종료 직후 runner는 어떤 Git 호출보다 먼저 control-plane과 trusted tool inventory를 direct .NET I/O로 재확인한다. 이어서 다음을 독립 검증한다.
 
 - `release_state`는 항상 `NOT_READY`다. 별도 `candidate_phase`만 `IMPLEMENTATION_BLOCKED` 또는 `UNSIGNED_CANDIDATE / REVIEW PENDING`이다.
+
+## Protected trust anchor scope
+
+The canonical protected trust anchor for this platform is `C:\ProgramData\YOnLab`.
+The protected targets `release-trust.json`, `attestations`, `gnupg`, and
+`empty-git-hooks` must remain below that anchor. For each target, the runner
+walks the target and every intermediate component up to and including
+`C:\ProgramData\YOnLab`, then stops. `C:\ProgramData` itself and the volume
+root are outside this protected-trust scope: the runner does not inspect or
+modify their ACLs.
+
+Within the bounded chain, every component remains non-reparse, owned only by
+`SYSTEM`, `Administrators`, or `TrustedInstaller`, and free of untrusted
+write/modify/delete/create/permission-change/take-ownership/control Allow ACEs.
+`release-trust.json` must also remain outside the Codex workspace. Policy
+fixtures represent the chain as protected content from the leaf through the
+YOnLab anchor; a node above that anchor is invalid. The separate trusted-tool
+executable policy may still inspect an approved installation root through the
+volume root as documented above; that policy does not authorize changing any
+`C:\ProgramData` ACL.
+
 - repository fields는 exact `S`, `S` tree, `source-tree-hash.v1`, `R`이다.
 - `R`은 `S`의 single direct first-parent child이고 `S..R`은 여섯 allowlist root만 바꾼다.
 - evidence registry의 요구 record set과 evidence-index record set이 exact set equality다. extra/missing/duplicate record가 없다.

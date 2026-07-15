@@ -100,28 +100,30 @@ try {
     $trustedOwners = @("S-1-5-18", "S-1-5-32-544", "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464")
     $protectedPath = [ordered]@{
         schema_version="runner-policy-fixture.v1"; case="protected-path-chain"
+        protected_root="C:\ProgramData\YOnLab"
         trusted_owner_sids=$trustedOwners
         nodes=@(
             [ordered]@{path="C:\ProgramData\YOnLab\release-trust.json";scope="PROTECTED_CONTENT";has_reparse_point=$false;owner_sid="S-1-5-32-544";allow_aces=@()},
-            [ordered]@{path="C:\ProgramData\YOnLab";scope="PROTECTED_CONTENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()},
-            [ordered]@{path="C:\ProgramData";scope="ANCESTOR_REPLACEMENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()},
-            [ordered]@{path="C:\";scope="ANCESTOR_REPLACEMENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()}
+            [ordered]@{path="C:\ProgramData\YOnLab";scope="PROTECTED_CONTENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()}
         )
     }
     Invoke-Policy "protected-root-chain-exact" $protectedPath $true "POLICY-PROTECTED-PATH"
+    $badAboveAnchor = Copy-Fixture $protectedPath
+    $badAboveAnchor.nodes=@($badAboveAnchor.nodes + [ordered]@{path="C:\ProgramData";scope="PROTECTED_CONTENT";has_reparse_point=$false;owner_sid="S-1-5-18";allow_aces=@()})
+    Invoke-Policy "reject-path-above-YOnLab-anchor" $badAboveAnchor $false "POLICY-PROTECTED-PATH"
     $badOwner = Copy-Fixture $protectedPath; $badOwner.nodes[0].owner_sid="S-1-5-21-1000"
     Invoke-Policy "reject-self-owned-protected-leaf" $badOwner $false "POLICY-PROTECTED-PATH"
     $badDeleteChild = Copy-Fixture $protectedPath
-    $badDeleteChild.nodes[2].allow_aces=@([ordered]@{sid="S-1-5-21-1000";rights=64;inherit_only=$false})
-    Invoke-Policy "reject-parent-delete-child-replacement" $badDeleteChild $false "POLICY-PROTECTED-PATH"
+    $badDeleteChild.nodes[1].allow_aces=@([ordered]@{sid="S-1-5-21-1000";rights=64;inherit_only=$false})
+    Invoke-Policy "reject-anchor-delete-child-write" $badDeleteChild $false "POLICY-PROTECTED-PATH"
     $badLeafWrite = Copy-Fixture $protectedPath
     $badLeafWrite.nodes[0].allow_aces=@([ordered]@{sid="S-1-5-11";rights=2;inherit_only=$false})
     Invoke-Policy "reject-broad-leaf-write" $badLeafWrite $false "POLICY-PROTECTED-PATH"
     $badReparse = Copy-Fixture $protectedPath; $badReparse.nodes[1].has_reparse_point=$true
     Invoke-Policy "reject-protected-root-reparse" $badReparse $false "POLICY-PROTECTED-PATH"
     $inheritedOnly = Copy-Fixture $protectedPath
-    $inheritedOnly.nodes[2].allow_aces=@([ordered]@{sid="S-1-5-21-1000";rights=64;inherit_only=$true})
-    Invoke-Policy "allow-inherit-only-parent-ace" $inheritedOnly $true "POLICY-PROTECTED-PATH"
+    $inheritedOnly.nodes[1].allow_aces=@([ordered]@{sid="S-1-5-21-1000";rights=64;inherit_only=$true})
+    Invoke-Policy "allow-inherit-only-anchor-ace" $inheritedOnly $true "POLICY-PROTECTED-PATH"
     $badIntermediate = Copy-Fixture $protectedPath
     $badIntermediate.nodes[1].allow_aces=@([ordered]@{sid="S-1-5-11";rights=2;inherit_only=$false})
     Invoke-Policy "reject-intermediate-broad-write" $badIntermediate $false "POLICY-PROTECTED-PATH"
