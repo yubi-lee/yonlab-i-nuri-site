@@ -153,6 +153,82 @@ if (-not (Test-Path -LiteralPath (Join-Path $gpgHome 'trustdb.gpg') -PathType Le
 
 runner child process는 `GNUPGHOME=C:\ProgramData\YOnLab\gnupg`를 고정하고 direct GPG에 `--no-options --no-auto-key-retrieve --no-auto-check-trustdb --batch --no-tty`를 사용한다. Git `verify-tag`는 direct executable만 지정하므로 보호된 `gpg.conf`의 exact `no-auto-check-trustdb`를 읽는다. runner는 최초 GPG 실행 전 tree/ACL snapshot을 만들고, 각 direct GPG call과 Git `verify-tag` 직후 다시 계산한다. lock, trustdb, config, keyring을 포함한 persistent byte·path·SDDL 변화가 있으면 `POST-GPG` 또는 `POST-TAG-GPG`로 실패한다. detached signature와 tag의 `VALIDSIG`는 trusted fingerprint, EdDSA/Ed25519 public-key algorithm `22`, SHA-256 hash algorithm `8`과 정확히 일치해야 한다. private key를 읽거나 서명하지 않는다.
 
+### 5.2.1 공개키 fingerprint 수집과 release-trust 반영
+
+GPG 설치 여부는 다음 두 명령으로 확인한다. 둘 다 실패하면 설치를 자동 수행하지 않고 운영자 승인을 먼저 받는다.
+
+~~~
+gpg --version
+where.exe gpg
+~~~
+
+승인된 설치가 필요할 때만 다음 명령을 사람이 실행한다. 이 작업은 private key를 만들거나 저장하지 않는다.
+
+~~~
+winget install GnuPG.GnuPG
+~~~
+
+C:\ProgramData\YOnLab\gnupg는 public-only verification home이다. 운영 공개키 bundle은 repository 밖의 승인된 전달 경로로 받아 import하며, approved-public-keys.asc와 private key는 repo에 넣지 않는다.
+
+~~~
+$trustedGpg = 'C:\Program Files (x86)\GnuPG\bin\gpg.exe'
+$gpgHome = 'C:\ProgramData\YOnLab\gnupg'
+& $trustedGpg --homedir $gpgHome --no-options --batch --no-tty --import .\approved-public-keys.asc
+& $trustedGpg --homedir $gpgHome --no-options --batch --no-tty --with-colons --fingerprint --list-keys
+& $trustedGpg --homedir $gpgHome --no-options --batch --no-tty --with-colons --list-secret-keys
+& $trustedGpg --homedir $gpgHome --no-options --batch --no-tty --check-trustdb
+~~~
+
+with-colons 출력의 fpr: record에서 field 10을 수집한다. sec: record가 하나라도 있으면 verification-only home으로 사용할 수 없다. fingerprint는 공개값이지만, 역할 배정은 외부 승인 기록과 함께 수행한다.
+
+| release-trust field | 승인 대상 |
+|---|---|
+| owner_fingerprints.OWN-ARCH | Architecture owner public key |
+| owner_fingerprints.OWN-UX | UX owner public key |
+| owner_fingerprints.OWN-AI | AI owner public key |
+| owner_fingerprints.OWN-DOC | Documentation owner public key |
+| owner_fingerprints.OWN-SEC | Security owner public key |
+| owner_fingerprints.OWN-OPS | Operations owner public key |
+| owner_fingerprints.OWN-QA | QA owner public key |
+| owner_fingerprints.OWN-ACC | Acceptance owner public key |
+| tag_signer_fingerprint | 반드시 OWN-QA와 같은 fingerprint |
+
+각 owner 값은 서로 다른 40/64자리 hexadecimal fingerprint여야 한다. tag_signer_fingerprint는 별도 임의 키가 아니라 exact OWN-QA 값이어야 한다.
+
+운영 ACCEPTED와 개발 PRE-TRUST는 분리한다. 개발 검증에 사용할 수 있는 것은 별도 관리되는 dev public key뿐이며, 그 fingerprint는 PRE-TRUST 전진 확인용이지 운영 owner 또는 release signer의 ACCEPTED 증명이 아니다. private key 생성·반입·저장 없이 이미 승인된 dev public key를 import하는 경우에만 사용하고, dev fingerprint를 운영 release-trust에 그대로 승격하지 않는다.
+
+실제 fingerprint가 모두 준비되기 전에는 C:\ProgramData\YOnLab\release-trust.json을 수정하지 않는다. 준비가 끝난 승인된 provisioning window에서만 다음 guarded 절차를 실행한다. 이 절차는 owner 8개와 tag signer만 갱신하며 tool hash와 GitHub workflow policy는 별도 승인 입력으로 유지한다.
+
+~~~
+$ErrorActionPreference = 'Stop'
+$trustPath = 'C:\ProgramData\YOnLab\release-trust.json'
+$roles = @('OWN-ARCH','OWN-UX','OWN-AI','OWN-DOC','OWN-SEC','OWN-OPS','OWN-QA','OWN-ACC')
+$owner = [ordered]@{}
+$seen = @{}
+$trustedGpg = 'C:\Program Files (x86)\GnuPG\bin\gpg.exe'
+$gpgHome = 'C:\ProgramData\YOnLab\gnupg'
+if (-not (Test-Path -LiteralPath $trustedGpg -PathType Leaf)) { throw 'approved GPG executable is missing' }
+$keyInventory = @(& $trustedGpg --homedir $gpgHome --no-options --batch --no-tty --with-colons --fingerprint --list-keys)
+if ($LASTEXITCODE -ne 0) { throw 'public-key inventory failed' }
+if (@($keyInventory | Where-Object { ([string]$_).StartsWith('sec:', [StringComparison]::Ordinal) }).Count -ne 0) { throw 'verification-only GPG home contains secret-key material' }
+$availableFingerprints = @($keyInventory | ForEach-Object { $line = [string]$_; if ($line.StartsWith('fpr:', [StringComparison]::Ordinal)) { $fields = $line -split ':'; if ($fields.Count -gt 9) { $fields[9].ToUpperInvariant() } } } | Where-Object { $_ } | Sort-Object -Unique)
+foreach ($role in $roles) {
+    $fingerprint = (Read-Host "Approved public-key fingerprint for $role").Trim().ToUpperInvariant()
+    if ($fingerprint -notmatch '^[0-9A-F]{40}([0-9A-F]{24})?$') { throw "$role must be an approved 40/64-hex fingerprint" }
+    if ($seen.ContainsKey($fingerprint)) { throw "duplicate owner fingerprint: $role" }
+    $owner[$role] = $fingerprint
+    $seen[$fingerprint] = $role
+}
+foreach ($fingerprint in $owner.Values) { if ($availableFingerprints -notcontains $fingerprint) { throw 'public-key keyring lacks an approved owner fingerprint' } }
+$trust = Get-Content -LiteralPath $trustPath -Raw | ConvertFrom-Json
+if ([string]$trust.schema_version -cne 'release-trust.v2' -or [string]$trust.repository -cne 'yubi-lee/yonlab-i-nuri-site' -or [string]$trust.attestation_root -cne 'C:\ProgramData\YOnLab\attestations') { throw 'release-trust identity mismatch' }
+$trust.owner_fingerprints = [pscustomobject]$owner
+$trust.tag_signer_fingerprint = $owner['OWN-QA']
+$utf8NoBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
+[IO.File]::WriteAllText($trustPath, (($trust | ConvertTo-Json -Depth 20) + [Environment]::NewLine), $utf8NoBom)
+~~~
+
+이 절차의 입력이 없거나 placeholder이면 write하지 않고 현재 release-trust.json을 보존한다. 실제 값 반영 후에도 runner는 trusted tool path/hash/signer, GitHub actor/workflow, public keyring과 attestation을 별도로 검증한다. fingerprint와 trust JSON은 machine-local 보호 경로에만 두며 repo에는 문서와 절차만 commit한다.
 ### 5.3 외부 workflow prerequisite
 
 required CI workflow는 candidate가 만드는 산출물이 아니다. 조직 관리자가 구현 실행 전에 `main`에 설치하고, 각 workflow의 numeric ID, repository path, `main` content SHA-256, exact check/job name, allowed actor와 required runner label set을 외부 `release-trust.v2`에 고정한다. candidate는 `.github/workflows/`를 추가·수정할 수 없다. `main`에 workflow가 없거나 trust의 ID/path/hash와 다르면 `Implement` 시작 전에 중단한다.
