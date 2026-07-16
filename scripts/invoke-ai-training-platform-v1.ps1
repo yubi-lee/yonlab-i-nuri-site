@@ -114,7 +114,11 @@ function Get-TrustedExecutableWorkingDirectory([string]$Command) {
     return Canonical $parent
 }
 function Assert-HostInvocationObservation($Observation, [string]$Code = "POLICY-HOST") {
-    if ($Observation.is_windows -ne $true -or $Observation.process_path_is_canonical -ne $true -or $Observation.process_has_reparse -ne $false -or $Observation.argv0_matches -ne $true -or $Observation.argv_prefix_matches -ne $true -or
+    $hostStartupArgumentsValid=$true
+    if ($null -ne $Observation.PSObject.Properties["host_startup_arguments_valid"]) { $hostStartupArgumentsValid=[bool]$Observation.host_startup_arguments_valid }
+    $argv0IsBareName=$false
+    if ($null -ne $Observation.PSObject.Properties["argv0_is_bare_name"]) { $argv0IsBareName=[bool]$Observation.argv0_is_bare_name }
+    if ($Observation.is_windows -ne $true -or $Observation.process_path_is_canonical -ne $true -or $Observation.process_has_reparse -ne $false -or -not $hostStartupArgumentsValid -or (($Observation.argv0_matches -ne $true) -and -not $argv0IsBareName) -or $Observation.argv_prefix_matches -ne $true -or
         [string]$Observation.host_name -cne "powershell.exe" -or -not [StringComparer]::OrdinalIgnoreCase.Equals([string]$Observation.process_path,[string]$Observation.expected_process_path) -or
         [string]$Observation.expected_process_path -notmatch '^[A-Za-z]:\\Windows\\System32\\WindowsPowerShell\\v1\.0\\powershell\.exe$' -or [int]$Observation.no_profile_count -ne 1 -or
         [int]$Observation.non_interactive_count -ne 1 -or [int]$Observation.file_count -ne 1 -or [int]$Observation.forbidden_switch_count -ne 0 -or
@@ -138,7 +142,8 @@ function Assert-CanonicalProductionHostInvocation([string]$SelectedMode, [string
     $noProfile=@($arguments | Where-Object { [string]$_ -ieq "-NoProfile" }).Count
     $nonInteractive=@($arguments | Where-Object { [string]$_ -ieq "-NonInteractive" }).Count
     $fileIndexes=@(for($index=0;$index -lt $arguments.Count;$index+=1){if([string]$arguments[$index] -ieq "-File"){$index}})
-    $forbidden=@($arguments | Where-Object { @("-Command","-CommandWithArgs","-EncodedCommand","-NoExit","-Interactive","-WorkingDirectory") -icontains [string]$_ }).Count
+    $forbiddenTokens=@("-Command","-CommandWithArgs","-EncodedCommand","-EncodedArguments","-NoExit","-Interactive","-WorkingDirectory","-PSConsoleFile","-Version")
+    $forbidden=@($arguments | Where-Object { $forbiddenTokens -icontains [string]$_ }).Count
     $fileTargetMatches=$false
     $resolvedRunnerPath=$null
     if ($fileIndexes.Count -eq 1 -and $fileIndexes[0] + 1 -lt $arguments.Count) {
@@ -147,26 +152,53 @@ function Assert-CanonicalProductionHostInvocation([string]$SelectedMode, [string
             try { $resolvedRunnerPath=Canonical (Resolve-Path -LiteralPath $RunnerPath -ErrorAction Stop).Path; $fileTargetMatches=[StringComparer]::OrdinalIgnoreCase.Equals((Canonical (Resolve-Path -LiteralPath $fileArgument -ErrorAction Stop).Path),$resolvedRunnerPath) } catch { $fileTargetMatches=$false }
         }
     }
-    $argv0Matches=$false
-    if ($arguments.Count -gt 0 -and [IO.Path]::IsPathRooted([string]$arguments[0])) {
-        try { $argv0Matches=[StringComparer]::OrdinalIgnoreCase.Equals((Canonical (Resolve-Path -LiteralPath ([string]$arguments[0]) -ErrorAction Stop).Path),$processResolved) } catch { $argv0Matches=$false }
-    }
-    $argvPrefixMatches=$false
-    if ($arguments.Count -ge 8 -and $null -ne $resolvedRunnerPath) {
-        $expectedPrefix=@($expectedProcessPath,"-NoLogo","-NoProfile","-NonInteractive","-ExecutionPolicy","Bypass","-File",$resolvedRunnerPath)
-        $argvPrefixMatches=$true
-        for($index=0;$index -lt $expectedPrefix.Count;$index+=1) {
-            $actualValue=[string]$arguments[$index]
-            if ($index -eq 0 -or $index -eq 7) {
-                try { $actualValue=Canonical (Resolve-Path -LiteralPath $actualValue -ErrorAction Stop).Path } catch { $argvPrefixMatches=$false; break }
+    $hostStartupArgumentsValid=$false
+    if ($fileIndexes.Count -eq 1 -and $fileIndexes[0] -gt 0 -and $fileIndexes[0] + 1 -lt $arguments.Count) {
+        $hostStartupArgumentsValid=$true
+        $fileIndex=[int]$fileIndexes[0]
+        $startupNoLogo=0
+        $startupNoProfile=0
+        $startupNonInteractive=0
+        $startupExecutionPolicy=0
+        for ($index=1; $index -lt $fileIndex; $index+=1) {
+            $token=[string]$arguments[$index]
+            if ($token -ieq "-NoLogo") {
+                $startupNoLogo+=1
+                if ($startupNoLogo -gt 1) { $hostStartupArgumentsValid=$false }
+            } elseif ($token -ieq "-NoProfile") {
+                $startupNoProfile+=1
+            } elseif ($token -ieq "-NonInteractive") {
+                $startupNonInteractive+=1
+            } elseif ($token -ieq "-ExecutionPolicy") {
+                $startupExecutionPolicy+=1
+                if ($startupExecutionPolicy -gt 1 -or $index + 1 -ge $fileIndex -or [string]$arguments[$index + 1] -cne "Bypass") {
+                    $hostStartupArgumentsValid=$false
+                } else {
+                    $index+=1
+                }
+            } else {
+                $hostStartupArgumentsValid=$false
             }
-            if (-not [StringComparer]::OrdinalIgnoreCase.Equals($actualValue,[string]$expectedPrefix[$index])) { $argvPrefixMatches=$false; break }
+        }
+        if ($startupNoProfile -ne 1 -or $startupNonInteractive -ne 1 -or $startupNoLogo -gt 1 -or $startupExecutionPolicy -gt 1) {
+            $hostStartupArgumentsValid=$false
         }
     }
+    $argv0Matches=$false
+    $argv0IsBareName=$false
+    if ($arguments.Count -gt 0) {
+        $argv0=[string]$arguments[0]
+        if ([StringComparer]::OrdinalIgnoreCase.Equals($argv0,[IO.Path]::GetFileName($expectedProcessPath))) {
+            $argv0IsBareName=$true
+        } elseif ([IO.Path]::IsPathRooted($argv0)) {
+            try { $argv0Matches=[StringComparer]::OrdinalIgnoreCase.Equals((Canonical (Resolve-Path -LiteralPath $argv0 -ErrorAction Stop).Path),$processResolved) } catch { $argv0Matches=$false }
+        }
+    }
+    $argvPrefixMatches=$hostStartupArgumentsValid -and $fileTargetMatches
     $observation=[pscustomobject]@{
         is_windows=$true;process_path=$processResolved;expected_process_path=$expectedProcessPath;process_path_is_canonical=([IO.Path]::IsPathRooted($processPath) -and [StringComparer]::OrdinalIgnoreCase.Equals($processFull.TrimEnd([char[]]@('\','/')),$processResolved))
-        process_has_reparse=$false;host_name=[IO.Path]::GetFileName($processResolved);argv0_matches=$argv0Matches;argv_prefix_matches=$argvPrefixMatches
-        no_profile_count=$noProfile;non_interactive_count=$nonInteractive;file_count=$fileIndexes.Count;forbidden_switch_count=$forbidden;file_target_matches=$fileTargetMatches
+        process_has_reparse=$false;host_name=[IO.Path]::GetFileName($processResolved);argv0_matches=$argv0Matches;argv0_is_bare_name=$argv0IsBareName;argv_prefix_matches=$argvPrefixMatches
+        no_profile_count=$noProfile;non_interactive_count=$nonInteractive;file_count=$fileIndexes.Count;forbidden_switch_count=$forbidden;file_target_matches=$fileTargetMatches;host_startup_arguments_valid=$hostStartupArgumentsValid
     }
     Assert-HostInvocationObservation $observation "PRE-HOST"
     Write-Pass "PRE-HOST canonical direct no-profile non-interactive PowerShell file invocation"

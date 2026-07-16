@@ -40,7 +40,11 @@ pass 'canonical repository and four-mode boundary'
 for token in 'Assert-CanonicalProductionHostInvocation' 'Assert-HostInvocationObservation' '[Environment]::GetCommandLineArgs()' '[Environment]::SystemDirectory' 'WindowsPowerShell\v1.0\powershell.exe' '-NoProfile' '-NonInteractive' 'file_target_matches'; do
   assert_fixed "$token" "canonical production host invocation contract missing: $token"
 done
-assert_fixed '$expectedPrefix=@($expectedProcessPath,"-NoLogo","-NoProfile","-NonInteractive","-ExecutionPolicy","Bypass","-File",$resolvedRunnerPath)' 'host argv[0..7] is not an exact closed prefix'
+assert_fixed '$hostStartupArgumentsValid' 'host startup switch parser is missing'
+assert_fixed '$forbiddenTokens=@(' 'forbidden pre-File switch set is missing'
+assert_fixed '-PSConsoleFile' 'PowerShell ISE startup rejection is missing'
+assert_fixed '-Version' 'PowerShell version startup rejection is missing'
+assert_absent '$expectedPrefix=@(' 'legacy fixed argv prefix remains'
 assert_fixed 'if ($Mode -ceq "PolicySelfTest") { Invoke-PolicySelfTest $PolicyFixture; exit 0 }' 'Linux-only policy fixture exception is not explicit'
 assert_fixed '$CanonicalRunnerHost = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"' 'resume guidance does not pin the canonical production host'
 assert_fixed '$CanonicalRunnerPath = "D:\Views\yonlab-inuri-site\scripts\invoke-ai-training-platform-v1.ps1"' 'resume guidance does not pin the canonical runner path'
