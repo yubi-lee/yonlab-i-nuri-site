@@ -319,11 +319,51 @@ if [[ -z "$PWSH" ]]; then
   fi
 fi
 [[ -x "$PWSH" ]] || fail "PowerShell executable is not runnable: $PWSH"
+PWSH_BASENAME="$(
+  basename "$PWSH" |
+    tr '[:upper:]' '[:lower:]'
+)"
+
+SAFE_WINPS_MODULE_PATH=""
+
+if [[
+  "$PWSH_BASENAME" == "powershell.exe" ||
+  "$PWSH_BASENAME" == "powershell"
+]]; then
+  PWSH_PARENT="$(cd "$(dirname "$PWSH")" && pwd)"
+  SAFE_WINPS_MODULE_PATH="$(cygpath -w "$PWSH_PARENT/Modules")"
+
+  if [[ -z "$SAFE_WINPS_MODULE_PATH" ]]; then
+    fail 'cannot resolve Windows PowerShell system module path'
+  fi
+fi
+
+invoke_test_powershell() {
+  if [[ -n "$SAFE_WINPS_MODULE_PATH" ]]; then
+    PSModulePath="$SAFE_WINPS_MODULE_PATH" \
+      "$PWSH" "$@"
+  else
+    "$PWSH" "$@"
+  fi
+}
+
+invoke_test_powershell \
+  -NoLogo \
+  -NoProfile \
+  -NonInteractive \
+  -Command '
+    $command = Get-Command Get-FileHash -ErrorAction Stop
+    if ([string]$command.ModuleName -cne "Microsoft.PowerShell.Utility") {
+      throw "Get-FileHash module binding mismatch"
+    }
+  '
+pass 'Windows PowerShell system module discovery is isolated from Git Bash PSModulePath'
+
 RUNNER_PWSH="$(cygpath -w "$RUNNER")"
 VALIDATOR_PWSH="$(cygpath -w "$VALIDATOR")"
 TEST_ROOT_PWSH="$(cygpath -w "$TEST_ROOT")"
-"$PWSH" -NoLogo -NoProfile -Command "[void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$RUNNER_PWSH')); [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$VALIDATOR_PWSH'))"
-"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-invoke-utf8-process.ps1"
-"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-validate-codex-final-result.ps1"
-"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-runner-policy-fixtures.ps1" -RunnerPath "$RUNNER_PWSH"
+invoke_test_powershell -NoLogo -NoProfile -Command "[void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$RUNNER_PWSH')); [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$VALIDATOR_PWSH'))"
+invoke_test_powershell -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-invoke-utf8-process.ps1"
+invoke_test_powershell -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-validate-codex-final-result.ps1"
+invoke_test_powershell -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-runner-policy-fixtures.ps1" -RunnerPath "$RUNNER_PWSH"
 pass 'guarded runner, validator, process, and executable adversarial contracts'

@@ -33,8 +33,42 @@ function New-Unsigned {
 function Copy-Object($Value) { return (($Value | ConvertTo-Json -Depth 30) | ConvertFrom-Json) }
 function Write-Fixture([string]$Name, $Value) { $path = Join-Path $temp "$Name.json"; [IO.File]::WriteAllText($path, ($Value | ConvertTo-Json -Depth 30), (New-Object Text.UTF8Encoding -ArgumentList $false)); return $path }
 function Invoke-Validator([string]$Path) {
-    $output = @(& $shell -NoLogo -NoProfile -File $validator -ResultPath $Path -ExpectedRunId "run-20260713-0001" -ProjectRoot $temp 2>&1)
-    return [pscustomobject]@{ ExitCode=$LASTEXITCODE; Output=(($output | ForEach-Object { $_.ToString() }) -join "`n") }
+    $previousErrorActionPreference = $ErrorActionPreference
+    $output = @()
+    $exitCode = $null
+
+    try {
+        $ErrorActionPreference = "Continue"
+
+        $output = @(
+            & $shell `
+                -NoLogo `
+                -NoProfile `
+                -NonInteractive `
+                -ExecutionPolicy Bypass `
+                -File $validator `
+                -ResultPath $Path `
+                -ExpectedRunId "run-20260713-0001" `
+                -ProjectRoot $temp `
+                2>&1 |
+                ForEach-Object {
+                    $_.ToString()
+                }
+        )
+
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+
+    if ($null -eq $exitCode) {
+        throw "validator native exit code was not captured"
+    }
+
+    return [pscustomobject]@{
+        ExitCode = [int]$exitCode
+        Output = ($output -join "`n")
+    }
 }
 function Expect([string]$Name, $Value, [int]$Expected) {
     $result = Invoke-Validator (Write-Fixture $Name $Value)
@@ -44,7 +78,17 @@ function Expect([string]$Name, $Value, [int]$Expected) {
 
 try {
     $unsigned = New-Unsigned
-    Expect "unsigned-review-pending" $unsigned 5
+    $unsignedResult = Invoke-Validator (
+        Write-Fixture "unsigned-review-pending" $unsigned
+    )
+    if (
+        $unsignedResult.ExitCode -ne 5 -or
+        -not $unsignedResult.Output.Contains("REVIEW_PENDING") -or
+        -not $unsignedResult.Output.Contains("RESULT-UNSIGNED")
+    ) {
+        throw "unsigned-review-pending expected exit 5 with retained stderr: $($unsignedResult.Output)"
+    }
+    Write-Host "PASS: validator unsigned-review-pending -> 5 with retained stderr"
     $pending = Copy-Object $unsigned; $pending.release_state = "CODE_COMPLETE / ACCEPTANCE DATA PENDING"
     Expect "reject-codex-signed-candidate" $pending 3
     $accepted = Copy-Object $unsigned; $accepted.release_state = "ACCEPTED"

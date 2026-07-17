@@ -85,7 +85,120 @@ function Invoke-EmptyWorktreeInventoryRegression([string]$Path) {
     Write-Host "PASS: empty worktree inventories parse as zero paths"
 }
 
+function Invoke-ProtectedRootSnapshotRuntimeShapeRegression {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $tokens = $null
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile(
+        $Path,
+        [ref]$tokens,
+        [ref]$errors
+    )
+
+    if ($errors.Count -ne 0) {
+        throw 'runner parse failed while loading protected snapshot functions'
+    }
+
+    foreach ($name in @(
+        'Get-ProtectedTrustRootsSnapshot',
+        'Assert-ProtectedRootSnapshotObservation',
+        'Assert-ExactObjectProperties'
+    )) {
+        $functionAst = $ast.Find(
+            {
+                param($node)
+
+                $node -is [Management.Automation.Language.FunctionDefinitionAst] -and
+                $node.Name -ceq $name
+            },
+            $true
+        )
+
+        if ($null -eq $functionAst) {
+            throw "missing runner function $name"
+        }
+
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+
+    function Stop-Launcher {
+        param(
+            [string]$Code,
+            [string]$Message,
+            [int]$ExitCode = 2
+        )
+
+        throw "$Code/$ExitCode`: $Message"
+    }
+
+    function Get-ProtectedRootSnapshot {
+        param(
+            [string]$Path,
+            [string]$ProtectedRoot,
+            [string]$Code,
+            [string]$Label
+        )
+
+        return ('a' * 64)
+    }
+
+    $snapshot = Get-ProtectedTrustRootsSnapshot `
+        'C:\trust.json' `
+        'C:\hooks' `
+        'C:\gnupg' `
+        'C:\attestations'
+
+    Assert-ProtectedRootSnapshotObservation `
+        $snapshot `
+        $snapshot `
+        'TEST-PROTECTED-SNAPSHOT'
+
+    $propertyNames = @($snapshot.PSObject.Properties.Name)
+    $expectedNames = @(
+        'release_trust',
+        'git_hooks',
+        'gpg_home',
+        'attestations'
+    )
+
+    if (
+        $propertyNames.Count -ne $expectedNames.Count -or
+        @(Compare-Object -ReferenceObject $expectedNames -DifferenceObject $propertyNames).Count -ne 0
+    ) {
+        throw 'runtime protected snapshot property set differs'
+    }
+
+    $mutated = $snapshot |
+        ConvertTo-Json -Depth 5 |
+        ConvertFrom-Json
+    $mutated.gpg_home = 'b' * 64
+    $mutationRejected = $false
+
+    try {
+        Assert-ProtectedRootSnapshotObservation `
+            $snapshot `
+            $mutated `
+            'TEST-PROTECTED-SNAPSHOT'
+    } catch {
+        $mutationRejected = $true
+    }
+
+    if (-not $mutationRejected) {
+        throw 'protected snapshot mutation was accepted'
+    }
+
+    Write-Host (
+        'PASS: protected root snapshot producer returns the exact ' +
+        'runtime object shape'
+    )
+}
+
 try {
+    Invoke-ProtectedRootSnapshotRuntimeShapeRegression $RunnerPath
     Invoke-EmptyWorktreeInventoryRegression $RunnerPath
     $s = "1" * 40; $r = "2" * 40; $tree = "3" * 40; $digest = "4" * 64
     $identity = [ordered]@{

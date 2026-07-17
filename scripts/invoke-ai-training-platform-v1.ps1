@@ -501,7 +501,7 @@ function Get-ProtectedRootSnapshot([string]$Path, [string]$ProtectedRoot, [strin
 }
 
 function Get-ProtectedTrustRootsSnapshot([string]$TrustPath, [string]$HooksPath, [string]$GpgHome, [string]$AttestationRoot) {
-    return [ordered]@{
+    return [pscustomobject][ordered]@{
         release_trust=Get-ProtectedRootSnapshot $TrustPath $TrustPath "PRE-TRUST" "release trust"
         git_hooks=Get-ProtectedRootSnapshot $HooksPath $HooksPath "PRE-GIT-CONTROL" "protected Git hooks"
         gpg_home=Get-ProtectedRootSnapshot $GpgHome $GpgHome "PRE-TRUST" "protected GnuPG home"
