@@ -176,12 +176,12 @@ $gpgHome = 'C:\ProgramData\YOnLab\gnupg'
 $utf8NoBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
 [IO.File]::WriteAllText((Join-Path $gpgHome 'gpg.conf'), "no-auto-check-trustdb`n", $utf8NoBom)
 if (-not (Test-Path -LiteralPath (Join-Path $gpgHome 'trustdb.gpg') -PathType Leaf) -or (Get-Item -LiteralPath (Join-Path $gpgHome 'trustdb.gpg')).Length -le 0) { throw 'preprovisioned trustdb.gpg is required' }
-& $trustedGpg --homedir $gpgHome --no-options --no-auto-key-retrieve --no-auto-check-trustdb --batch --no-tty --with-colons --fingerprint --list-keys
+& $trustedGpg --homedir $gpgHome --no-options --no-auto-key-retrieve --no-auto-check-trustdb --lock-never --batch --no-tty --with-colons --fingerprint --list-keys
 ```
 
 위 단계는 보호 ACL 적용 전의 별도 provisioning 절차다. 이후 `gpg.conf`는 UTF-8 BOM 없이 exact byte text `no-auto-check-trustdb\n` 하나만 가져야 하고 `trustdb.gpg`는 non-empty regular file이어야 한다. 추가 option, comment, blank line, BOM, 누락되거나 빈 trustdb를 허용하지 않는다.
 
-runner child process는 `GNUPGHOME=C:\ProgramData\YOnLab\gnupg`를 고정하고 direct GPG에 `--no-options --no-auto-key-retrieve --no-auto-check-trustdb --batch --no-tty`를 사용한다. Git `verify-tag`는 direct executable만 지정하므로 보호된 `gpg.conf`의 exact `no-auto-check-trustdb`를 읽는다. runner는 최초 GPG 실행 전 tree/ACL snapshot을 만들고, 각 direct GPG call과 Git `verify-tag` 직후 다시 계산한다. lock, trustdb, config, keyring을 포함한 persistent byte·path·SDDL 변화가 있으면 `POST-GPG` 또는 `POST-TAG-GPG`로 실패한다. detached signature와 tag의 `VALIDSIG`는 trusted fingerprint, EdDSA/Ed25519 public-key algorithm `22`, SHA-256 hash algorithm `8`과 정확히 일치해야 한다. private key를 읽거나 서명하지 않는다.
+runner child process는 `GNUPGHOME=C:\ProgramData\YOnLab\gnupg`를 고정하고 direct GPG에 `--no-options --no-auto-key-retrieve --no-auto-check-trustdb --lock-never --batch --no-tty`를 사용한다. `--lock-never`는 사전 provision되어 immutable snapshot으로 보호되는 public-only home을 단일 runner가 read-only로 조회하는 이 특수 경계에만 허용한다. 이 option은 GnuPG의 동시 접근 직렬화를 비활성화하므로 runner 실행 중에는 같은 home을 provisioning하거나 다른 writer로 열어서는 안 된다. 동시 mutation이 발생하면 keyring 손상 위험이 남으며, runner의 전후 snapshot 비교는 persistent 변화에 대해 fail-closed한다. Git `verify-tag`는 direct executable만 지정하므로 보호된 `gpg.conf`의 exact `no-auto-check-trustdb`를 읽는다. runner는 최초 GPG 실행 전 tree/ACL snapshot을 만들고, 각 direct GPG call과 Git `verify-tag` 직후 다시 계산한다. lock, trustdb, config, keyring을 포함한 persistent byte·path·SDDL 변화가 있으면 `POST-GPG` 또는 `POST-TAG-GPG`로 실패한다. detached signature와 tag의 `VALIDSIG`는 trusted fingerprint, EdDSA/Ed25519 public-key algorithm `22`, SHA-256 hash algorithm `8`과 정확히 일치해야 한다. private key를 읽거나 서명하지 않는다.
 
 ### 5.2.1 공개키 fingerprint 수집과 release-trust 반영
 

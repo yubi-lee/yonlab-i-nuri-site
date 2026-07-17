@@ -273,7 +273,7 @@ function Get-SafeGitArguments([string[]]$Arguments) { return @("--no-replace-obj
 function SafeGit([string]$GitCommand, [string[]]$Arguments = @()) { return Native-ReadOnly $GitCommand (Get-SafeGitArguments $Arguments) }
 function TrustedGpg([string]$GpgCommand, [string[]]$Arguments = @()) {
     $gpgSnapshotBefore=Get-ProtectedRootSnapshot $ProtectedGpgHome $ProtectedGpgHome "PRE-GPG" "protected GnuPG home"
-    $result=Native-ReadOnly $GpgCommand (@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--batch", "--no-tty") + @($Arguments))
+    $result=Native-ReadOnly $GpgCommand (@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--lock-never", "--batch", "--no-tty") + @($Arguments))
     Assert-ProtectedGpgHomeUnchanged $gpgSnapshotBefore $ProtectedGpgHome "POST-GPG"
     return $result
 }
