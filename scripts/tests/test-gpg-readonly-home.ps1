@@ -39,9 +39,9 @@ function Invoke-ReadOnlyGpg([string[]]$Arguments, [string]$Description) {
 }
 
 $runnerText = [IO.File]::ReadAllText((Resolve-Path -LiteralPath $RunnerPath))
-$expectedPrefix = '@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--lock-never", "--batch", "--no-tty")'
+$expectedPrefix = '@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--no-autostart", "--lock-never", "--batch", "--no-tty")'
 if (-not $runnerText.Contains($expectedPrefix)) {
-    throw "TrustedGpg must disable GnuPG locking for the immutable verification-only home"
+    throw "TrustedGpg must prevent automatic GnuPG agent state for the immutable verification-only home"
 }
 
 if (-not (Test-Path -LiteralPath $GpgPath -PathType Leaf)) {
@@ -67,6 +67,7 @@ try {
         "--no-options",
         "--no-auto-key-retrieve",
         "--no-auto-check-trustdb",
+        "--no-autostart",
         "--lock-never",
         "--batch",
         "--no-tty"
