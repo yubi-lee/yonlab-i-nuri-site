@@ -210,12 +210,13 @@ function Native([string]$Command, [string[]]$Arguments = @()) {
     $combined = $(if ([string]::IsNullOrWhiteSpace($captured.ErrorText)) { $stdoutText } elseif ([string]::IsNullOrWhiteSpace($stdoutText)) { $captured.ErrorText } else { $stdoutText.TrimEnd([char[]]@([char]13,[char]10)) + "`n" + $captured.ErrorText })
     return [pscustomobject]@{ ExitCode=$captured.ExitCode; Text=$combined.Trim() }
 }
+function Native-ReadOnly([string]$Command, [string[]]$Arguments = @()) { return Invoke-NativeCaptureBytes -Command $Command -Arguments $Arguments -MaximumBytes $MaxNativeCaptureBytes -IsolationMode "BestEffortReadOnly" -ReadOnlyProbe }
 function Native-OK($Result, [string]$Code, [string]$Operation) { if ($Result.ExitCode -ne 0) { Stop-Launcher $Code "$Operation failed ($($Result.ExitCode)): $($Result.Text)" } }
 function Get-SafeGitArguments([string[]]$Arguments) { return @("--no-replace-objects", "-c", "core.fsmonitor=false", "-c", "core.hooksPath=$ProtectedHooksPath", "-c", "core.pager=cat", "-c", "pager.branch=false", "-c", "pager.log=false") + @($Arguments) }
-function SafeGit([string]$GitCommand, [string[]]$Arguments = @()) { return Native $GitCommand (Get-SafeGitArguments $Arguments) }
+function SafeGit([string]$GitCommand, [string[]]$Arguments = @()) { return Native-ReadOnly $GitCommand (Get-SafeGitArguments $Arguments) }
 function TrustedGpg([string]$GpgCommand, [string[]]$Arguments = @()) {
     $gpgSnapshotBefore=Get-ProtectedRootSnapshot $ProtectedGpgHome $ProtectedGpgHome "PRE-GPG" "protected GnuPG home"
-    $result=Native $GpgCommand (@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--batch", "--no-tty") + @($Arguments))
+    $result=Native-ReadOnly $GpgCommand (@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--batch", "--no-tty") + @($Arguments))
     Assert-ProtectedGpgHomeUnchanged $gpgSnapshotBefore $ProtectedGpgHome "POST-GPG"
     return $result
 }
@@ -675,8 +676,9 @@ function Assert-NoTrackedSubmoduleMetadata([string]$GitCommand, [string]$Root) {
     if ($tracked.ExitCode -ne 1) { Stop-Launcher "GIT-SUBMODULE" "could not prove tracked .gitmodules absence: $($tracked.Text)" 6 }
 }
 
-function New-KillOnCloseJob($Process) {
+function New-KillOnCloseJob($Process, [ValidateSet("Required", "BestEffortReadOnly", "DisabledForPolicySelfTest")][string]$IsolationMode = "Required") {
     if ($env:OS -cne "Windows_NT") { return [IntPtr]::Zero }
+    if ($IsolationMode -ceq "DisabledForPolicySelfTest") { return [IntPtr]::Zero }
     if ($null -eq ("YOnLab.NativeJob" -as [type])) {
         Add-Type -TypeDefinition @'
 using System;
@@ -702,11 +704,14 @@ namespace YOnLab {
     [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] public static extern IntPtr CreateJobObject(IntPtr attributes, string name);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool SetInformationJobObject(IntPtr job, int infoClass, IntPtr info, uint length);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+    [DllImport("kernel32.dll", SetLastError=true)] public static extern bool IsProcessInJob(IntPtr process, IntPtr job, out bool result);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool CloseHandle(IntPtr handle);
   }
 }
 '@
     }
+    $inJob = $false
+    if (-not [YOnLab.NativeJob]::IsProcessInJob([Diagnostics.Process]::GetCurrentProcess().Handle, [IntPtr]::Zero, [ref]$inJob)) { throw "IsProcessInJob failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
     $job = [YOnLab.NativeJob]::CreateJobObject([IntPtr]::Zero, $null)
     if ($job -eq [IntPtr]::Zero) { throw "CreateJobObject failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
     $limit = New-Object YOnLab.NativeJob+ExtendedLimit
@@ -716,7 +721,13 @@ namespace YOnLab {
     try {
         [Runtime.InteropServices.Marshal]::StructureToPtr($limit, $pointer, $false)
         if (-not [YOnLab.NativeJob]::SetInformationJobObject($job, 9, $pointer, [uint32]$size)) { throw "SetInformationJobObject failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
-        if (-not [YOnLab.NativeJob]::AssignProcessToJobObject($job, $Process.Handle)) { throw "AssignProcessToJobObject failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
+        if (-not [YOnLab.NativeJob]::AssignProcessToJobObject($job, $Process.Handle)) {
+            $errorCode = [Runtime.InteropServices.Marshal]::GetLastWin32Error()
+            if ($IsolationMode -ceq "BestEffortReadOnly" -and $errorCode -eq 5) { [void][YOnLab.NativeJob]::CloseHandle($job); return [IntPtr]::Zero }
+            $message = "AssignProcessToJobObject failed: $errorCode"
+            if ($errorCode -eq 5) { $message += " (Access Denied: nested Job Object; current process in job=$inJob; launch from an independent shell)" }
+            throw $message
+        }
         return $job
     } catch {
         [void][YOnLab.NativeJob]::CloseHandle($job)
@@ -793,8 +804,9 @@ namespace YOnLab {
     return [pscustomobject]@{ Stream=(New-Object YOnLab.BoundedWriteStream -ArgumentList $Inner,$budget); Budget=$budget }
 }
 
-function Invoke-NativeCaptureBytes([string]$Command, [string[]]$Arguments, [long]$MaximumBytes = $MaxNativeCaptureBytes, [int]$TimeoutSeconds = $MaxNativeSeconds) {
+function Invoke-NativeCaptureBytes([string]$Command, [string[]]$Arguments, [long]$MaximumBytes = $MaxNativeCaptureBytes, [int]$TimeoutSeconds = $MaxNativeSeconds, [ValidateSet("Required", "BestEffortReadOnly", "DisabledForPolicySelfTest")][string]$IsolationMode = "Required", [switch]$ReadOnlyProbe) {
     if ($TimeoutSeconds -lt 1 -or $TimeoutSeconds -gt 21600) { throw "native command timeout must be 1..21600 seconds" }
+    if ($IsolationMode -ceq "BestEffortReadOnly" -and -not $ReadOnlyProbe) { throw "BestEffortReadOnly requires an allowlisted read-only probe" }
     $psi = New-Object Diagnostics.ProcessStartInfo
     $psi.UseShellExecute = $false; $psi.CreateNoWindow = $true
     $psi.RedirectStandardOutput = $true; $psi.RedirectStandardError = $true
@@ -808,7 +820,7 @@ function Invoke-NativeCaptureBytes([string]$Command, [string[]]$Arguments, [long
     try {
         $capture = [IO.File]::Open($temporary, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
         $errorCapture = [IO.File]::Open($errorTemporary, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
-        if (-not $process.Start()) { throw "native capture process did not start" }; $started = $true; $job = New-KillOnCloseJob $process
+        if (-not $process.Start()) { throw "native capture process did not start" }; $started = $true; $job = New-KillOnCloseJob $process $IsolationMode
         $wrapped = New-BoundedCaptureStream $capture $MaximumBytes; $boundedCapture = $wrapped.Stream
         $wrappedError = New-BoundedCaptureStream $errorCapture $MaximumBytes $wrapped.Budget; $boundedErrorCapture = $wrappedError.Stream
         $stdoutTask = $process.StandardOutput.BaseStream.CopyToAsync($boundedCapture)
@@ -844,7 +856,7 @@ function Invoke-NativeCaptureBytes([string]$Command, [string[]]$Arguments, [long
 }
 
 function Invoke-SafeGitCaptureBytes([string]$GitCommand, [string[]]$Arguments, [long]$MaximumBytes = $MaxNativeCaptureBytes) {
-    return Invoke-NativeCaptureBytes $GitCommand (Get-SafeGitArguments $Arguments) $MaximumBytes
+    return Invoke-NativeCaptureBytes -Command $GitCommand -Arguments (Get-SafeGitArguments $Arguments) -MaximumBytes $MaximumBytes -IsolationMode "BestEffortReadOnly" -ReadOnlyProbe
 }
 
 function Get-BoundedFileInventory([string]$Root, [string[]]$RelativePaths, [string]$Label) {
@@ -949,7 +961,7 @@ exit $LASTEXITCODE
     Set-SafeProcessEnvironment $psi
     $process = New-Object Diagnostics.Process; $process.StartInfo = $psi; $started = $false; $job = [IntPtr]::Zero; $stdoutTask = $null; $stderrTask = $null
     try {
-        if (-not $process.Start()) { throw "trusted validator process did not start" }; $started = $true; $job = New-KillOnCloseJob $process
+        if (-not $process.Start()) { throw "trusted validator process did not start" }; $started = $true; $job = New-KillOnCloseJob $process "Required"
         $stdoutTask = $process.StandardOutput.ReadToEndAsync(); $stderrTask = $process.StandardError.ReadToEndAsync()
         $payloadBytes = $utf8.GetBytes($payload)
         $process.StandardInput.BaseStream.Write($payloadBytes, 0, $payloadBytes.Length); $process.StandardInput.Close()
@@ -1330,7 +1342,7 @@ function Invoke-Utf8Process(
     $started = $false; $stdoutTask = $null; $stderrTask = $null; $job = [IntPtr]::Zero; $boundedStdout = $null; $boundedStderr = $null
     try {
         if (-not $process.Start()) { throw "native process did not start" }
-        $started = $true; $job = New-KillOnCloseJob $process
+        $started = $true; $job = New-KillOnCloseJob $process "Required"
         $boundedStdout = (New-BoundedCaptureStream $stdout $MaximumStdoutBytes).Stream
         $boundedStderr = (New-BoundedCaptureStream $stderr $MaximumStderrBytes).Stream
         $stdoutTask = $process.StandardOutput.BaseStream.CopyToAsync($boundedStdout)
@@ -1729,6 +1741,24 @@ function Assert-StreamBoundsObservation($Observation) {
     }
 }
 
+function Assert-JobIsolationObservation($Observation) {
+    $mode=[string]$Observation.isolation_mode; $validModes=@("Required","BestEffortReadOnly","DisabledForPolicySelfTest")
+    if ($validModes -notcontains $mode) { Stop-Launcher "POLICY-JOB" "unknown native isolation mode" 6 }
+    $errorCode=[int]$Observation.access_denied_error_code; $assignmentFailed=($Observation.assignment_failed -eq $true); $assignmentAttempted=($Observation.native_job_assignment_attempted -eq $true)
+    $fallback=($Observation.fallback_used -eq $true); $currentInJob=($Observation.current_process_in_job -eq $true); $message=[string]$Observation.error_message
+    if ($mode -ceq "Required") {
+        if (-not $currentInJob -or -not $assignmentAttempted -or -not $assignmentFailed -or $errorCode -ne 5 -or $fallback) { Stop-Launcher "POLICY-JOB" "Required isolation must fail closed on nested job assignment" 6 }
+        if ($message -notmatch "Access Denied" -or $message -notmatch "nested Job Object" -or $message -notmatch "independent shell") { Stop-Launcher "POLICY-JOB" "Access Denied diagnostics must name nested Job Object and independent shell recovery" 6 }
+        return
+    }
+    if ($mode -ceq "BestEffortReadOnly") {
+        if (-not $currentInJob -or -not $assignmentAttempted -or -not $assignmentFailed -or $errorCode -ne 5 -or -not $fallback) { Stop-Launcher "POLICY-JOB" "BestEffortReadOnly may fallback only after access-denied assignment failure" 6 }
+        if ([string]$Observation.command_kind -cne "ReadOnlyProbe" -or [string]$Observation.command -cne [string]$Observation.readonly_probe_command -or -not (Test-ExactOrdinalArray $Observation.arguments $Observation.readonly_probe_arguments)) { Stop-Launcher "POLICY-JOB" "BestEffortReadOnly fallback requires the exact allowlisted read-only probe" 6 }
+        return
+    }
+    if ($assignmentAttempted -or $fallback -or [string]$Observation.command_kind -cne "PolicySelfTest") { Stop-Launcher "POLICY-JOB" "PolicySelfTest must not assign a native Job Object" 6 }
+}
+
 function Test-BytesContain([byte[]]$Haystack, [byte[]]$Needle) {
     if ($Needle.Length -eq 0 -or $Haystack.Length -lt $Needle.Length) { return $false }
     for ($offset = 0; $offset -le $Haystack.Length - $Needle.Length; $offset += 1) {
@@ -1756,7 +1786,7 @@ function Resolve-ProtectedAttestationFile([string]$AttestationRoot, [string]$Rel
 }
 
 function Get-GitHubApiResponseWithStatus([string]$GhCommand,[string]$Endpoint,[string]$Context) {
-    $response=Native $GhCommand @("api","--include","--method","GET","-H","Accept: application/vnd.github+json",$Endpoint)
+    $response=Native-ReadOnly $GhCommand @("api","--include","--method","GET","-H","Accept: application/vnd.github+json",$Endpoint)
     $matches=@([regex]::Matches([string]$response.Text,'(?m)^HTTP/\S+\s+([0-9]{3})(?:\s|$)'))
     if ($matches.Count -ne 1) { Stop-Launcher "POST-TAG" "$Context did not return exactly one authenticated HTTP status line" 6 }
     $bodyMatch=[regex]::Match([string]$response.Text,'(?s)\r?\n\r?\n(.*)$')
@@ -1808,7 +1838,7 @@ function Get-ReleaseCandidateIdentity([string]$GitCommand, [string]$Root, [strin
 
 function Get-GitHubRepositoryFileSha256AtCommit([string]$GhCommand,[string]$Commit,[string]$RepositoryPath,[string]$Context) {
     if ($Commit -notmatch '^[0-9a-f]{40}$' -or $RepositoryPath -notmatch '^\.github/workflows/[A-Za-z0-9._/-]+\.ya?ml$') { Stop-Launcher "POST-CI" "$Context commit/path is not an immutable workflow identity" 6 }
-    $response=Native $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/contents/$RepositoryPath`?ref=$Commit")
+    $response=Native-ReadOnly $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/contents/$RepositoryPath`?ref=$Commit")
     Native-OK $response "POST-CI" "$Context workflow content"
     $object=ConvertFrom-StrictJsonText $response.Text "$Context workflow content response"
     if ([string]$object.path -cne $RepositoryPath -or [string]$object.type -cne "file" -or [string]$object.encoding -cne "base64" -or [string]$object.sha -notmatch '^[0-9a-f]{40}$') { Stop-Launcher "POST-CI" "$Context workflow content response identity mismatch" 6 }
@@ -1820,16 +1850,16 @@ function Get-GitHubRepositoryFileSha256AtCommit([string]$GhCommand,[string]$Comm
 }
 
 function Get-AndAssertGitHubCandidateFacts([string]$GhCommand, [string]$ReleaseSnapshotCommit, $TrustedWorkflowByCheck, $AllowedActors) {
-    $remoteHeadResponse = Native $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $remoteHeadResponse "POST-CI" "GitHub feature branch ref"
+    $remoteHeadResponse = Native-ReadOnly $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $remoteHeadResponse "POST-CI" "GitHub feature branch ref"
     $remoteHead = ConvertFrom-StrictJsonText $remoteHeadResponse.Text "GitHub feature branch ref"
     if ([string]$remoteHead.ref -cne "refs/heads/$ExpectedBranch" -or [string]$remoteHead.object.type -cne "commit" -or [string]$remoteHead.object.sha -cne $ReleaseSnapshotCommit) { Stop-Launcher "POST-CI" "remote feature branch differs from R" 6 }
-    $prResponse = Native $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/pulls?state=open&head=yubi-lee:$ExpectedBranch&base=main&per_page=100"); Native-OK $prResponse "POST-CI" "GitHub pull request inventory"
+    $prResponse = Native-ReadOnly $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/pulls?state=open&head=yubi-lee:$ExpectedBranch&base=main&per_page=100"); Native-OK $prResponse "POST-CI" "GitHub pull request inventory"
     $pullRequests = @(ConvertFrom-StrictJsonText $prResponse.Text "GitHub PR response")
     if ($pullRequests.Count -ne 1) { Stop-Launcher "POST-CI" "exactly one open same-repository feature-to-main PR is required" 6 }
     $pr = $pullRequests[0]
     $pullRequestBaseSha=[string]$pr.base.sha
     if ([string]$pr.state -cne "open" -or [string]$pr.head.ref -cne $ExpectedBranch -or [string]$pr.head.sha -cne $ReleaseSnapshotCommit -or [string]$pr.head.repo.full_name -cne $ExpectedRepo -or $pr.head.repo.fork -ne $false -or [string]$pr.base.ref -cne "main" -or [string]$pr.base.repo.full_name -cne $ExpectedRepo -or $pullRequestBaseSha -notmatch '^[0-9a-f]{40}$') { Stop-Launcher "POST-CI" "PR identity/head/base/fork policy mismatch" 6 }
-    $checksResponse = Native $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/commits/$ReleaseSnapshotCommit/check-runs?per_page=100"); Native-OK $checksResponse "POST-CI" "GitHub check runs"
+    $checksResponse = Native-ReadOnly $GhCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/commits/$ReleaseSnapshotCommit/check-runs?per_page=100"); Native-OK $checksResponse "POST-CI" "GitHub check runs"
     $checks = @(Assert-ExactRequiredCiInventory (ConvertFrom-StrictJsonText $checksResponse.Text "GitHub check-runs response") $RequiredCiChecks)
     $checkByName=@{}; $baseWorkflowHashes=@{}; $releaseWorkflowHashes=@{}
     foreach ($check in $checks) {
@@ -1840,11 +1870,11 @@ function Get-AndAssertGitHubCandidateFacts([string]$GhCommand, [string]$ReleaseS
         $details=[string]$check.details_url
         if ($details -notmatch '^https://github\.com/yubi-lee/yonlab-i-nuri-site/actions/runs/([0-9]+)/job/([0-9]+)$') { Stop-Launcher "POST-CI" "check must bind an exact Actions run and job: $name" 6 }
         $actionsRunId=[int64]$Matches[1]; $actionsJobId=[int64]$Matches[2]
-        $runResponse=Native $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/actions/runs/$actionsRunId"); Native-OK $runResponse "POST-CI" "GitHub Actions run"
+        $runResponse=Native-ReadOnly $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/actions/runs/$actionsRunId"); Native-OK $runResponse "POST-CI" "GitHub Actions run"
         $run=ConvertFrom-StrictJsonText $runResponse.Text "GitHub Actions run response"
         $runPullRequests=@($run.pull_requests); $runPrNumbers=@($runPullRequests | ForEach-Object { [int64]$_.number })
         if ([int64]$run.id -ne $actionsRunId -or [int64]$run.workflow_id -ne [int64]$policy.workflow_id -or [string]$run.path -cne [string]$policy.workflow_path -or [string]$run.head_sha -cne $ReleaseSnapshotCommit -or [string]$run.repository.full_name -cne $ExpectedRepo -or [string]$run.head_repository.full_name -cne $ExpectedRepo -or [string]$run.actor.login -notin @($AllowedActors) -or [string]$run.event -cne "pull_request" -or [string]$run.status -cne "completed" -or [string]$run.conclusion -cne "success") { Stop-Launcher "POST-CI" "workflow run identity/path/actor/status mismatch: $name" 6 }
-        $jobsResponse=Native $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/actions/runs/$actionsRunId/jobs?per_page=100"); Native-OK $jobsResponse "POST-CI" "GitHub Actions jobs"
+        $jobsResponse=Native-ReadOnly $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/actions/runs/$actionsRunId/jobs?per_page=100"); Native-OK $jobsResponse "POST-CI" "GitHub Actions jobs"
         $jobsObject=ConvertFrom-StrictJsonText $jobsResponse.Text "GitHub Actions jobs response"
         $jobs=@($jobsObject.jobs | Where-Object { [int64]$_.id -eq $actionsJobId })
         if ($jobs.Count -ne 1) { Stop-Launcher "POST-CI" "check job ID is absent or duplicated: $name" 6 }
@@ -2048,7 +2078,7 @@ function Invoke-ReadOnlyReleaseVerification([string]$SelectedMode, [string]$Bund
         [void](Assert-ValidSignaturePolicy $tagVerification.Text ([string]$TrustedFingerprints["OWN-QA"]) "annotated tag")
         $remoteObject=ConvertFrom-StrictJsonText $remoteTag.Body "remote tag ref"
         if ([string]$remoteObject.ref -cne "refs/tags/$([string]$bundle.release_id)" -or [string]$remoteObject.object.type -cne "tag" -or [string]$remoteObject.object.sha -cne $parts[1]) { Stop-Launcher "POST-TAG" "remote annotated tag object mismatch" 6 }
-        $remoteTagObjectResponse=Native $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/git/tags/$([string]$remoteObject.object.sha)"); Native-OK $remoteTagObjectResponse "POST-TAG" "remote tag object"
+        $remoteTagObjectResponse=Native-ReadOnly $GhCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/git/tags/$([string]$remoteObject.object.sha)"); Native-OK $remoteTagObjectResponse "POST-TAG" "remote tag object"
         $remoteTagObject=ConvertFrom-StrictJsonText $remoteTagObjectResponse.Text "remote tag object"
         if ([string]$remoteTagObject.object.type -cne "commit" -or [string]$remoteTagObject.object.sha -cne [string]$identity.release_snapshot_commit -or $remoteTagObject.verification.verified -ne $true) { Stop-Launcher "POST-TAG" "remote tag target/signature verification mismatch" 6 }
         Assert-ReleaseStateTransition ([pscustomobject]@{mode=$SelectedMode;release_state="ACCEPTED";technical_signatures=7;acceptance_signature=$true;signed_tag=$true})
@@ -2120,6 +2150,10 @@ function Invoke-PolicySelfTest([string]$FixturePath) {
         "remote-tag-lookup" {
             Assert-RemoteTagLookupObservation $fixture
             Write-Host "PASS [POLICY-TAG-LOOKUP]: exact authenticated tag HTTP status"; return
+        }
+        "job-isolation" {
+            Assert-JobIsolationObservation $fixture
+            Write-Host "PASS [POLICY-JOB]: explicit native isolation mode contract"; return
         }
         "stream-bounds" {
             Assert-StreamBoundsObservation $fixture
@@ -2241,19 +2275,19 @@ $ignored = SafeGit $gitCommand @("-C", $resolvedRoot, "check-ignore", "-q", "--n
 
 $codexVersion=$null; $codexHelpDigest=$null; $dockerServer=$null; $composeVersion=$null
 if ($Mode -ceq "Implement") {
-    $codexVersion = Native $codexCommand @("--version"); Native-OK $codexVersion "PRE-CODEX" "Codex version"
-    $codexLogin = Native $codexCommand @("login", "status"); Native-OK $codexLogin "PRE-CODEX" "Codex login"
-    $codexGlobalHelp = Native $codexCommand @("--help"); $codexExecHelp = Native $codexCommand @("exec", "--help"); $codexResumeHelp = Native $codexCommand @("exec", "resume", "--help")
+    $codexVersion = Native-ReadOnly $codexCommand @("--version"); Native-OK $codexVersion "PRE-CODEX" "Codex version"
+    $codexLogin = Native-ReadOnly $codexCommand @("login", "status"); Native-OK $codexLogin "PRE-CODEX" "Codex login"
+    $codexGlobalHelp = Native-ReadOnly $codexCommand @("--help"); $codexExecHelp = Native-ReadOnly $codexCommand @("exec", "--help"); $codexResumeHelp = Native-ReadOnly $codexCommand @("exec", "resume", "--help")
     foreach ($probe in @($codexGlobalHelp, $codexExecHelp, $codexResumeHelp)) { Native-OK $probe "PRE-CODEX" "Codex CLI feature help" }
     foreach ($token in @("--ask-for-approval", "--sandbox", "--cd")) { if (-not $codexGlobalHelp.Text.Contains($token)) { Stop-Launcher "PRE-CODEX" "global CLI feature missing: $token" } }
     foreach ($token in @("--json", "--output-schema", "--output-last-message", "--ignore-user-config", "--ignore-rules", "--strict-config")) { if (-not $codexExecHelp.Text.Contains($token) -or -not $codexResumeHelp.Text.Contains($token)) { Stop-Launcher "PRE-CODEX" "exec/resume feature missing: $token" } }
     if (-not $codexResumeHelp.Text.Contains("SESSION_ID")) { Stop-Launcher "PRE-CODEX" "resume SESSION_ID contract missing" }
     $codexHelpDigest = String-Sha256 ($codexGlobalHelp.Text + "`n---exec---`n" + $codexExecHelp.Text + "`n---resume---`n" + $codexResumeHelp.Text)
-    $dockerServer = Native $dockerCommand @("version", "--format", "{{.Server.Version}}"); Native-OK $dockerServer "PRE-DOCKER" "Docker"
-    $composeVersion = Native $dockerCommand @("compose", "version", "--short"); Native-OK $composeVersion "PRE-DOCKER" "Compose"
+    $dockerServer = Native-ReadOnly $dockerCommand @("version", "--format", "{{.Server.Version}}"); Native-OK $dockerServer "PRE-DOCKER" "Docker"
+    $composeVersion = Native-ReadOnly $dockerCommand @("compose", "version", "--short"); Native-OK $composeVersion "PRE-DOCKER" "Compose"
 }
-$ghAuth = Native $ghCommand @("auth", "status"); Native-OK $ghAuth "PRE-GH" "gh auth status"
-$ghActorResponse = Native $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "user"); Native-OK $ghActorResponse "PRE-GH" "authenticated GitHub actor"
+$ghAuth = Native-ReadOnly $ghCommand @("auth", "status"); Native-OK $ghAuth "PRE-GH" "gh auth status"
+$ghActorResponse = Native-ReadOnly $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "user"); Native-OK $ghActorResponse "PRE-GH" "authenticated GitHub actor"
 $ghActor = ConvertFrom-StrictJsonText $ghActorResponse.Text "GitHub actor response"
 if ($allowedGithubActors -cnotcontains [string]$ghActor.login) { Stop-Launcher "PRE-GH" "authenticated GitHub actor is not in protected allowlist" }
 $gpgVersion = TrustedGpg $gpgCommand @("--version"); Native-OK $gpgVersion "PRE-TRUST" "GnuPG detached-signature verifier"
@@ -2262,23 +2296,23 @@ $gpgSecretInventory = TrustedGpg $gpgCommand @("--with-colons", "--list-secret-k
 if (@($gpgSecretInventory.Text -split "`n" | Where-Object { $_.StartsWith("sec:", [StringComparison]::Ordinal) }).Count -ne 0) { Stop-Launcher "PRE-TRUST" "verification-only protected GnuPG home must not contain secret keys" }
 $availableGpgFingerprints = @($gpgKeyInventory.Text -split "`n" | Where-Object { $_.StartsWith("fpr:", [StringComparison]::Ordinal) } | ForEach-Object { $fields = $_ -split ':'; if ($fields.Count -gt 9) { $fields[9].ToUpperInvariant() } } | Where-Object { $_ } | Sort-Object -Unique)
 foreach ($fingerprint in $trustedFingerprints.Values) { if ($availableGpgFingerprints -cnotcontains ([string]$fingerprint).ToUpperInvariant()) { Stop-Launcher "PRE-TRUST" "protected keyring lacks trusted signer fingerprint: $fingerprint" } }
-$ghRepo = Native $ghCommand @("repo", "view", $ExpectedRepo, "--json", "nameWithOwner"); Native-OK $ghRepo "PRE-GH" "gh repo view"
+$ghRepo = Native-ReadOnly $ghCommand @("repo", "view", $ExpectedRepo, "--json", "nameWithOwner"); Native-OK $ghRepo "PRE-GH" "gh repo view"
 if (((ConvertFrom-StrictJsonText $ghRepo.Text "gh repo response").nameWithOwner) -cne $ExpectedRepo) { Stop-Launcher "PRE-GH" "GitHub repository mismatch" }
 foreach ($trustedWorkflow in @($trustedWorkflowByCheck.Values)) {
     $workflowPath=[string]$trustedWorkflow.workflow_path
-    $workflowResponse = Native $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/contents/$workflowPath`?ref=main"); Native-OK $workflowResponse "PRE-GH" "trusted workflow content on main"
+    $workflowResponse = Native-ReadOnly $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/contents/$workflowPath`?ref=main"); Native-OK $workflowResponse "PRE-GH" "trusted workflow content on main"
     $workflowObject = ConvertFrom-StrictJsonText $workflowResponse.Text "trusted workflow content"
     if ([string]$workflowObject.path -cne $workflowPath -or [string]$workflowObject.type -cne "file" -or [string]$workflowObject.encoding -cne "base64") { Stop-Launcher "PRE-GH" "trusted workflow content response mismatch" }
     try { $workflowBytes=[Convert]::FromBase64String(([string]$workflowObject.content).Replace("`n", "")) } catch { Stop-Launcher "PRE-GH" "trusted workflow content is not canonical base64" }
     if ((Bytes-Sha256 $workflowBytes) -cne [string]$trustedWorkflow.workflow_sha256) { Stop-Launcher "PRE-GH" "trusted workflow on main differs from protected hash: $workflowPath" }
 }
 foreach ($workflow in $trustedWorkflowByCheck.Values) {
-    $workflowMetadataResponse = Native $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/actions/workflows/$([int64]$workflow.workflow_id)"); Native-OK $workflowMetadataResponse "PRE-GH" "trusted workflow metadata"
+    $workflowMetadataResponse = Native-ReadOnly $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/actions/workflows/$([int64]$workflow.workflow_id)"); Native-OK $workflowMetadataResponse "PRE-GH" "trusted workflow metadata"
     $workflowMetadata = ConvertFrom-StrictJsonText $workflowMetadataResponse.Text "trusted workflow metadata"
     if ([int64]$workflowMetadata.id -ne [int64]$workflow.workflow_id -or [string]$workflowMetadata.path -cne [string]$workflow.workflow_path -or [string]$workflowMetadata.state -cne "active") { Stop-Launcher "PRE-GH" "trusted workflow id/path/state mismatch" }
 }
 $preHead = SafeGit $gitCommand @("-C", $resolvedRoot, "rev-parse", "HEAD"); Native-OK $preHead "PRE-GH" "preflight HEAD"
-$preRemoteRef = Native $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $preRemoteRef "PRE-GH" "GitHub branch ref"
+$preRemoteRef = Native-ReadOnly $ghCommand @("api", "--method", "GET", "-H", "Accept: application/vnd.github+json", "repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $preRemoteRef "PRE-GH" "GitHub branch ref"
 $preRemoteRefObject = ConvertFrom-StrictJsonText $preRemoteRef.Text "GitHub branch ref response"
 if ([string]$preRemoteRefObject.ref -cne "refs/heads/$ExpectedBranch" -or [string]$preRemoteRefObject.object.type -cne "commit" -or [string]$preRemoteRefObject.object.sha -cne $preHead.Text) { Stop-Launcher "PRE-UPSTREAM" "GitHub branch ref must equal local HEAD before Codex" }
 if ($Mode -ceq "Implement") {
@@ -2443,7 +2477,7 @@ Assert-TrustedExecutableInventoryUnchanged $trustedToolInventory $releaseTrust.t
 Assert-ProtectedTrustRootsUnchanged $protectedTrustRootsSnapshot $resolvedTrustPath $ProtectedHooksPath $ProtectedGpgHome $resolvedAttestationRoot
 $closingHead=SafeGit $gitCommand @("-C",$resolvedRoot,"rev-parse","HEAD"); Native-OK $closingHead "POST-FINAL" "closing HEAD"
 $closingStatus=SafeGit $gitCommand @("-C",$resolvedRoot,"status","--porcelain=v1","--untracked-files=normal"); Native-OK $closingStatus "POST-FINAL" "closing worktree"
-$closingRemote=Native $ghCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $closingRemote "POST-FINAL" "closing remote ref"
+$closingRemote=Native-ReadOnly $ghCommand @("api","--method","GET","-H","Accept: application/vnd.github+json","repos/$ExpectedRepo/git/ref/heads/$ExpectedBranch"); Native-OK $closingRemote "POST-FINAL" "closing remote ref"
 $closingRemoteObject=ConvertFrom-StrictJsonText $closingRemote.Text "closing remote ref"
 Assert-GitControlPlaneSnapshot $gitControlPlaneSnapshot
 if ($closingHead.Text -cne [string]$identity.release_snapshot_commit -or -not [string]::IsNullOrWhiteSpace($closingStatus.Text) -or [string]$closingRemoteObject.object.sha -cne [string]$identity.release_snapshot_commit) { Stop-Launcher "POST-FINAL" "R/worktree/remote changed during guarded verification" 6 }

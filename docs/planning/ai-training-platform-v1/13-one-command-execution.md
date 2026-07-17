@@ -117,7 +117,12 @@ GitHub credential helper는 고정된 direct `gh.exe`에 붙는 exact 문자열 
 
 위 double quote를 포함한 한 문자열과 같은, trust에 기록된 `gh.exe` absolute path에서 계산한 exact helper만 허용한다. 가변 suffix·다른 shell command는 허용하지 않는다. `gpg.program`도 trust의 canonical `gpg.exe` path를 double quote한 exact 값만 허용한다. `http.extraHeader`, `http.sslVerify=false`, SSL cert/key override, cookie, username, URL rewrite, proxy, 임의 credential helper를 포함한 ambient Git config는 호출 전에 거부한다.
 
-`Invoke-NativeCaptureBytes`, `Invoke-TrustedValidatorProcess`, `Invoke-Utf8Process`가 만드는 모든 `ProcessStartInfo`는 `WorkingDirectory`를 해당 direct executable의 canonical parent directory로 고정한다. repository나 caller CWD를 상속하지 않으므로 current-directory DLL search를 이용한 side-loading을 차단한다. Git은 모든 repository 연산에 explicit `-C D:\Views\yonlab-inuri-site`를 사용하고, validator·GPG·Codex의 파일 인자는 absolute path 또는 자체 `-C` 계약으로 전달한다.
+
+native child isolation is three explicit modes: Required, BestEffortReadOnly, DisabledForPolicySelfTest.
+- Required is the default for Implement, Codex child, trusted validator, process-tree cleanup, and mutation-capable paths. Before starting a child, the runner observes whether the current host is already in a Job Object with IsProcessInJob and assigns the child to a KILL_ON_JOB_CLOSE Job Object. Assignment failure is fail-closed. ERROR_ACCESS_DENIED (5) diagnostics include Access Denied, nested Job Object, and launch from an independent shell.
+- BestEffortReadOnly is exposed only through Native-ReadOnly for explicitly registered read-only probes. Git, GPG, GitHub, Docker, and Codex version/help/status probes may fallback to an unassigned zero job handle only after nested Job Object ERROR_ACCESS_DENIED (5) and only when the exact executable and arguments match the allowlist. Other commands, arguments, Implement, and Codex execution never fallback.
+- DisabledForPolicySelfTest is limited to the native policy-fixture boundary and creates or assigns no Job Object. PolicySelfTest does not start a native child; it calls the production assertion function only.
+All three modes preserve exact executable paths, canonical working directories, UseShellExecute=false, hard timeouts, and simultaneous bounded stdout/stderr capture. BestEffortReadOnly therefore never changes into shell execution or unbounded capture. Codex Implement and the validator always use Required.
 
 ### 5.2 release trust와 public-only GPG
 

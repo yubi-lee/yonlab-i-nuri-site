@@ -22,7 +22,13 @@ function Copy-Fixture($Payload) {
 
 function Invoke-Policy([string]$Name, $Payload, [bool]$ShouldPass, [string]$ExpectedCode) {
     $fixture = Write-Fixture $Name $Payload
-    $output = & $powerShell -NoLogo -NoProfile -File $RunnerPath -Mode PolicySelfTest -PolicyFixture $fixture 2>&1
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+    $output = @(& $powerShell -NoLogo -NoProfile -File $RunnerPath -Mode PolicySelfTest -PolicyFixture $fixture 2>&1 | ForEach-Object { $_.ToString() })
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
     $exitCode = $LASTEXITCODE
     if ($ShouldPass) {
         if ($exitCode -ne 0 -or ($output -join "`n") -notmatch "PASS \[$ExpectedCode\]") {
@@ -224,6 +230,25 @@ try {
     Invoke-Policy "reject-remote-tag-auth-failure-as-absence" $tagAuthFailure $false "POLICY-TAG-LOOKUP"
 
     $bounds = [ordered]@{schema_version="runner-policy-fixture.v1";case="stream-bounds";stdout_bytes=1024;stderr_bytes=1024;total_bytes=2048;maximum_bytes=2048;elapsed_milliseconds=999;timeout_milliseconds=1000}
+    $jobIsolation = [ordered]@{
+        schema_version="runner-policy-fixture.v1"; case="job-isolation"; access_denied_error_code=5; current_process_in_job=$true
+        required_mode="Required"; readonly_mode="BestEffortReadOnly"; disabled_mode="DisabledForPolicySelfTest"
+        readonly_probe_command="C:\Program Files\Git\cmd\git.exe"; readonly_probe_arguments=@("--version")
+        codex_probe_command="C:\ProgramData\YOnLab\bin\codex.exe"; codex_probe_arguments=@("--version")
+        isolation_mode="Required"; command_kind="Implement"; command="C:\ProgramData\YOnLab\bin\codex.exe"; arguments=@("--version")
+        assignment_failed=$true; native_job_assignment_attempted=$true; fallback_used=$false
+        error_message="AssignProcessToJobObject failed: 5 (Access Denied; nested Job Object; launch from an independent shell)"
+    }
+    Invoke-Policy "job-isolation-required-fails-closed" $jobIsolation $true "POLICY-JOB"
+    $readOnlyJob = Copy-Fixture $jobIsolation
+    $readOnlyJob.isolation_mode="BestEffortReadOnly"; $readOnlyJob.command_kind="ReadOnlyProbe"; $readOnlyJob.command=$readOnlyJob.readonly_probe_command; $readOnlyJob.arguments=$readOnlyJob.readonly_probe_arguments; $readOnlyJob.fallback_used=$true
+    Invoke-Policy "job-isolation-readonly-allowlisted-fallback" $readOnlyJob $true "POLICY-JOB"
+    $unallowlistedReadOnlyJob = Copy-Fixture $readOnlyJob; $unallowlistedReadOnlyJob.command="C:\Program Files\Git\cmd\git.exe"; $unallowlistedReadOnlyJob.arguments=@("push","origin","HEAD")
+    Invoke-Policy "job-isolation-readonly-unallowlisted-command-rejected" $unallowlistedReadOnlyJob $false "POLICY-JOB"
+    $codexFallbackJob = Copy-Fixture $readOnlyJob; $codexFallbackJob.command_kind="CodexImplement"; $codexFallbackJob.command=$codexFallbackJob.codex_probe_command; $codexFallbackJob.arguments=$codexFallbackJob.codex_probe_arguments
+    Invoke-Policy "job-isolation-codex-fallback-rejected" $codexFallbackJob $false "POLICY-JOB"
+    $policySelfTestJob = Copy-Fixture $jobIsolation; $policySelfTestJob.isolation_mode="DisabledForPolicySelfTest"; $policySelfTestJob.command_kind="PolicySelfTest"; $policySelfTestJob.command=""; $policySelfTestJob.arguments=@(); $policySelfTestJob.assignment_failed=$false; $policySelfTestJob.native_job_assignment_attempted=$false
+    Invoke-Policy "job-isolation-policy-self-test-does-not-assign" $policySelfTestJob $true "POLICY-JOB"
     Invoke-Policy "stream-bound-at-limit" $bounds $true "POLICY-BOUNDS"
     $badBounds = Copy-Fixture $bounds; $badBounds.total_bytes=2049
     Invoke-Policy "reject-stream-overflow" $badBounds $false "POLICY-BOUNDS"
