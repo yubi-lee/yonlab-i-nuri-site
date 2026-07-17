@@ -89,6 +89,29 @@ try {
     $unknownPreFile=Copy-Fixture $hostInvocation; $unknownPreFile.argv_prefix_matches=$false
     Invoke-Policy "reject-unknown-prefile-host-option" $unknownPreFile $false "POLICY-HOST"
 
+    $modulePath=[ordered]@{
+        schema_version="runner-policy-fixture.v1"; case="windows-powershell-module-path"
+        edition="Desktop"; ps_home="C:\Windows\System32\WindowsPowerShell\v1.0"; windows_directory="C:\Windows"
+        current_entries=@(
+            "C:\Program Files\WindowsApps\Microsoft.PowerShell_7.6.3.0_x64__8wekyb3d8bbwe\Modules",
+            "C:\Users\me\Documents\PowerShell\Modules",
+            "C:\Users\me\Documents\WindowsPowerShell\Modules",
+            "C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+        )
+        should_normalize=$true
+        expected_safe_paths=@("C:\Windows\System32\WindowsPowerShell\v1.0\Modules")
+        expected_normalized_entries=@("C:\Windows\System32\WindowsPowerShell\v1.0\Modules")
+        expected_removed_entries=@(
+            "C:\Program Files\WindowsApps\Microsoft.PowerShell_7.6.3.0_x64__8wekyb3d8bbwe\Modules",
+            "C:\Users\me\Documents\PowerShell\Modules",
+            "C:\Users\me\Documents\WindowsPowerShell\Modules"
+        )
+    }
+    Invoke-Policy "normalize-desktop-powershell-module-path" $modulePath $true "POLICY-MODULE-PATH"
+    $coreModulePath=Copy-Fixture $modulePath; $coreModulePath.edition="Core"; $coreModulePath.should_normalize=$false
+    $coreModulePath.expected_safe_paths=@(); $coreModulePath.expected_normalized_entries=$coreModulePath.current_entries; $coreModulePath.expected_removed_entries=@()
+    Invoke-Policy "leave-core-powershell-module-path-unhandled" $coreModulePath $true "POLICY-MODULE-PATH"
+
     $gpgVerification=[ordered]@{
         schema_version="runner-policy-fixture.v1";case="gpg-verification-configuration"
         gpg_conf_relative_path="gpg.conf";gpg_conf_utf8_no_bom=$true;gpg_conf_text="no-auto-check-trustdb`n"

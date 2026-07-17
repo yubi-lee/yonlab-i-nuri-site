@@ -96,6 +96,12 @@ runner exit 의미는 다음과 같다.
 
 production mode는 첫 repository/trust read보다 먼저 active process를 검사한다. host는 `[Environment]::SystemDirectory\WindowsPowerShell\v1.0\powershell.exe` 하나만 허용하며 현재 process path는 그 canonical 경로와 일치해야 한다. argv 0은 canonical 절대경로 또는 정확한 `powershell.exe` basename을 허용하고, `-NoProfile`와 `-NonInteractive`는 각각 정확히 한 번 필요하다. `-NoLogo`와 `-ExecutionPolicy Bypass`는 선택적이며, `-File` 앞의 startup token은 이 허용 목록에만 속해야 한다. `-File` 다음 대상은 absolute current runner path와 일치해야 하며 이후 인자만 runner parameter다. parent가 `cmd.exe`, `WindowsTerminal.exe`, `explorer.exe`인 정상 Windows 실행 방식은 검사 대상이 아니다. user-installed `pwsh.exe`, wrapper, relative `-File`, `-Command`, `-EncodedCommand`, `-EncodedArguments`, `-NoExit`, `-Interactive`, `-WorkingDirectory`, `-PSConsoleFile`, `-Version`, duplicate/unknown pre-File option은 모두 `PRE-HOST`에서 실패한다. cross-platform adversarial fixture를 실행하는 `PolicySelfTest`만 이 production host 검사를 명시적으로 생략하며 repository/network mutation 권한은 없다. trust store의 `trusted_tools.powershell.path`도 같은 OS PowerShell 경로를 가리켜야 이후 active-process path/hash/ACL 재검증이 구성 가능하다.
 
+#### 5.1.1 process-level PowerShell module path isolation
+
+Windows PowerShell 5.1 runner는 PRE-HOST 통과 직후 현재 프로세스의 PSModulePath만 정규화한다. 허용 set은 $PSHOME\Modules와 $env:WINDIR\system32\WindowsPowerShell\v1.0\Modules의 canonical 중복 제거 목록이며, PowerShell 7/Core 경로, CurrentUser WindowsPowerShell Modules 경로, 그 밖의 사용자 writable module 경로는 제거한다. 사용자·시스템 환경 변수와 registry는 변경하지 않는다.
+
+이 경계는 Microsoft.PowerShell.Security의 PowerShell 7/Windows PowerShell 5.1 type-data 충돌과 module hijack 경로를 차단한다. Get-Acl 실패는 계속 PRE-TRUST에서 fail-closed로 처리하며, PolicySelfTest는 Desktop 정규화와 Core 무변경 정책을 각각 검증한다.
+
 ### 5.1 direct trusted executables
 
 ambient `PATH`, alias, function, `.cmd`/`.bat` shim, repository-local binary와 custom wrapper는 신뢰하지 않는다. 관리자는 승인된 direct executable 7개(`powershell`, `python`, `git`, `gh`, `docker`, `codex`, `gpg`)의 실제 설치 경로를 `release-trust.v2`에 기록한다. 공백과 괄호는 올바르게 quote된 canonical Windows 경로에서 허용하지만 따옴표·역따옴표·환경변수 표식·command separator·redirection 등 shell metacharacter, ADS와 dot segment는 금지한다. 허용 root는 다음으로 닫는다.

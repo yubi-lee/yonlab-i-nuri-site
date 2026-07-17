@@ -67,6 +67,48 @@ function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) {
 }
 function Write-Pass([string]$Message) { Write-Host "PASS: $Message" }
 function Canonical([string]$Path) { return [IO.Path]::GetFullPath($Path).TrimEnd([char[]]@('\','/')) }
+function Get-WindowsPowerShellModulePathPolicy([string]$Edition, [string]$PsHomePath, [string]$WindowsDirectory, [string[]]$CurrentEntries) {
+    $current = @($CurrentEntries | ForEach-Object { [string]$_ })
+    if ($Edition -cne "Desktop") {
+        return [pscustomobject]@{
+            should_normalize=$false; safe_paths=@(); normalized_entries=$current; removed_entries=@()
+            normalized_path=($current -join [IO.Path]::PathSeparator)
+        }
+    }
+    $safeCandidates=@(
+        (Join-Path $PsHomePath "Modules")
+        (Join-Path $WindowsDirectory "system32\WindowsPowerShell\v1.0\Modules")
+    )
+    $safeLookup=New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
+    $safePaths=New-Object 'Collections.Generic.List[string]'
+    foreach ($candidate in $safeCandidates) {
+        if ([string]::IsNullOrWhiteSpace([string]$candidate)) { continue }
+        $canonical=Canonical ([string]$candidate)
+        if ($safeLookup.Add($canonical)) { [void]$safePaths.Add($canonical) }
+    }
+    $normalizedEntries=@($safePaths.ToArray())
+    $removedEntries=@($current | Where-Object {
+        [string]::IsNullOrWhiteSpace([string]$_) -or -not $safeLookup.Contains((Canonical ([string]$_)))
+    })
+    return [pscustomobject]@{
+        should_normalize=$true; safe_paths=$normalizedEntries; normalized_entries=$normalizedEntries; removed_entries=$removedEntries
+        normalized_path=($normalizedEntries -join [IO.Path]::PathSeparator)
+    }
+}
+function Initialize-WindowsPowerShellModulePath {
+    if ($PSEdition -cne "Desktop") { return }
+    $currentEntries=@()
+    if (-not [string]::IsNullOrEmpty([string]$env:PSModulePath)) {
+        $separator=[regex]::Escape([string][IO.Path]::PathSeparator)
+        $currentEntries=@([string]$env:PSModulePath -split $separator)
+    }
+    try {
+        $policy=Get-WindowsPowerShellModulePathPolicy $PSEdition $PSHOME $env:WINDIR $currentEntries
+    } catch {
+        Stop-Launcher "PRE-ENV" "Windows PowerShell module path normalization failed" 6
+    }
+    $env:PSModulePath=[string]$policy.normalized_path
+}
 function Get-ForbiddenExecutionEnvironmentNames {
     return @(
         "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_SYSTEM", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM",
@@ -1734,6 +1776,19 @@ function Assert-RemoteTagLookupObservation($Observation) {
     Stop-Launcher "POLICY-TAG-LOOKUP" "unknown remote tag lookup expectation" 6
 }
 
+function Assert-WindowsPowerShellModulePathObservation($Observation) {
+    $actual=Get-WindowsPowerShellModulePathPolicy ([string]$Observation.edition) ([string]$Observation.ps_home) ([string]$Observation.windows_directory) @($Observation.current_entries)
+    $expectedSafePaths=@($Observation.expected_safe_paths)
+    $expectedNormalizedEntries=@($Observation.expected_normalized_entries)
+    $expectedRemovedEntries=@($Observation.expected_removed_entries)
+    if ($actual.should_normalize -ne [bool]$Observation.should_normalize -or
+        -not (Test-ExactOrdinalArray $actual.safe_paths $expectedSafePaths) -or
+        -not (Test-ExactOrdinalArray $actual.normalized_entries $expectedNormalizedEntries) -or
+        -not (Test-ExactOrdinalArray $actual.removed_entries $expectedRemovedEntries) -or
+        [string]$actual.normalized_path -cne ($expectedNormalizedEntries -join [IO.Path]::PathSeparator)) {
+        Stop-Launcher "POLICY-MODULE-PATH" "Windows PowerShell module path policy normalization mismatch" 6
+    }
+}
 function Assert-StreamBoundsObservation($Observation) {
     if ([int64]$Observation.stdout_bytes -lt 0 -or [int64]$Observation.stderr_bytes -lt 0 -or [int64]$Observation.total_bytes -ne ([int64]$Observation.stdout_bytes + [int64]$Observation.stderr_bytes) -or
         [int64]$Observation.total_bytes -gt [int64]$Observation.maximum_bytes -or [int64]$Observation.elapsed_milliseconds -ge [int64]$Observation.timeout_milliseconds) {
@@ -2155,6 +2210,10 @@ function Invoke-PolicySelfTest([string]$FixturePath) {
             Assert-JobIsolationObservation $fixture
             Write-Host "PASS [POLICY-JOB]: explicit native isolation mode contract"; return
         }
+        "windows-powershell-module-path" {
+            Assert-WindowsPowerShellModulePathObservation $fixture
+            Write-Host "PASS [POLICY-MODULE-PATH]: Windows PowerShell 5.1 module path policy"; return
+        }
         "stream-bounds" {
             Assert-StreamBoundsObservation $fixture
             Write-Host "PASS [POLICY-BOUNDS]: byte/time limits"; return
@@ -2166,6 +2225,7 @@ function Invoke-PolicySelfTest([string]$FixturePath) {
 if ($Mode -ceq "PolicySelfTest") { Invoke-PolicySelfTest $PolicyFixture; exit 0 }
 
 Assert-CanonicalProductionHostInvocation $Mode $PSCommandPath
+Initialize-WindowsPowerShellModulePath
 $literalProjectRoot = $ProjectRoot.TrimEnd([char[]]@('\','/'))
 if ($ProjectRoot.IndexOf(':', 2) -ge 0 -or $ProjectRoot -match '(^|[\\/])\.\.?(?:[\\/]|$)' -or -not [StringComparer]::OrdinalIgnoreCase.Equals($literalProjectRoot, $ExpectedRoot)) { Stop-Launcher "PRE-ROOT" "project root must be the literal canonical path '$ExpectedRoot' without ADS or dot segments" }
 if (-not (Test-Path -LiteralPath $ProjectRoot -PathType Container)) { Stop-Launcher "PRE-ROOT" "target repository does not exist: $ProjectRoot" }
