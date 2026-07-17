@@ -131,20 +131,29 @@ function Assert-NoExecutionEnvironmentOverrides {
     }
 }
 function Set-SafeProcessEnvironment($ProcessStartInfo) {
-    # Ambient execution-affecting variables are rejected before the first Git
-    # call. These fixed child values additionally prevent prompts and pagers.
-    $ProcessStartInfo.EnvironmentVariables["GIT_PAGER"] = "cat"
-    $ProcessStartInfo.EnvironmentVariables["GIT_TERMINAL_PROMPT"] = "0"
-    $ProcessStartInfo.EnvironmentVariables["GCM_INTERACTIVE"] = "Never"
-    $ProcessStartInfo.EnvironmentVariables["GIT_OPTIONAL_LOCKS"] = "0"
-    $ProcessStartInfo.EnvironmentVariables["PAGER"] = "cat"
-    $ProcessStartInfo.EnvironmentVariables["GNUPGHOME"] = $ProtectedGpgHome
+    # The parent process must be clean before the first Git call. The child
+    # environment is independently fail-closed so system/global Git config,
+    # indexed config injection, attributes, and pager controls cannot leak in.
+    $environment = $ProcessStartInfo.EnvironmentVariables
+    foreach ($existingName in @($environment.Keys)) {
+        if ([string]$existingName -match '^(?:GIT_CONFIG_COUNT|GIT_CONFIG_PARAMETERS|GIT_CONFIG_KEY_.*|GIT_CONFIG_VALUE_.*|GIT_CONFIG_SYSTEM|GIT_CONFIG_GLOBAL|GIT_CONFIG_NOSYSTEM|GIT_ATTR_NOSYSTEM)$') { [void]$environment.Remove([string]$existingName) }
+    }
+    [void]$environment.Remove("GIT_PAGER")
+    $environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    $environment["GIT_CONFIG_GLOBAL"] = "NUL"
+    $environment["GIT_CONFIG_SYSTEM"] = "NUL"
+    $environment["GIT_ATTR_NOSYSTEM"] = "1"
+    $environment["GIT_TERMINAL_PROMPT"] = "0"
+    $environment["GCM_INTERACTIVE"] = "Never"
+    $environment["GIT_OPTIONAL_LOCKS"] = "0"
+    $environment["PAGER"] = "cat"
+    $environment["GNUPGHOME"] = $ProtectedGpgHome
     if (-not [string]::IsNullOrWhiteSpace([string]$script:GitHubCredentialHelper)) {
         # The only injected config is a runner-built, absolute-path gh helper
         # for github.com HTTPS credentials. Ambient indexed config is rejected.
-        $ProcessStartInfo.EnvironmentVariables["GIT_CONFIG_COUNT"] = "1"
-        $ProcessStartInfo.EnvironmentVariables["GIT_CONFIG_KEY_0"] = "credential.https://github.com.helper"
-        $ProcessStartInfo.EnvironmentVariables["GIT_CONFIG_VALUE_0"] = [string]$script:GitHubCredentialHelper
+        $environment["GIT_CONFIG_COUNT"] = "1"
+        $environment["GIT_CONFIG_KEY_0"] = "credential.https://github.com.helper"
+        $environment["GIT_CONFIG_VALUE_0"] = [string]$script:GitHubCredentialHelper
     }
 }
 function Get-TrustedExecutableWorkingDirectory([string]$Command) {
@@ -690,7 +699,7 @@ function Test-UnsafeGitConfigName([string]$Name) {
 function Assert-SafeGitConfigScopeNameFields([string[]]$Fields) {
     $fields = @($Fields)
     if (($fields.Count % 2) -ne 0) { Stop-Launcher "PRE-GIT-CONFIG" "Git configuration scope/name inventory is malformed" }
-    $allowedCommandNames = @("core.fsmonitor", "core.hookspath", "core.pager", "pager.branch", "pager.log")
+    $allowedCommandNames = @("core.fsmonitor", "core.hookspath", "core.pager", "pager.branch", "pager.log", "credential.https://github.com.helper")
     $commandNames = New-Object Collections.Generic.List[string]
     for ($index = 0; $index -lt $fields.Count; $index += 2) {
         $scope = [string]$fields[$index]; $name = ([string]$fields[$index + 1]).ToLowerInvariant()
@@ -1800,6 +1809,12 @@ function Assert-WindowsPowerShellModulePathObservation($Observation) {
         Stop-Launcher "POLICY-MODULE-PATH" "Windows PowerShell module path policy normalization mismatch" 6
     }
 }
+function Assert-GitConfigIsolationObservation($Observation) {
+    $expectedHooksPath = "C:\ProgramData\YOnLab\empty-git-hooks"
+    if ($Observation.raw_system_textconv_present -ne $true -or $Observation.safe_system_scope_ignored -ne $true -or $Observation.safe_global_scope_ignored -ne $true -or $Observation.safe_local_config_readable -ne $true -or $Observation.safe_git_pager_unset -ne $true -or $Observation.safe_attr_nosystem -ne $true -or [string]$Observation.safe_hooks_path -cne $expectedHooksPath -or $Observation.unsafe_config_without_safe_env_rejected -ne $true -or $Observation.local_executable_config_rejected -ne $true) {
+        Stop-Launcher "POLICY-GIT-CONFIG" "Git system/global config isolation, local config preservation, pager/attribute controls, or executable-config rejection mismatch" 6
+    }
+}
 function Assert-StreamBoundsObservation($Observation) {
     if ([int64]$Observation.stdout_bytes -lt 0 -or [int64]$Observation.stderr_bytes -lt 0 -or [int64]$Observation.total_bytes -ne ([int64]$Observation.stdout_bytes + [int64]$Observation.stderr_bytes) -or
         [int64]$Observation.total_bytes -gt [int64]$Observation.maximum_bytes -or [int64]$Observation.elapsed_milliseconds -ge [int64]$Observation.timeout_milliseconds) {
@@ -2224,6 +2239,10 @@ function Invoke-PolicySelfTest([string]$FixturePath) {
         "windows-powershell-module-path" {
             Assert-WindowsPowerShellModulePathObservation $fixture
             Write-Host "PASS [POLICY-MODULE-PATH]: Windows PowerShell 5.1 module path policy"; return
+        }
+        "git-config-isolation" {
+            Assert-GitConfigIsolationObservation $fixture
+            Write-Host "PASS [POLICY-GIT-CONFIG]: process-level system/global Git config isolation"; return
         }
         "stream-bounds" {
             Assert-StreamBoundsObservation $fixture

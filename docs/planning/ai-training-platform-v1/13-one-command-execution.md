@@ -102,6 +102,25 @@ Windows PowerShell 5.1 runner는 PRE-HOST 통과 직후 현재 프로세스의 P
 
 이 경계는 Microsoft.PowerShell.Security의 PowerShell 7/Windows PowerShell 5.1 type-data 충돌과 module hijack 경로를 차단한다. Get-Acl 실패는 계속 PRE-TRUST에서 fail-closed로 처리하며, PolicySelfTest는 Desktop 정규화와 Core 무변경 정책을 각각 검증한다.
 
+
+#### 5.1.2 process-level Git config isolation
+
+runner는 Git system/global 설정을 수정하지 않는다. Git child process를 생성할 때만 process-level 환경을 정규화하여 machine-local C:\Program Files\Git\etc\gitconfig와 사용자 global Git 설정이 runner execution surface에 들어오지 않게 한다.
+
+Set-SafeProcessEnvironment는 다음 값을 child process에 고정한다.
+
+~~~text
+GIT_CONFIG_NOSYSTEM=1
+GIT_CONFIG_GLOBAL=NUL
+GIT_CONFIG_SYSTEM=NUL
+GIT_ATTR_NOSYSTEM=1
+GIT_PAGER=(unset)
+~~~
+
+GIT_PAGER는 child에서 제거하고 PAGER=cat을 보조 fallback으로 둔다. repository-local config는 계속 읽을 수 있어야 하므로 local remote, branch, core identity 값은 보존한다. SafeGit은 --no-replace-objects와 C:\ProgramData\YOnLab\empty-git-hooks를 명시하고, pager/fsmonitor를 고정한다.
+
+runner가 주입하는 command-scope config는 exact protected GitHub credential helper와 위의 non-executable controls만 허용한다. system/global scope의 diff.*.textconv, filter/clean/smudge/process, include, URL rewrite, credential override 등은 격리 후 보이지 않아야 하며 local scope에 나타나면 PRE-GIT-CONFIG에서 fail-closed한다. 이 정책은 Git config 파일, registry, 사용자/system environment를 영구 변경하지 않는다.
+
 ### 5.1 direct trusted executables
 
 ambient `PATH`, alias, function, `.cmd`/`.bat` shim, repository-local binary와 custom wrapper는 신뢰하지 않는다. 관리자는 승인된 direct executable 7개(`powershell`, `python`, `git`, `gh`, `docker`, `codex`, `gpg`)의 실제 설치 경로를 `release-trust.v2`에 기록한다. 공백과 괄호는 올바르게 quote된 canonical Windows 경로에서 허용하지만 따옴표·역따옴표·환경변수 표식·command separator·redirection 등 shell metacharacter, ADS와 dot segment는 금지한다. 허용 root는 다음으로 닫는다.

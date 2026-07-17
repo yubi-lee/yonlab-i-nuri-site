@@ -4,7 +4,7 @@ $runner = Join-Path (Split-Path -Parent $PSScriptRoot) "invoke-ai-training-platf
 $tokens = $null; $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile($runner, [ref]$tokens, [ref]$errors)
 if ($errors.Count -gt 0) { throw "runner parse failed" }
-foreach ($name in @("Canonical", "String-Sha256", "Bytes-Sha256", "Assert-BoundedFile", "Assert-NoReparseComponent", "Get-NoFollowTreeEntries", "Assert-StrictJsonLexical", "ConvertFrom-StrictJsonText", "Assert-CodexEventSemantics", "Read-CodexEvents", "Quote-WindowsArgument", "Get-ForbiddenExecutionEnvironmentNames", "Assert-NoExecutionEnvironmentOverrides", "Set-SafeProcessEnvironment", "Get-TrustedExecutableWorkingDirectory", "Test-SafeTrustedExecutablePathSyntax", "Get-GitGpgProgramSpec", "Get-GitHubCredentialHelperSpec", "New-KillOnCloseJob", "Close-KillOnCloseJob", "Stop-NativeProcessTree", "New-BoundedCaptureStream", "Invoke-NativeCaptureBytes", "Native", "Write-AtomicUtf8Text", "Read-Utf8NoBomText", "Try-PersistThreadReceipt", "Invoke-Utf8Process", "Invoke-TrustedValidatorProcess", "Get-FinalDocumentInventoryPaths", "Get-ThreadId", "Get-GitControlPlaneSnapshot", "Compare-GitControlPlaneSnapshot", "Get-GitReferenceSnapshot", "Compare-GitReferenceSnapshot", "Get-BoundedFileInventory", "Snapshot-Digest", "Test-UnsafeGitConfigName", "Assert-SafeGitConfigScopeNameFields", "Get-ValidSignatureStatus", "Assert-ValidSignaturePolicy", "Assert-ExactRequiredCiInventory")) {
+foreach ($name in @("Canonical", "String-Sha256", "Bytes-Sha256", "Assert-BoundedFile", "Assert-NoReparseComponent", "Get-NoFollowTreeEntries", "Assert-StrictJsonLexical", "ConvertFrom-StrictJsonText", "Assert-CodexEventSemantics", "Read-CodexEvents", "Quote-WindowsArgument", "Get-ForbiddenExecutionEnvironmentNames", "Assert-NoExecutionEnvironmentOverrides", "Set-SafeProcessEnvironment", "Get-SafeGitArguments", "Get-TrustedExecutableWorkingDirectory", "Test-SafeTrustedExecutablePathSyntax", "Get-GitGpgProgramSpec", "Get-GitHubCredentialHelperSpec", "New-KillOnCloseJob", "Close-KillOnCloseJob", "Stop-NativeProcessTree", "New-BoundedCaptureStream", "Invoke-NativeCaptureBytes", "Native", "Write-AtomicUtf8Text", "Read-Utf8NoBomText", "Try-PersistThreadReceipt", "Invoke-Utf8Process", "Invoke-TrustedValidatorProcess", "Get-FinalDocumentInventoryPaths", "Get-ThreadId", "Get-GitControlPlaneSnapshot", "Compare-GitControlPlaneSnapshot", "Get-GitReferenceSnapshot", "Compare-GitReferenceSnapshot", "Get-BoundedFileInventory", "Snapshot-Digest", "Test-UnsafeGitConfigName", "Assert-SafeGitConfigScopeNameFields", "Get-ValidSignatureStatus", "Assert-ValidSignaturePolicy", "Assert-ExactRequiredCiInventory")) {
     $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
     if ($null -eq $functionAst) { throw "missing function $name" }
     . ([scriptblock]::Create($functionAst.Extent.Text))
@@ -28,6 +28,7 @@ $MaxWorktreeSnapshotBytes = 268435456
 $MaxWorktreeFileBytes = 67108864
 $MaxWorktreeFiles = 20000
 $ProtectedGpgHome = "C:\ProgramData\YOnLab\gnupg"
+$ProtectedHooksPath = "C:\ProgramData\YOnLab\empty-git-hooks"
 $script:GitHubCredentialHelper = $null
 $savedGitDir = $env:GIT_DIR
 $nativeReadOnlyPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
@@ -46,12 +47,14 @@ try {
     if (-not $environmentRejected) { throw "GIT_DIR environment override was accepted" }
 } finally { $env:GIT_DIR = $savedGitDir }
 if (-not (Test-UnsafeGitConfigName "filter.evil.process") -or -not (Test-UnsafeGitConfigName "url.https://evil.invalid/.insteadOf") -or -not (Test-UnsafeGitConfigName "credential.helper") -or (Test-UnsafeGitConfigName "core.repositoryformatversion")) { throw "Git executable/redirect config classifier mismatch" }
-$safeCommandFields = @("command","core.fsmonitor","command","core.hookspath","command","core.pager","command","pager.branch","command","pager.log","local","core.repositoryformatversion")
+$safeCommandFields = @("command","core.fsmonitor","command","core.hookspath","command","core.pager","command","pager.branch","command","pager.log","command","credential.https://github.com.helper","local","core.repositoryformatversion")
 Assert-SafeGitConfigScopeNameFields $safeCommandFields
 foreach ($unsafePair in @(
     @("system","filter.evil.process"),
+    @("system","diff.astextplain.textconv"),
     @("global","credential.helper"),
     @("local","url.https://evil.invalid/.insteadOf"),
+    @("local","filter.evil.process"),
     @("command","alias.evil")
 )) {
     $fixture = @($safeCommandFields) + @($unsafePair[0],$unsafePair[1])
@@ -63,10 +66,27 @@ $spaceSafeGpg = Get-GitGpgProgramSpec "C:\Program Files (x86)\GnuPG\bin\gpg.exe"
 if ($spaceSafeGpg -cne '"C:/Program Files (x86)/GnuPG/bin/gpg.exe"') { throw "protected GPG executable specification mismatch" }
 $script:GitHubCredentialHelper = Get-GitHubCredentialHelperSpec "C:\Program Files\GitHub CLI\gh.exe"
 $safePsi = New-Object Diagnostics.ProcessStartInfo
+$safePsi.EnvironmentVariables["GIT_PAGER"] = "attacker-pager"
+$safePsi.EnvironmentVariables["GIT_CONFIG_SYSTEM"] = "attacker-system"
+$safePsi.EnvironmentVariables["GIT_CONFIG_GLOBAL"] = "attacker-global"
+$safePsi.EnvironmentVariables["GIT_CONFIG_NOSYSTEM"] = "0"
+$safePsi.EnvironmentVariables["GIT_ATTR_NOSYSTEM"] = "0"
+$safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] = "7"
+$safePsi.EnvironmentVariables["GIT_CONFIG_KEY_99"] = "attacker-key"
+$safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_99"] = "attacker-value"
 Set-SafeProcessEnvironment $safePsi
-if ($safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] -cne "1" -or $safePsi.EnvironmentVariables["GIT_CONFIG_KEY_0"] -cne "credential.https://github.com.helper" -or $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_0"] -cne '!"C:/Program Files/GitHub CLI/gh.exe" auth git-credential') { throw "pinned gh credential helper injection mismatch" }
+if ($safePsi.EnvironmentVariables["GIT_PAGER"] -ne $null -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_SYSTEM"] -cne "NUL" -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_GLOBAL"] -cne "NUL" -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_NOSYSTEM"] -cne "1" -or
+    $safePsi.EnvironmentVariables["GIT_ATTR_NOSYSTEM"] -cne "1" -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] -cne "1" -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_KEY_99"] -ne $null -or
+    $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_99"] -ne $null) { throw "safe Git child environment did not isolate system/global config and pager" }
+if (@(Get-SafeGitArguments @("status")) -notcontains "core.hooksPath=C:\ProgramData\YOnLab\empty-git-hooks") { throw "SafeGit did not pin the protected empty hooks path" }
+if ($safePsi.EnvironmentVariables["GIT_CONFIG_KEY_0"] -cne "credential.https://github.com.helper" -or $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_0"] -cne '!"C:/Program Files/GitHub CLI/gh.exe" auth git-credential') { throw "pinned gh credential helper injection mismatch" }
 $script:GitHubCredentialHelper = $null
-Write-Host "PASS: rejects execution-affecting environment and Git configuration overrides"
+Write-Host "PASS: isolates Git system/global config, pager, hooks, and executable configuration overrides"
 
 $signatureFingerprint = "0123456789ABCDEF0123456789ABCDEF01234567"
 $ed25519Status = "[GNUPG:] VALIDSIG $signatureFingerprint 2026-07-14 1784000000 0 4 0 22 8 00 $signatureFingerprint"

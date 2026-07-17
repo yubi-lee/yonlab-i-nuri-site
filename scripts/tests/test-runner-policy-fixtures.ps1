@@ -112,6 +112,25 @@ try {
     $coreModulePath.expected_safe_paths=@(); $coreModulePath.expected_normalized_entries=$coreModulePath.current_entries; $coreModulePath.expected_removed_entries=@()
     Invoke-Policy "leave-core-powershell-module-path-unhandled" $coreModulePath $true "POLICY-MODULE-PATH"
 
+    $gitConfigIsolation=[ordered]@{
+        schema_version="runner-policy-fixture.v1"; case="git-config-isolation"
+        raw_system_textconv_present=$true
+        safe_system_scope_ignored=$true; safe_global_scope_ignored=$true; safe_local_config_readable=$true
+        safe_git_pager_unset=$true; safe_attr_nosystem=$true
+        safe_hooks_path="C:\ProgramData\YOnLab\empty-git-hooks"
+        unsafe_config_without_safe_env_rejected=$true
+        local_executable_config_rejected=$true
+    }
+    Invoke-Policy "git-config-isolation-safe-system-textconv" $gitConfigIsolation $true "POLICY-GIT-CONFIG"
+    $badGitIsolation=Copy-Fixture $gitConfigIsolation; $badGitIsolation.safe_system_scope_ignored=$false
+    Invoke-Policy "reject-unisolated-system-config-observation" $badGitIsolation $false "POLICY-GIT-CONFIG"
+    $badGitIsolation=Copy-Fixture $gitConfigIsolation; $badGitIsolation.safe_local_config_readable=$false
+    Invoke-Policy "reject-local-config-loss" $badGitIsolation $false "POLICY-GIT-CONFIG"
+    $badGitIsolation=Copy-Fixture $gitConfigIsolation; $badGitIsolation.safe_hooks_path="C:\attacker\hooks"
+    Invoke-Policy "reject-untrusted-hooks-path" $badGitIsolation $false "POLICY-GIT-CONFIG"
+    $badGitIsolation=Copy-Fixture $gitConfigIsolation; $badGitIsolation.local_executable_config_rejected=$false
+    Invoke-Policy "reject-local-executable-config-acceptance" $badGitIsolation $false "POLICY-GIT-CONFIG"
+
     $gpgVerification=[ordered]@{
         schema_version="runner-policy-fixture.v1";case="gpg-verification-configuration"
         gpg_conf_relative_path="gpg.conf";gpg_conf_utf8_no_bom=$true;gpg_conf_text="no-auto-check-trustdb`n"
