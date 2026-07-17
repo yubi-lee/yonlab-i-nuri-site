@@ -133,8 +133,65 @@ $threadId = "01990000-0000-7000-8000-000000000001"
 if ((Get-ThreadId @([pscustomobject]@{type="thread.started";thread_id=$threadId})) -cne $threadId) { throw "Codex thread UUID was rejected" }
 Write-Host "PASS: validated exact Codex thread UUID extraction"
 
-$workRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot "../../.."))
-$inventory = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $workRoot "yonlab-ai-training-platform-design/final-document-inventory.json") | ConvertFrom-Json
+$installedRoot = [IO.Path]::GetFullPath(
+    (Join-Path $PSScriptRoot "../..")
+)
+
+$packageRoot = [IO.Path]::GetFullPath(
+    (Join-Path $PSScriptRoot "../../..")
+)
+
+$installedInventoryPath = Join-Path `
+    $installedRoot `
+    "docs/planning/ai-training-platform-v1/final-document-inventory.json"
+
+$packageInventoryPath = Join-Path `
+    $packageRoot `
+    "yonlab-ai-training-platform-design/final-document-inventory.json"
+
+if (
+    Test-Path `
+        -LiteralPath $installedInventoryPath `
+        -PathType Leaf
+) {
+    $layout = "installed"
+    $inventoryPath = $installedInventoryPath
+} elseif (
+    Test-Path `
+        -LiteralPath $packageInventoryPath `
+        -PathType Leaf
+) {
+    $layout = "package"
+    $inventoryPath = $packageInventoryPath
+} else {
+    throw (
+        "cannot resolve final-document inventory for installed " +
+        "or package layout; installed=$installedInventoryPath; " +
+        "package=$packageInventoryPath"
+    )
+}
+
+$inventoryItem = Get-Item `
+    -LiteralPath $inventoryPath `
+    -Force
+
+if (
+    ($inventoryItem.Attributes -band
+        [IO.FileAttributes]::ReparsePoint) -ne 0
+) {
+    throw "final-document inventory must not be a reparse point: $inventoryPath"
+}
+
+$inventory = Get-Content `
+    -Raw `
+    -Encoding UTF8 `
+    -LiteralPath $inventoryPath |
+    ConvertFrom-Json
+
+Write-Host (
+    "PASS: final-document inventory layout=$layout path=$inventoryPath"
+)
+
 $inventoryPaths = @(Get-FinalDocumentInventoryPaths $inventory "v1.0.0-rc1")
 $expectedInventoryCount = [int]$inventory.expected_counts.total
 if ($expectedInventoryCount -le 0 -or $inventoryPaths.Count -ne $expectedInventoryCount -or $inventoryPaths -notcontains "docs/releases/ai-training-platform/v1.0.0-rc1/README.md" -or $inventoryPaths -notcontains "dist/docs/v1.0.0-rc1/manuals/quick-start.pdf") { throw "normative final-document inventory expansion mismatch" }
@@ -142,7 +199,9 @@ Write-Host "PASS: normative $expectedInventoryCount-path final-document inventor
 
 $temp = Join-Path ([IO.Path]::GetTempPath()) ("yonlab process test " + [Guid]::NewGuid().ToString("N"))
 [IO.Directory]::CreateDirectory($temp) | Out-Null
+$savedConsoleInputEncoding = [Console]::InputEncoding
 try {
+    [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
     $gitDirectory = Join-Path $temp "repository/.git"
     $commonDirectory = $gitDirectory
     [IO.Directory]::CreateDirectory((Join-Path $gitDirectory "hooks")) | Out-Null
@@ -253,6 +312,33 @@ try {
     Write-Host "PASS: WinPS5-safe no-BOM run/resume artifact encoding"
 
     $currentPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+
+    function ConvertTo-TestEncodedCommand {
+        param(
+            [Parameter(Mandatory = $true)]
+            [string]$Script
+        )
+
+        return [Convert]::ToBase64String(
+            [Text.Encoding]::Unicode.GetBytes($Script)
+        )
+    }
+
+    function Get-TestPowerShellArguments {
+        param(
+            [Parameter(Mandatory = $true)]
+            [string]$Script
+        )
+
+        return @(
+            '-NoLogo'
+            '-NoProfile'
+            '-NonInteractive'
+            '-EncodedCommand'
+            (ConvertTo-TestEncodedCommand $Script)
+        )
+    }
+
     $oversizedNativeScript = '[Console]::Out.Write("x" * 4096); [Console]::Error.Write("y" * 4096)'
     $oversizedNativeEncoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($oversizedNativeScript))
     $savedNativeLimit = $MaxNativeCaptureBytes
@@ -273,77 +359,143 @@ try {
     if (-not $nativeTimeoutRejected) { throw "Native helper accepted a process past its hard deadline" }
     Write-Host "PASS: Native helper enforces a hard per-command deadline"
 
-    $nativeToolDirectory = Join-Path $temp "protected native tool parent"
-    New-Item -ItemType Directory -Path $nativeToolDirectory | Out-Null
-    $nativeWorkingDirectoryMock = Join-Path $nativeToolDirectory "working-directory-tool"
-    [IO.File]::WriteAllText($nativeWorkingDirectoryMock, "#!/usr/bin/env bash`nprintf '%s' `"`$PWD`"`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
-    & chmod +x $nativeWorkingDirectoryMock
-    if ($LASTEXITCODE -ne 0) { throw "native working-directory mock chmod failed" }
-    $nativeWorkingDirectoryResult = Invoke-NativeCaptureBytes $nativeWorkingDirectoryMock @() 4096 10
+    $nativeWorkingDirectoryScript = @'
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $utf8
+[Console]::Out.Write([Environment]::CurrentDirectory)
+'@
+    $nativeWorkingDirectoryResult = Invoke-NativeCaptureBytes `
+        $currentPowerShell `
+        (Get-TestPowerShellArguments $nativeWorkingDirectoryScript) `
+        4096 `
+        10
+    $expectedNativeWorkingDirectory = [IO.Path]::GetFullPath(
+        (Split-Path -Parent $currentPowerShell)
+    )
     $nativeObservedWorkingDirectory = (New-Object Text.UTF8Encoding -ArgumentList $false, $true).GetString($nativeWorkingDirectoryResult.Bytes)
-    if (-not [StringComparer]::Ordinal.Equals(([IO.Path]::GetFullPath($nativeToolDirectory)), ([IO.Path]::GetFullPath($nativeObservedWorkingDirectory)))) { throw "Native helper inherited repository/current working directory instead of executable parent" }
+    if (-not [StringComparer]::Ordinal.Equals($expectedNativeWorkingDirectory, ([IO.Path]::GetFullPath($nativeObservedWorkingDirectory)))) { throw "Native helper inherited repository/current working directory instead of executable parent" }
     Write-Host "PASS: Native helper pins executable-parent working directory"
 
-    $mock = Join-Path $temp "mock codex executable"
     $inputReceipt = Join-Path $temp "input.bin"
     $stdout = Join-Path $temp "stdout.jsonl"
     $stderr = Join-Path $temp "stderr.log"
-    $script = @'
-#!/usr/bin/env bash
-set -euo pipefail
-printf '%s' "$PWD" > "$MOCK_WORKING_DIRECTORY_RECEIPT"
-cat > "$MOCK_INPUT_RECEIPT"
-printf '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001","text":"한글"}\n'
-for i in $(seq 1 20000); do printf '{"type":"item","i":%s,"text":"가나다"}\n' "$i"; done
-for i in $(seq 1 20000); do printf '오류-stream-%s-abcdefghijklmnopqrstuvwxyz\n' "$i" >&2; done
+    $streamScript = @'
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $utf8
+[Console]::InputEncoding = $utf8
+
+[IO.File]::WriteAllText(
+    $env:MOCK_WORKING_DIRECTORY_RECEIPT,
+    [Environment]::CurrentDirectory,
+    $utf8
+)
+
+$inputStream = [Console]::OpenStandardInput()
+$receiptStream = [IO.File]::Open(
+    $env:MOCK_INPUT_RECEIPT,
+    [IO.FileMode]::Create,
+    [IO.FileAccess]::Write,
+    [IO.FileShare]::None
+)
+
+try {
+    $inputStream.CopyTo($receiptStream)
+    $receiptStream.Flush()
+} finally {
+    $receiptStream.Dispose()
+}
+
+[Console]::Out.WriteLine(
+    '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001","text":"한글"}'
+)
+
+for ($i = 1; $i -le 20000; $i += 1) {
+    [Console]::Out.WriteLine(
+        ('{"type":"item","i":' + $i + ',"text":"가나다"}')
+    )
+}
+
+for ($i = 1; $i -le 20000; $i += 1) {
+    [Console]::Error.WriteLine(
+        ('오류-stream-' + $i + '-abcdefghijklmnopqrstuvwxyz')
+    )
+}
+
+[Console]::Out.Flush()
+[Console]::Error.Flush()
 '@
-    [IO.File]::WriteAllText($mock, $script, (New-Object Text.UTF8Encoding -ArgumentList $false))
-    & chmod +x $mock
-    if ($LASTEXITCODE -ne 0) { throw "chmod failed" }
     $env:MOCK_INPUT_RECEIPT = $inputReceipt
     $workingDirectoryReceipt = Join-Path $temp "codex-working-directory.txt"
     $env:MOCK_WORKING_DIRECTORY_RECEIPT = $workingDirectoryReceipt
     $input = "한국어 프롬프트`n경로 공백 및 😀`n"
-    $code = Invoke-Utf8Process -Command $mock -Arguments @() -InputText $input -StdoutPath $stdout -StderrPath $stderr
+    $code = Invoke-Utf8Process `
+        -Command $currentPowerShell `
+        -Arguments (Get-TestPowerShellArguments $streamScript) `
+        -InputText $input `
+        -StdoutPath $stdout `
+        -StderrPath $stderr
     if ($code -ne 0) { throw "mock returned $code" }
     $expected = (New-Object Text.UTF8Encoding -ArgumentList $false, $true).GetBytes($input)
     $actual = [IO.File]::ReadAllBytes($inputReceipt)
     if ([Convert]::ToBase64String($expected) -cne [Convert]::ToBase64String($actual)) { throw "UTF-8 stdin bytes differ" }
+    $expectedCodexWorkingDirectory = [IO.Path]::GetFullPath(
+        (Split-Path -Parent $currentPowerShell)
+    )
     $observedCodexWorkingDirectory = [IO.File]::ReadAllText($workingDirectoryReceipt).Trim()
-    if (-not [StringComparer]::Ordinal.Equals(([IO.Path]::GetFullPath((Split-Path -Parent $mock))), ([IO.Path]::GetFullPath($observedCodexWorkingDirectory)))) { throw "Codex process inherited repository/current working directory instead of executable parent" }
+    if (-not [StringComparer]::Ordinal.Equals($expectedCodexWorkingDirectory, ([IO.Path]::GetFullPath($observedCodexWorkingDirectory)))) { throw "Codex process inherited repository/current working directory instead of executable parent" }
     $strict = New-Object Text.UTF8Encoding -ArgumentList $false, $true
     $outText = $strict.GetString([IO.File]::ReadAllBytes($stdout)); $errText = $strict.GetString([IO.File]::ReadAllBytes($stderr))
     if (-not $outText.Contains('"text":"한글"') -or -not $outText.Contains('"i":20000')) { throw "stdout capture incomplete" }
     if (-not $errText.Contains('오류-stream-20000')) { throw "stderr capture incomplete" }
-    Write-Host "PASS: UTF-8 concurrent large stdout/stderr mock with space path"
+    Write-Host "PASS: UTF-8 concurrent large stdout/stderr direct executable mock with space-bearing paths"
 
-    $timeoutMock = Join-Path $temp "timeout mock executable"
-    [IO.File]::WriteAllText($timeoutMock, "#!/usr/bin/env bash`ncat >/dev/null`nsleep 3`n", (New-Object Text.UTF8Encoding -ArgumentList $false))
-    & chmod +x $timeoutMock
-    if ($LASTEXITCODE -ne 0) { throw "timeout mock chmod failed" }
+    $timeoutScript = @'
+$inputStream = [Console]::OpenStandardInput()
+$inputStream.CopyTo([IO.Stream]::Null)
+[Threading.Thread]::Sleep(3000)
+'@
     $codexTimeoutRejected = $false
-    try { [void](Invoke-Utf8Process -Command $timeoutMock -Arguments @() -InputText "deadline`n" -StdoutPath $stdout -StderrPath $stderr -TimeoutSeconds 1) }
+    try {
+        [void](Invoke-Utf8Process `
+            -Command $currentPowerShell `
+            -Arguments (Get-TestPowerShellArguments $timeoutScript) `
+            -InputText "deadline`n" `
+            -StdoutPath $stdout `
+            -StderrPath $stderr `
+            -TimeoutSeconds 1)
+    }
     catch { $codexTimeoutRejected = $_.Exception.Message -match 'hard timeout' }
     if (-not $codexTimeoutRejected) { throw "Codex process helper accepted a process past its hard deadline" }
     Write-Host "PASS: Codex process helper enforces a hard execution deadline"
 
-    $heartbeatMock = Join-Path $temp "heartbeat mock executable"
     $heartbeatScript = @'
-#!/usr/bin/env bash
-set -euo pipefail
-cat >/dev/null
-for i in $(seq 1 20000); do printf '{"type":"item","i":%s,"padding":"abcdefghijklmnopqrstuvwxyz0123456789"}\n' "$i"; done
-printf '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001"}\n'
-sleep 2.2
-printf '{"type":"turn.completed"}\n'
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $utf8
+
+$inputStream = [Console]::OpenStandardInput()
+$inputStream.CopyTo([IO.Stream]::Null)
+
+for ($i = 1; $i -le 20000; $i += 1) {
+    [Console]::Out.WriteLine(
+        '{"type":"item","i":' +
+        $i +
+        ',"padding":"abcdefghijklmnopqrstuvwxyz0123456789"}'
+    )
+}
+
+[Console]::Out.WriteLine(
+    '{"type":"thread.started","thread_id":"01990000-0000-4000-8000-000000000001"}'
+)
+
+[Threading.Thread]::Sleep(2200)
+
+[Console]::Out.WriteLine('{"type":"turn.completed"}')
+[Console]::Out.Flush()
 '@
-    [IO.File]::WriteAllText($heartbeatMock, $heartbeatScript, (New-Object Text.UTF8Encoding -ArgumentList $false))
-    & chmod +x $heartbeatMock
-    if ($LASTEXITCODE -ne 0) { throw "heartbeat mock chmod failed" }
     $heartbeatStdout = Join-Path $temp "heartbeat.jsonl"
     $heartbeatStderr = Join-Path $temp "heartbeat-errors.log"
     $heartbeatMessages = @(& {
-        Invoke-Utf8Process -Command $heartbeatMock -Arguments @() -InputText "heartbeat`n" `
+        Invoke-Utf8Process -Command $currentPowerShell -Arguments (Get-TestPowerShellArguments $heartbeatScript) -InputText "heartbeat`n" `
             -StdoutPath $heartbeatStdout -StderrPath $heartbeatStderr -RunId "heartbeat-test" `
             -HeartbeatSeconds 1 -ResumeCommand "resume-exact"
     } 6>&1 | ForEach-Object { $_.ToString() })
@@ -382,5 +534,6 @@ exit 0
     if ($validatorResult.ExitCode -ne 0) { throw "large stdin validator failed: $($validatorResult.Text)" }
     Write-Host "PASS: validator larger than Windows command-line limit executes from preloaded stdin bytes"
 } finally {
+    [Console]::InputEncoding = $savedConsoleInputEncoding
     Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
 }

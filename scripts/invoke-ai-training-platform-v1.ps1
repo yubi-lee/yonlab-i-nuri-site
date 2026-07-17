@@ -959,8 +959,12 @@ function Get-WorktreeSnapshot([string]$GitCommand, [string]$Root, [string]$Exclu
     if ((Bytes-Sha256 $statusBefore.Bytes) -cne (Bytes-Sha256 $statusAfter.Bytes)) { Stop-Launcher "WORKTREE-SNAPSHOT" "worktree changed while its snapshot was being captured" }
     $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
     try { $untrackedText = $strictUtf8.GetString($untrackedResult.Bytes); $ignoredText = $strictUtf8.GetString($ignoredResult.Bytes) } catch { Stop-Launcher "WORKTREE-SNAPSHOT" "Git path inventory is not strict UTF-8" 6 }
-    $untrackedPaths = @($untrackedText.Split([char]0, [StringSplitOptions]::RemoveEmptyEntries))
-    $ignoredPaths = @($ignoredText.Split([char]0, [StringSplitOptions]::RemoveEmptyEntries))
+    $untrackedPaths = @(
+        Split-NulDelimitedText $untrackedText
+    )
+    $ignoredPaths = @(
+        Split-NulDelimitedText $ignoredText
+    )
     $untrackedInventory = Get-BoundedFileInventory $Root $untrackedPaths "untracked"
     $ignoredInventory = Get-BoundedFileInventory $Root $ignoredPaths "ignored"
     return [ordered]@{

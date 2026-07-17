@@ -1,13 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-WORK_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-OVERLAY_ROOT="$WORK_ROOT/repo-overlay"
-RUNNER="$OVERLAY_ROOT/scripts/invoke-ai-training-platform-v1.ps1"
-VALIDATOR="$OVERLAY_ROOT/scripts/validate-codex-final-result.ps1"
-STRICT_SCHEMA="$WORK_ROOT/yonlab-ai-training-platform-design/codex-final-result.schema.json"
-OUTPUT_SCHEMA="$WORK_ROOT/yonlab-ai-training-platform-design/codex-output.schema.json"
-TRUST_EXAMPLE="$WORK_ROOT/yonlab-ai-training-platform-design/release-trust.example.json"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALLED_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+PACKAGE_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+if [[
+  -s "$INSTALLED_ROOT/scripts/invoke-ai-training-platform-v1.ps1" &&
+  -s "$INSTALLED_ROOT/scripts/validate-codex-final-result.ps1" &&
+  -s "$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/codex-final-result.schema.json" &&
+  -s "$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/codex-output.schema.json" &&
+  -s "$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/release-trust.example.json"
+]]; then
+  LAYOUT="installed"
+  RUNNER="$INSTALLED_ROOT/scripts/invoke-ai-training-platform-v1.ps1"
+  VALIDATOR="$INSTALLED_ROOT/scripts/validate-codex-final-result.ps1"
+  STRICT_SCHEMA="$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/codex-final-result.schema.json"
+  OUTPUT_SCHEMA="$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/codex-output.schema.json"
+  TRUST_EXAMPLE="$INSTALLED_ROOT/docs/planning/ai-training-platform-v1/release-trust.example.json"
+  TEST_ROOT="$INSTALLED_ROOT/scripts/tests"
+elif [[
+  -s "$PACKAGE_ROOT/repo-overlay/scripts/invoke-ai-training-platform-v1.ps1" &&
+  -s "$PACKAGE_ROOT/repo-overlay/scripts/validate-codex-final-result.ps1" &&
+  -s "$PACKAGE_ROOT/yonlab-ai-training-platform-design/codex-final-result.schema.json" &&
+  -s "$PACKAGE_ROOT/yonlab-ai-training-platform-design/codex-output.schema.json" &&
+  -s "$PACKAGE_ROOT/yonlab-ai-training-platform-design/release-trust.example.json"
+]]; then
+  LAYOUT="package"
+  OVERLAY_ROOT="$PACKAGE_ROOT/repo-overlay"
+  RUNNER="$OVERLAY_ROOT/scripts/invoke-ai-training-platform-v1.ps1"
+  VALIDATOR="$OVERLAY_ROOT/scripts/validate-codex-final-result.ps1"
+  STRICT_SCHEMA="$PACKAGE_ROOT/yonlab-ai-training-platform-design/codex-final-result.schema.json"
+  OUTPUT_SCHEMA="$PACKAGE_ROOT/yonlab-ai-training-platform-design/codex-output.schema.json"
+  TRUST_EXAMPLE="$PACKAGE_ROOT/yonlab-ai-training-platform-design/release-trust.example.json"
+  TEST_ROOT="$OVERLAY_ROOT/scripts/tests"
+else
+  printf 'FAIL: unable to resolve installed repository or overlay package layout\n' >&2
+  exit 1
+fi
+
+printf 'INFO: runner contract layout=%s\n' "$LAYOUT"
 
 fail() { printf 'FAIL: %s\n' "$1" >&2; exit 1; }
 pass() { printf 'PASS: %s\n' "$1"; }
@@ -79,6 +111,18 @@ assert_fixed "return '!\"' + \$GhCommand.Replace(" 'quoted fixed gh credential h
 assert_fixed "return '\"' + \$GpgCommand.Replace(" 'quoted fixed gpg.program is missing'
 pass 'release-trust.v2 seven-tool hash/ACL/conditional-Authenticode policy'
 
+PYTHON_BIN="${PYTHON_BIN:-}"
+if [[ -z "$PYTHON_BIN" ]]; then
+  if command -v python3 >/dev/null 2>&1 && python3 --version >/dev/null 2>&1; then
+    PYTHON_BIN="$(command -v python3)"
+  elif command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
+    PYTHON_BIN="$(command -v python)"
+  else
+    printf 'PLATFORM-BLOCKED: Python 3 is required for runner contract tests\n' >&2
+    exit 3
+  fi
+fi
+
 # Every external root of trust is bounded from its leaf through the canonical
 # YOnLab anchor. C:\ProgramData and the volume root are outside this policy.
 for token in \
@@ -91,7 +135,7 @@ done
 assert_fixed 'protected_root=$resolvedRoot' 'protected chain does not record its canonical YOnLab anchor'
 assert_fixed 'path chain extends beyond the YOnLab anchor' 'protected chain does not reject nodes above the YOnLab anchor'
 assert_fixed 'if ([StringComparer]::OrdinalIgnoreCase.Equals($current,$resolvedRoot)) { $reachedProtectedRoot=$true; break }' 'protected chain does not stop at the YOnLab anchor'
-python3 - "$RUNNER" <<'PY'
+"$PYTHON_BIN" - "$RUNNER" <<'PY'
 import re, sys
 text=open(sys.argv[1], encoding='utf-8-sig').read()
 m=re.search(r'function Get-ProtectedPathChainObservation\(.*?\n}\n\nfunction Assert-ProtectedRootPathChain', text, re.S)
@@ -103,7 +147,7 @@ for forbidden in ('GetPathRoot', 'volumeRoot', 'ANCESTOR_REPLACEMENT'):
         raise SystemExit(f'FAIL: protected path-chain still inspects volume ancestry: {forbidden}')
 print('PASS: protected path-chain is bounded at the YOnLab anchor')
 PY
-assert_fixed 'Assert-ProtectedRootPathChain $resolvedTrustPath $resolvedTrustPath' 'release trust file does not validate its YOnLab-bounded chain'
+assert_fixed 'Assert-ProtectedRootPathChain $resolvedTrustPath (Split-Path -Parent $resolvedTrustPath) "PRE-TRUST" "release trust"' 'release trust file does not validate its YOnLab-bounded chain'
 assert_fixed 'Assert-ProtectedRootPathChain $resolved $resolved' 'hooks/GPG protected roots do not validate their YOnLab-bounded chain'
 assert_fixed 'Assert-ProtectedRootPathChain $full $AttestationRoot' 'attestation leaf does not validate root/intermediate/leaf ACLs'
 assert_fixed 'Get-ProtectedRootSnapshot' 'protected roots have no byte/ACL snapshot for TOCTOU revalidation'
@@ -149,7 +193,7 @@ for token in \
   'prohibited self-reference OID or tracked Actions run URL'; do
   assert_fixed "$token" "S/R constructibility contract missing: $token"
 done
-python3 - "$RUNNER" <<'PY'
+"$PYTHON_BIN" - "$RUNNER" <<'PY'
 import re, sys
 text=open(sys.argv[1], encoding='utf-8-sig').read()
 m=re.search(r'function Assert-ReleaseIdentityObservation\(.*?\n}\n\nfunction ', text, re.S)
@@ -201,7 +245,7 @@ done
 assert_fixed 'Assert-ProtectedPathAcl $literal "EXTERNAL-ATTESTATION" "attestation bundle"' 'external bundle ACL is not verified'
 assert_fixed 'Assert-DetachedSignature' 'external detached signature verification is missing'
 assert_fixed 'function TrustedGpg([string]$GpgCommand, [string[]]$Arguments = @())' 'direct trusted GPG helper is missing'
-assert_fixed '@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--batch", "--no-tty")' 'direct trusted GPG calls do not disable automatic trustdb checks'
+assert_fixed '@("--homedir", $ProtectedGpgHome, "--no-options", "--no-auto-key-retrieve", "--no-auto-check-trustdb", "--no-autostart", "--lock-never", "--batch", "--no-tty")' 'direct trusted GPG calls do not disable automatic trustdb checks'
 for token in 'Assert-ProtectedGpgVerificationConfiguration' 'gpg.conf' 'no-auto-check-trustdb' 'trustdb.gpg' 'Assert-ProtectedGpgHomeUnchanged'; do
   assert_fixed "$token" "protected read-only GPG contract missing: $token"
 done
@@ -236,7 +280,7 @@ done
 pass 'closed evidence registry, hashes, freshness, and consumers'
 
 # Strict and model-facing schemas must expose only NOT_READY plus the two phases.
-python3 - "$STRICT_SCHEMA" "$OUTPUT_SCHEMA" "$TRUST_EXAMPLE" <<'PY'
+"$PYTHON_BIN" - "$STRICT_SCHEMA" "$OUTPUT_SCHEMA" "$TRUST_EXAMPLE" <<'PY'
 import json, sys
 strict, output, trust=(json.load(open(p, encoding='utf-8-sig')) for p in sys.argv[1:])
 required='candidate_phase'
@@ -275,8 +319,11 @@ if [[ -z "$PWSH" ]]; then
   fi
 fi
 [[ -x "$PWSH" ]] || fail "PowerShell executable is not runnable: $PWSH"
-"$PWSH" -NoLogo -NoProfile -Command "[void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$RUNNER')); [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$VALIDATOR'))"
-"$PWSH" -NoLogo -NoProfile -File "$OVERLAY_ROOT/scripts/tests/test-invoke-utf8-process.ps1"
-"$PWSH" -NoLogo -NoProfile -File "$OVERLAY_ROOT/scripts/tests/test-validate-codex-final-result.ps1"
-"$PWSH" -NoLogo -NoProfile -File "$OVERLAY_ROOT/scripts/tests/test-runner-policy-fixtures.ps1" -RunnerPath "$RUNNER"
+RUNNER_PWSH="$(cygpath -w "$RUNNER")"
+VALIDATOR_PWSH="$(cygpath -w "$VALIDATOR")"
+TEST_ROOT_PWSH="$(cygpath -w "$TEST_ROOT")"
+"$PWSH" -NoLogo -NoProfile -Command "[void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$RUNNER_PWSH')); [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '$VALIDATOR_PWSH'))"
+"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-invoke-utf8-process.ps1"
+"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-validate-codex-final-result.ps1"
+"$PWSH" -NoLogo -NoProfile -File "$TEST_ROOT_PWSH\\test-runner-policy-fixtures.ps1" -RunnerPath "$RUNNER_PWSH"
 pass 'guarded runner, validator, process, and executable adversarial contracts'

@@ -42,7 +42,51 @@ function Invoke-Policy([string]$Name, $Payload, [bool]$ShouldPass, [string]$Expe
     Write-Host "PASS: $Name"
 }
 
+function Invoke-EmptyWorktreeInventoryRegression([string]$Path) {
+    $tokens = $null
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
+    if ($errors.Count -ne 0) { throw "runner parse failed while loading worktree snapshot functions" }
+    foreach ($name in @("Split-NulDelimitedText", "Get-WorktreeSnapshot")) {
+        $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
+        if ($null -eq $functionAst) { throw "missing runner function $name" }
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+
+    function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$($ExitCode): $Message" }
+    $script:emptyInventoryCaptureCount = 0
+    function Invoke-SafeGitCaptureBytes([string]$GitCommand, [string[]]$Arguments) {
+        $script:emptyInventoryCaptureCount += 1
+        return [pscustomobject]@{ ExitCode = 0; Bytes = [byte[]]@(); ErrorText = "" }
+    }
+    function Get-BoundedFileInventory([string]$Root, [string[]]$RelativePaths, [string]$Label) {
+        $paths = @($RelativePaths)
+        if ($paths.Count -ne 0) { throw "empty Git inventory passed $($paths.Count) $Label path(s): $($paths -join '|')" }
+        if (@($paths | Where-Object { [string]::IsNullOrEmpty([string]$_) }).Count -ne 0) { throw "empty Git inventory passed a blank $Label path" }
+        return [ordered]@{ total_bytes = 0; files = @() }
+    }
+    function Bytes-Sha256([byte[]]$Value) { return ("0" * 64) }
+    function Snapshot-Digest($Snapshot) { return ("1" * 64) }
+    $script:MaxWorktreeSnapshotBytes = 1024
+
+    foreach ($case in @(
+        [pscustomobject]@{ name = "empty"; input = ""; expected = @() },
+        [pscustomobject]@{ name = "nul-only"; input = [string][char]0; expected = @() },
+        [pscustomobject]@{ name = "two-paths"; input = ("alpha.txt" + [char]0 + "beta.txt" + [char]0); expected = @("alpha.txt", "beta.txt") }
+    )) {
+        $actual = @(Split-NulDelimitedText $case.input)
+        if ($actual.Count -ne $case.expected.Count -or (@(Compare-Object -ReferenceObject $case.expected -DifferenceObject $actual).Count -ne 0)) {
+            throw "Split-NulDelimitedText case $($case.name) returned unexpected values"
+        }
+    }
+
+    $null = Get-WorktreeSnapshot "git.exe" "D:\fixture" ".artifacts/codex/20260717T170000Z-abcdef12"
+    if ($script:emptyInventoryCaptureCount -ne 7) { throw "Get-WorktreeSnapshot made $script:emptyInventoryCaptureCount Git captures instead of 7" }
+    Write-Host "PASS: empty worktree inventories parse as zero paths"
+}
+
 try {
+    Invoke-EmptyWorktreeInventoryRegression $RunnerPath
     $s = "1" * 40; $r = "2" * 40; $tree = "3" * 40; $digest = "4" * 64
     $identity = [ordered]@{
         schema_version = "runner-policy-fixture.v1"; case = "release-identity"
