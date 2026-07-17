@@ -252,7 +252,13 @@ function Native([string]$Command, [string[]]$Arguments = @()) {
     $combined = $(if ([string]::IsNullOrWhiteSpace($captured.ErrorText)) { $stdoutText } elseif ([string]::IsNullOrWhiteSpace($stdoutText)) { $captured.ErrorText } else { $stdoutText.TrimEnd([char[]]@([char]13,[char]10)) + "`n" + $captured.ErrorText })
     return [pscustomobject]@{ ExitCode=$captured.ExitCode; Text=$combined.Trim() }
 }
-function Native-ReadOnly([string]$Command, [string[]]$Arguments = @()) { return Invoke-NativeCaptureBytes -Command $Command -Arguments $Arguments -MaximumBytes $MaxNativeCaptureBytes -IsolationMode "BestEffortReadOnly" -ReadOnlyProbe }
+function Native-ReadOnly([string]$Command, [string[]]$Arguments = @()) {
+    $captured = Invoke-NativeCaptureBytes -Command $Command -Arguments $Arguments -MaximumBytes $MaxNativeCaptureBytes -IsolationMode "BestEffortReadOnly" -ReadOnlyProbe
+    $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
+    try { $stdoutText = $strictUtf8.GetString($captured.Bytes) } catch { throw "native stdout is not strict UTF-8" }
+    $combined = $(if ([string]::IsNullOrWhiteSpace($captured.ErrorText)) { $stdoutText } elseif ([string]::IsNullOrWhiteSpace($stdoutText)) { $captured.ErrorText } else { $stdoutText.TrimEnd([char[]]@([char]13,[char]10)) + "`n" + $captured.ErrorText })
+    return [pscustomobject]@{ ExitCode=$captured.ExitCode; Text=$combined.Trim() }
+}
 function Native-OK($Result, [string]$Code, [string]$Operation) { if ($Result.ExitCode -ne 0) { Stop-Launcher $Code "$Operation failed ($($Result.ExitCode)): $($Result.Text)" } }
 function Get-SafeGitArguments([string[]]$Arguments) { return @("--no-replace-objects", "-c", "core.fsmonitor=false", "-c", "core.hooksPath=$ProtectedHooksPath", "-c", "core.pager=cat", "-c", "pager.branch=false", "-c", "pager.log=false") + @($Arguments) }
 function SafeGit([string]$GitCommand, [string[]]$Arguments = @()) { return Native-ReadOnly $GitCommand (Get-SafeGitArguments $Arguments) }
@@ -701,13 +707,18 @@ function Assert-SafeGitConfigScopeNameFields([string[]]$Fields) {
     if ($actualCommands.Count -ne $expectedCommands.Count -or @(Compare-Object -ReferenceObject $expectedCommands -DifferenceObject $actualCommands).Count -ne 0) { Stop-Launcher "PRE-GIT-CONFIG" "runner command-scope Git config set is not exact" }
 }
 
+function Split-NulDelimitedText([string]$Text) {
+    $textValue=[string]$Text
+    return @($textValue.Split([char[]]@([char]0), [StringSplitOptions]::RemoveEmptyEntries))
+}
+
 function Assert-NoExecutableGitConfiguration([string]$GitCommand, [string]$Root) {
     # Listing names parses configuration but does not run the configured
     # helpers. Includes are themselves forbidden, so no external config may
     # silently extend the execution surface used by later Git commands.
     $inventory = SafeGit $GitCommand @("-C", $Root, "config", "--null", "--name-only", "--show-scope", "--list")
     Native-OK $inventory "PRE-GIT-CONFIG" "Git configuration name inventory"
-    $fields = @($inventory.Text.Split([char]0, [StringSplitOptions]::RemoveEmptyEntries))
+    $fields = @(Split-NulDelimitedText $inventory.Text)
     Assert-SafeGitConfigScopeNameFields $fields
     Write-Pass "PRE-GIT-CONFIG no executable/redirect/include/submodule Git configuration"
 }

@@ -9,6 +9,14 @@ foreach ($name in @("Canonical", "String-Sha256", "Bytes-Sha256", "Assert-Bounde
     if ($null -eq $functionAst) { throw "missing function $name" }
     . ([scriptblock]::Create($functionAst.Extent.Text))
 }
+$nativeReadOnlyFunctionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq "Native-ReadOnly" }, $true)
+if ($null -eq $nativeReadOnlyFunctionAst) { throw "missing function Native-ReadOnly" }
+. ([scriptblock]::Create($nativeReadOnlyFunctionAst.Extent.Text))
+
+$splitNulFunctionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq "Split-NulDelimitedText" }, $true)
+if ($null -eq $splitNulFunctionAst) { throw "missing function Split-NulDelimitedText" }
+. ([scriptblock]::Create($splitNulFunctionAst.Extent.Text))
+
 function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/${ExitCode}: $Message" }
 $MaxJsonBytes = 8388608
 $MaxJsonlBytes = 268435456
@@ -22,6 +30,15 @@ $MaxWorktreeFiles = 20000
 $ProtectedGpgHome = "C:\ProgramData\YOnLab\gnupg"
 $script:GitHubCredentialHelper = $null
 $savedGitDir = $env:GIT_DIR
+$nativeReadOnlyPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+$nativeReadOnlyScript = '[Console]::Out.Write("readonly")'
+$nativeReadOnlyEncoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($nativeReadOnlyScript))
+$nativeReadOnlyResult = Native-ReadOnly $nativeReadOnlyPowerShell @("-NoLogo", "-NoProfile", "-EncodedCommand", $nativeReadOnlyEncoded)
+if ($nativeReadOnlyResult.ExitCode -ne 0 -or $nativeReadOnlyResult.Text -cne "readonly") { throw "Native-ReadOnly did not return an ExitCode/Text result contract" }
+Write-Host "PASS: Native-ReadOnly returns decoded text result contract"
+$nulFields = @(Split-NulDelimitedText ("system" + [char]0 + "core.pager" + [char]0))
+if ($nulFields.Count -ne 2 -or $nulFields[0] -cne "system" -or $nulFields[1] -cne "core.pager") { throw "Split-NulDelimitedText did not remove the trailing NUL in Windows PowerShell 5.1" }
+Write-Host "PASS: Split-NulDelimitedText removes trailing NUL in Windows PowerShell 5.1"
 try {
     $env:GIT_DIR = "C:\attacker\forged-git-dir"
     $environmentRejected = $false
