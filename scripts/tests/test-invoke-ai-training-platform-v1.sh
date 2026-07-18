@@ -70,7 +70,10 @@ pass 'canonical repository and four-mode boundary'
 # Guarded runtime identity must be injected by the launcher and bound into a
 # per-attempt model-facing schema; the static base schema remains unchanged.
 for token in \
-  'function New-CodexRuntimeEnvelope' 'run_id=$RunId' \
+  'function New-CodexRuntimeEnvelope' 'function ConvertTo-UtcRfc3339Z' 'ToUniversalTime()' \
+  "\"yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'\"" '$attemptStartedAtText' \
+  '-ExpectedAttemptStartedAt $attemptStartedAtText' 'attempt_started_at=$attemptStartedAtText' \
+  '2000-01-01T00:00:00.0000000Z' 'run_id=$RunId' \
   'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' \
   'runtime_output_schema_sha256' 'codex-run-manifest.v8' \
   '[string]$ReleaseId = ""' 'function Assert-GuardedReleaseId' \
@@ -86,6 +89,8 @@ for token in \
   assert_fixed "$token" "runtime identity/BOM host contract missing: $token"
 done
 assert_absent '.TrimStart([char]0xFEFF)' 'broad BOM trimming remains in the trusted validator host'
+assert_absent '$attemptStartedAt.ToString("o")' 'offset-form attempt timestamp serialization remains'
+assert_absent '.Replace("+00:00", "Z")' 'string replacement timestamp normalization remains'
 assert_absent 'while ($validatorBytes' 'broad validator-byte BOM stripping remains in the trusted validator host'
 pass 'guarded runtime identity, dynamic schema, and fail-closed BOM host contract'
 

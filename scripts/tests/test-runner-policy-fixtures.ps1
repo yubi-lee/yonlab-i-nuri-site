@@ -275,7 +275,7 @@ function Invoke-RuntimeIdentityRegression {
     $errors = $null
     $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
     if ($errors.Count -ne 0) { throw 'runner parse failed while loading runtime identity functions' }
-    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
+    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'ConvertTo-UtcRfc3339Z', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
         $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
         if ($null -eq $functionAst) { throw "missing runner function $name" }
         . ([scriptblock]::Create($functionAst.Extent.Text))
@@ -285,6 +285,11 @@ function Invoke-RuntimeIdentityRegression {
     $runId = '20260718T050335Z-45c3f0a9'
     $attemptId = '20260718T012345Z-0123456789ab'
     $started = '2026-07-18T05:03:35.0000000Z'
+    $offsetValue = [DateTimeOffset]::ParseExact('2026-07-18T23:39:34.6606660+09:00', "yyyy-MM-dd'T'HH:mm:ss.fffffffzzz", [Globalization.CultureInfo]::InvariantCulture)
+    $utcValue = [DateTimeOffset]::ParseExact('2026-07-18T14:39:34.6606660+00:00', "yyyy-MM-dd'T'HH:mm:ss.fffffffzzz", [Globalization.CultureInfo]::InvariantCulture)
+    $expectedUtcText = '2026-07-18T14:39:34.6606660Z'
+    if ((ConvertTo-UtcRfc3339Z $offsetValue) -cne $expectedUtcText -or (ConvertTo-UtcRfc3339Z $utcValue) -cne $expectedUtcText -or (ConvertTo-UtcRfc3339Z $offsetValue) -match '\+00:00$' -or (ConvertTo-UtcRfc3339Z $offsetValue) -notmatch 'Z$') { throw 'UTC formatter did not canonicalize offset timestamps to invariant Z RFC3339' }
+    Write-Host 'PASS: UTC-Z formatter canonicalizes offset timestamps'
     $head = '38a9a78b9089323633bf92ac152925ee0bfca15f'
     $releaseId = 'v0.1.0-rc5'
     $CanonicalRunnerHost = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"

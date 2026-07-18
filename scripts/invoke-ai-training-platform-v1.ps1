@@ -68,6 +68,13 @@ function Assert-GuardedReleaseId {
     }
     return $Value
 }
+function ConvertTo-UtcRfc3339Z {
+    param(
+        [Parameter(Mandatory = $true)]
+        [DateTimeOffset]$Value
+    )
+    return $Value.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", [Globalization.CultureInfo]::InvariantCulture)
+}
 function Get-ResumeCommand {
     param(
         [Parameter(Mandatory = $true)]
@@ -2646,13 +2653,13 @@ if ($DryRun) {
     $dryRunSyntheticRunId = '00000000T000000Z-00000000'
     $dryRunAttemptId = '00000000T000000Z-000000000000'
     $dryRunResumeCommand = Get-ResumeCommand -RunId $dryRunSyntheticRunId -ReleaseId $guardedReleaseId
-    $dryRunEnvelope = New-CodexRuntimeEnvelope $dryRunSyntheticRunId $dryRunAttemptId '2000-01-01T00:00:00.0000000+00:00' $preHead.Text $guardedReleaseId 'initial' $dryRunResumeCommand
+    $dryRunEnvelope = New-CodexRuntimeEnvelope $dryRunSyntheticRunId $dryRunAttemptId '2000-01-01T00:00:00.0000000Z' $preHead.Text $guardedReleaseId 'initial' $dryRunResumeCommand
     $dryRunBaseSchemaText = Read-Utf8NoBomText $outputSchemaPath $MaxJsonBytes 'trusted model-facing output schema'
     $dryRunSchemaText = New-RuntimeCodexOutputSchemaText $dryRunBaseSchemaText $dryRunSyntheticRunId $guardedReleaseId
     $dryRunSchema = ConvertFrom-StrictJsonText $dryRunSchemaText 'runtime output schema'
     $dryRunRunProperty = $dryRunSchema.properties.PSObject.Properties['run_id'].Value
     $dryRunReleaseProperty = $dryRunSchema.properties.PSObject.Properties['release_id'].Value
-    if (-not $dryRunEnvelope.Contains("run_id=$dryRunSyntheticRunId") -or -not $dryRunEnvelope.Contains("release_id=$guardedReleaseId") -or @($dryRunRunProperty.enum).Count -ne 1 -or [string]@($dryRunRunProperty.enum)[0] -cne $dryRunSyntheticRunId -or @($dryRunReleaseProperty.enum).Count -ne 1 -or [string]@($dryRunReleaseProperty.enum)[0] -cne $guardedReleaseId -or (String-Sha256 $dryRunSchemaText) -notmatch '^[0-9a-f]{64}$') {
+    if (-not $dryRunEnvelope.Contains("run_id=$dryRunSyntheticRunId") -or -not $dryRunEnvelope.Contains("release_id=$guardedReleaseId") -or -not $dryRunEnvelope.Contains("attempt_started_at=2000-01-01T00:00:00.0000000Z") -or $dryRunEnvelope.Contains("attempt_started_at=2000-01-01T00:00:00.0000000+00:00") -or @($dryRunRunProperty.enum).Count -ne 1 -or [string]@($dryRunRunProperty.enum)[0] -cne $dryRunSyntheticRunId -or @($dryRunReleaseProperty.enum).Count -ne 1 -or [string]@($dryRunReleaseProperty.enum)[0] -cne $guardedReleaseId -or (String-Sha256 $dryRunSchemaText) -notmatch '^[0-9a-f]{64}$') {
         Stop-Launcher "RUNTIME-IDENTITY" "dry-run runtime prompt/schema binding is not exact" 6
     }
     $dryRunExclusion = '.artifacts/codex/00000000T000000Z-00000000'
@@ -2677,6 +2684,11 @@ $runManifest = Join-Path $runDirectory "run-manifest.json"; $runManifestHash = J
 try { $runLock=[IO.File]::Open($runLockPath,[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None) } catch { Stop-Launcher "RUN-LOCK" "another process owns this exact run or the lock cannot be opened" 6 }
 $attemptId = "{0}-{1}" -f ([DateTime]::UtcNow.ToString("yyyyMMddTHHmmssZ")), ([Guid]::NewGuid().ToString("N").Substring(0, 12))
 $attemptStartedAt = [DateTimeOffset]::UtcNow
+$attemptStartedAtText = ConvertTo-UtcRfc3339Z $attemptStartedAt
+$attemptTimestampPattern = '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{7}Z$'
+if ($attemptStartedAtText -notmatch $attemptTimestampPattern) {
+    Stop-Launcher 'ATTEMPT-TIMESTAMP' 'attempt timestamp is not canonical UTC RFC3339 Z' 6
+}
 $finalResult = Join-Path $runDirectory "final-result-$attemptId.json"
 $progressLog = Join-Path $runDirectory "progress-$attemptId.jsonl"; $errorLog = Join-Path $runDirectory "errors-$attemptId.log"; $postEvidence = Join-Path $runDirectory "post-run-evidence-$attemptId.json"; $docEvidence = Join-Path $runDirectory "final-document-verification-$attemptId.json"
 foreach ($attemptPath in @($finalResult, $progressLog, $errorLog, $postEvidence, $docEvidence)) { if (Test-Path -LiteralPath $attemptPath) { Stop-Launcher "ATTEMPT-IDENTITY" "attempt artifact already exists: $attemptPath" } }
@@ -2720,7 +2732,7 @@ if (-not $isResume) {
 }
 
 $resumeCommand = Get-ResumeCommand -RunId $runId -ReleaseId $guardedReleaseId
-$runtimeEnvelope = New-CodexRuntimeEnvelope $runId $attemptId $attemptStartedAt.ToString("o") ([string]$manifest.repository.initial_head) $guardedReleaseId $(if ($isResume) { "resume" } else { "initial" }) $resumeCommand
+$runtimeEnvelope = New-CodexRuntimeEnvelope $runId $attemptId $attemptStartedAtText ([string]$manifest.repository.initial_head) $guardedReleaseId $(if ($isResume) { "resume" } else { "initial" }) $resumeCommand
 $basePromptText = $(if ($isResume) { "Resume the interrupted implementation using the exact plan and preserve verified work. Produce the required final JSON." } else { Get-Content -Raw -Encoding UTF8 -LiteralPath $promptPath })
 $promptText = "$runtimeEnvelope`n`n$basePromptText"
 $CodexArguments = $(if ($isResume) { $sessionId = $persistedSessionId; @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "resume", $sessionId, "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") } else { @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") })
@@ -2753,7 +2765,7 @@ if ($receiptSessionId -cne $sessionId) { Stop-Launcher "SESSION-ID" "early sessi
 $afterHead = SafeGit $gitCommand @("-C", $resolvedRoot, "rev-parse", "HEAD"); Native-OK $afterHead "POST-GIT" "post-run HEAD"
 $attemptWorktreeSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $activeRunRelative
 if ([string]$attemptWorktreeSnapshot.ignored_inventory_sha256 -cne [string]$initialWorktreeSnapshot.ignored_inventory_sha256) { Stop-Launcher "POST-IGNORED" "ignored files outside the isolated run evidence directory changed during Codex execution" 6 }
-$stateObject = [ordered]@{ run_id=$runId; release_id=$guardedReleaseId; attempt_id=$attemptId; attempt_started_at=$attemptStartedAt.ToString("o"); final_result_path=$finalResult; thread_id=$sessionId; head=$afterHead.Text; worktree_snapshot=$attemptWorktreeSnapshot; manifest_sha256=$digest; baseline_sha256=$baselineHash; prompt_sha256=$promptHash; output_schema_sha256=$outputSchemaHash; runtime_output_schema_sha256=$runtimeOutputSchemaSha256; strict_schema_sha256=$strictSchemaHash; final_document_inventory_sha256=$inventoryHash; trusted_validator_sha256=$trustedValidatorSha256; release_trust_sha256=$releaseTrustSha256; updated_at=[DateTime]::UtcNow.ToString("o") }; Write-AtomicUtf8Text $resumeStatePath ($stateObject | ConvertTo-Json -Depth 10) -Replace
+$stateObject = [ordered]@{ run_id=$runId; release_id=$guardedReleaseId; attempt_id=$attemptId; attempt_started_at=$attemptStartedAtText; final_result_path=$finalResult; thread_id=$sessionId; head=$afterHead.Text; worktree_snapshot=$attemptWorktreeSnapshot; manifest_sha256=$digest; baseline_sha256=$baselineHash; prompt_sha256=$promptHash; output_schema_sha256=$outputSchemaHash; runtime_output_schema_sha256=$runtimeOutputSchemaSha256; strict_schema_sha256=$strictSchemaHash; final_document_inventory_sha256=$inventoryHash; trusted_validator_sha256=$trustedValidatorSha256; release_trust_sha256=$releaseTrustSha256; updated_at=[DateTime]::UtcNow.ToString("o") }; Write-AtomicUtf8Text $resumeStatePath ($stateObject | ConvertTo-Json -Depth 10) -Replace
 $script:ResumeAvailable = $true
 if ($null -ne $parsedEvents.ParseError) { Stop-Launcher "PROGRESS-JSONL" ([string]$parsedEvents.ParseError) 3 }
 if ($codexExit -ne 0) { [Console]::Error.WriteLine("FAIL [CODEX-EXEC]: exit $codexExit"); [Console]::Error.WriteLine("RESUME: $resumeCommand"); exit $codexExit }
@@ -2762,7 +2774,7 @@ Assert-NoReparseComponent $finalResult "RESULT-PATH"
 [void](Assert-BoundedFile $finalResult $MaxJsonBytes "RESULT-SIZE" "Codex final JSON")
 $finalResultItem = Get-Item -LiteralPath $finalResult -Force
 if ($finalResultItem.Length -le 0 -or $finalResultItem.LastWriteTimeUtc -lt $attemptStartedAt.UtcDateTime) { Stop-Launcher "RESULT-FRESHNESS" "final result is empty or predates the current attempt" 3 }
-$validatorResult = Invoke-TrustedValidatorProcess -PowerShellCommand $trustedPowerShellCommand -TrustedValidatorBytes $trustedValidatorBytes -ResultPath $finalResult -ExpectedRunId $runId -ExpectedReleaseId $guardedReleaseId -ProjectRoot $resolvedRoot -ExpectedAttemptStartedAt $attemptStartedAt.ToString("o")
+$validatorResult = Invoke-TrustedValidatorProcess -PowerShellCommand $trustedPowerShellCommand -TrustedValidatorBytes $trustedValidatorBytes -ResultPath $finalResult -ExpectedRunId $runId -ExpectedReleaseId $guardedReleaseId -ProjectRoot $resolvedRoot -ExpectedAttemptStartedAt $attemptStartedAtText
 if ($validatorResult.ExitCode -ne 5) {
     if (-not [string]::IsNullOrWhiteSpace($validatorResult.Text)) { [Console]::Error.WriteLine($validatorResult.Text) }
     if ($validatorResult.ExitCode -eq 0) { Stop-Launcher "RESULT-STATE" "Implement validator must return the fail-closed NOT_READY exit 5" 6 }

@@ -22,7 +22,7 @@ function New-Unsigned {
     $gates = [ordered]@{}; foreach ($id in $gateIds) { $gates[$id] = New-Gate }
     $kpis = [ordered]@{}; foreach ($id in $kpiPolicy.Keys) { $kpis[$id] = New-Kpi $id }
     return [ordered]@{
-        schema_version="codex-final-result.v1";baseline_id="YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1";run_id="run-20260713-0001";release_id="v0.1.0-rc5";generated_at="2026-07-13T12:00:00Z";release_state="NOT_READY";candidate_phase="UNSIGNED_CANDIDATE / REVIEW PENDING";summary="verified"
+        schema_version="codex-final-result.v1";baseline_id="YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1";run_id="run-20260713-0001";release_id="v0.1.0-rc5";generated_at="2026-07-13T12:00:00.0000000Z";release_state="NOT_READY";candidate_phase="UNSIGNED_CANDIDATE / REVIEW PENDING";summary="verified"
         repository=[ordered]@{root="D:\Views\yonlab-inuri-site";remote="https://github.com/yubi-lee/yonlab-i-nuri-site.git";branch="feat/ai-training-platform-v1";baseline_commit=("a"*40);implementation_commit=("b"*40);implementation_tree=("c"*40);implementation_tree_sha256=("d"*64);release_snapshot_commit=("e"*40);worktree_clean=$true;push_status="PUSHED";pull_request_url="https://github.com/yubi-lee/yonlab-i-nuri-site/pull/1"}
         gates=$gates;kpi_results=$kpis;acceptance_data=@();blockers=@();generated_documents=@("docs/qa/evidence.json");commits=@([ordered]@{hash=("b"*40);subject="feat: complete"},[ordered]@{hash=("e"*40);subject="docs: create release snapshot"})
         verification_commands=@([ordered]@{command="verify";status="PASS";exit_code=0;finished_at="2026-07-13T12:00:00Z";acceptance_id=$null;evidence_path="docs/qa/evidence.json"})
@@ -32,7 +32,7 @@ function New-Unsigned {
 }
 function Copy-Object($Value) { return (($Value | ConvertTo-Json -Depth 30) | ConvertFrom-Json) }
 function Write-Fixture([string]$Name, $Value) { $path = Join-Path $temp "$Name.json"; [IO.File]::WriteAllText($path, ($Value | ConvertTo-Json -Depth 30), (New-Object Text.UTF8Encoding -ArgumentList $false)); return $path }
-function Invoke-Validator([string]$Path, [string]$ExpectedReleaseId = "v0.1.0-rc5") {
+function Invoke-Validator([string]$Path, [string]$ExpectedReleaseId = "v0.1.0-rc5", [string]$ExpectedAttemptStartedAt = "2026-07-13T12:00:00.0000000Z") {
     $previousErrorActionPreference = $ErrorActionPreference
     $output = @()
     $exitCode = $null
@@ -50,6 +50,7 @@ function Invoke-Validator([string]$Path, [string]$ExpectedReleaseId = "v0.1.0-rc
                 -ResultPath $Path `
                 -ExpectedRunId "run-20260713-0001" `
                 -ExpectedReleaseId $ExpectedReleaseId `
+                -ExpectedAttemptStartedAt $ExpectedAttemptStartedAt `
                 -ProjectRoot $temp `
                 2>&1 |
                 ForEach-Object {
@@ -90,6 +91,12 @@ try {
         throw "unsigned-review-pending expected exit 5 with retained stderr: $($unsignedResult.Output)"
     }
     Write-Host "PASS: validator unsigned-review-pending -> 5 with retained stderr"
+    $offsetAttemptResult = Invoke-Validator (Write-Fixture "reject-offset-attempt-start" $unsigned) "v0.1.0-rc5" "2026-07-13T12:00:00.0000000+00:00"
+    if ($offsetAttemptResult.ExitCode -ne 3 -or -not $offsetAttemptResult.Output.Contains("ExpectedAttemptStartedAt is not UTC RFC3339")) { throw "validator accepted non-Z guarded attempt timestamp: $($offsetAttemptResult.Output)" }
+    Write-Host "PASS: validator rejects non-Z guarded attempt timestamp -> 3"
+    $zAttemptResult = Invoke-Validator (Write-Fixture "accept-z-attempt-start" $unsigned) "v0.1.0-rc5" "2026-07-13T12:00:00.0000000Z"
+    if ($zAttemptResult.ExitCode -ne 5 -or -not $zAttemptResult.Output.Contains("REVIEW_PENDING")) { throw "validator rejected canonical UTC-Z guarded attempt timestamp: $($zAttemptResult.Output)" }
+    Write-Host "PASS: validator accepts canonical UTC-Z guarded attempt timestamp -> 5"
     $pending = Copy-Object $unsigned; $pending.release_state = "CODE_COMPLETE / ACCEPTANCE DATA PENDING"
     Expect "reject-codex-signed-candidate" $pending 3
     $accepted = Copy-Object $unsigned; $accepted.release_state = "ACCEPTED"
