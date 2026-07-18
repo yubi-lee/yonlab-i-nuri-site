@@ -59,15 +59,23 @@ function Invoke-EmptyWorktreeInventoryRegression([string]$Path) {
         $script:emptyInventoryCaptureCount += 1
         return [pscustomobject]@{ ExitCode = 0; Bytes = [byte[]]@(); ErrorText = "" }
     }
-    function Get-BoundedFileInventory([string]$Root, [string[]]$RelativePaths, [string]$Label) {
+    function Get-BoundedFileInventory {
+        param(
+            [string]$Root, [string[]]$RelativePaths, [string]$Label,
+            [long]$MaximumBytes = 268435456L, [int]$MaximumFiles = 20000, [switch]$Compact
+        )
         $paths = @($RelativePaths)
         if ($paths.Count -ne 0) { throw "empty Git inventory passed $($paths.Count) $Label path(s): $($paths -join '|')" }
         if (@($paths | Where-Object { [string]::IsNullOrEmpty([string]$_) }).Count -ne 0) { throw "empty Git inventory passed a blank $Label path" }
-        return [ordered]@{ total_bytes = 0; files = @() }
+        return [ordered]@{ total_bytes = 0; file_count = 0; inventory_sha256 = ("1" * 64); files = @() }
     }
+    function Test-VolatileIgnoredPath([string]$RelativePath) { return $false }
+    function String-Sha256([string]$Value) { return ("2" * 64) }
     function Bytes-Sha256([byte[]]$Value) { return ("0" * 64) }
     function Snapshot-Digest($Snapshot) { return ("1" * 64) }
     $script:MaxWorktreeSnapshotBytes = 1024
+    $script:MaxIgnoredWorktreeSnapshotBytes = 2147483648L
+    $script:MaxIgnoredWorktreeFiles = 200000
 
     foreach ($case in @(
         [pscustomobject]@{ name = "empty"; input = ""; expected = @() },
@@ -85,6 +93,69 @@ function Invoke-EmptyWorktreeInventoryRegression([string]$Path) {
     Write-Host "PASS: empty worktree inventories parse as zero paths"
 }
 
+function Invoke-CompactIgnoredInventoryRegression {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $tokens = $null
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
+    if ($errors.Count -ne 0) { throw 'runner parse failed while loading compact inventory functions' }
+    foreach ($name in @('Get-BoundedFileInventory', 'Get-WorktreeSnapshot', 'Split-NulDelimitedText', 'Snapshot-Digest', 'Assert-NoReparseComponent')) {
+        $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
+        if ($null -eq $functionAst) { throw "missing runner function $name" }
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+
+    function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$ExitCode`: $Message" }
+    $script:MaxWorktreeSnapshotBytes = 268435456L
+    $script:MaxWorktreeFileBytes = 67108864L
+    $script:MaxWorktreeFiles = 20000
+    $script:MaxIgnoredWorktreeSnapshotBytes = 2147483648L
+    $script:MaxIgnoredWorktreeFiles = 200000
+    $testRoot = Join-Path $root 'compact-inventory'
+    New-Item -ItemType Directory -Path (Join-Path $testRoot '.venv\Scripts'), (Join-Path $testRoot 'frontend\node_modules\.bin'), (Join-Path $testRoot 'other') -Force | Out-Null
+    [IO.File]::WriteAllBytes((Join-Path $testRoot '.venv\Scripts\python.exe'), [Text.Encoding]::UTF8.GetBytes('python'))
+    [IO.File]::WriteAllBytes((Join-Path $testRoot 'frontend\node_modules\.bin\vite.cmd'), [Text.Encoding]::UTF8.GetBytes('vite'))
+    [IO.File]::WriteAllBytes((Join-Path $testRoot 'other\vite.cmd'), [Text.Encoding]::UTF8.GetBytes('vite'))
+    $paths = @('.venv/Scripts/python.exe', 'frontend/node_modules/.bin/vite.cmd')
+
+    $compact = Get-BoundedFileInventory $testRoot $paths 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+    if ($compact.file_count -ne 2 -or $compact.total_bytes -ne 10 -or $compact.inventory_sha256 -notmatch '^[0-9a-f]{64}$' -or @($compact.files).Count -ne 0) { throw 'compact ignored inventory shape is invalid' }
+    $repeat = Get-BoundedFileInventory $testRoot $paths 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+    if ([string]$repeat.inventory_sha256 -cne [string]$compact.inventory_sha256) { throw 'compact ignored inventory is not deterministic' }
+
+    [IO.File]::WriteAllBytes((Join-Path $testRoot '.venv\Scripts\python.exe'), [Text.Encoding]::UTF8.GetBytes('python-mutated'))
+    $contentMutation = Get-BoundedFileInventory $testRoot $paths 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+    if ([string]$contentMutation.inventory_sha256 -ceq [string]$compact.inventory_sha256) { throw 'compact digest ignored content mutation' }
+
+    $pathMutation = Get-BoundedFileInventory $testRoot @('.venv/Scripts/python.exe', 'other/vite.cmd') 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+    if ([string]$pathMutation.inventory_sha256 -ceq [string]$contentMutation.inventory_sha256) { throw 'compact digest ignored path mutation' }
+
+    $standard = Get-BoundedFileInventory $testRoot @('.venv/Scripts/python.exe', 'frontend/node_modules/.bin/vite.cmd') 'ignored'
+    if (@($standard.files).Count -ne 2 -or $standard.total_bytes -ne 18) { throw 'standard inventory records were not preserved' }
+
+    foreach ($badPath in @('', '.venv/../bad', 'C:/rooted', 'bad:name')) {
+        try {
+            $null = Get-BoundedFileInventory $testRoot @($badPath) 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+            throw "unsafe path was accepted: $badPath"
+        } catch {
+            if ($_.Exception.Message -match 'unsafe path was accepted') { throw }
+        }
+    }
+    try {
+        $null = Get-BoundedFileInventory $testRoot $paths 'ignored' -MaximumBytes 1L -MaximumFiles 200000 -Compact
+        throw 'compact byte bound was not enforced'
+    } catch {
+        if ($_.Exception.Message -match 'compact byte bound was not enforced') { throw }
+    }
+    try {
+        $null = Get-BoundedFileInventory $testRoot @('.venv/Scripts/python.exe', '.VENV/Scripts/python.exe') 'ignored' -MaximumBytes 2147483648L -MaximumFiles 200000 -Compact
+        throw 'case-insensitive duplicate path was accepted'
+    } catch {
+        if ($_.Exception.Message -match 'case-insensitive duplicate path was accepted') { throw }
+    }
+    Write-Host 'PASS: compact ignored inventory shape, determinism, mutation, bounds, and path security'
+}
 function Invoke-ProtectedRootSnapshotRuntimeShapeRegression {
     param(
         [Parameter(Mandatory = $true)]
@@ -197,6 +268,7 @@ function Invoke-ProtectedRootSnapshotRuntimeShapeRegression {
     )
 }
 
+    Invoke-CompactIgnoredInventoryRegression $RunnerPath
 try {
     Invoke-ProtectedRootSnapshotRuntimeShapeRegression $RunnerPath
     Invoke-EmptyWorktreeInventoryRegression $RunnerPath

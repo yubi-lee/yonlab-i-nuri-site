@@ -45,6 +45,8 @@ $MaxCodexSeconds = 21600
 $MaxWorktreeSnapshotBytes = 268435456
 $MaxWorktreeFileBytes = 67108864
 $MaxWorktreeFiles = 20000
+$MaxIgnoredWorktreeSnapshotBytes = 2147483648L
+$MaxIgnoredWorktreeFiles = 200000
 $TrustedProtectionOwnerSids = @(
     "S-1-5-18", # LOCAL SYSTEM
     "S-1-5-32-544", # BUILTIN\Administrators
@@ -921,26 +923,60 @@ function Invoke-SafeGitCaptureBytes([string]$GitCommand, [string[]]$Arguments, [
     return Invoke-NativeCaptureBytes -Command $GitCommand -Arguments (Get-SafeGitArguments $Arguments) -MaximumBytes $MaximumBytes -IsolationMode "BestEffortReadOnly" -ReadOnlyProbe
 }
 
-function Get-BoundedFileInventory([string]$Root, [string[]]$RelativePaths, [string]$Label) {
+function Get-BoundedFileInventory {
+    param(
+        [Parameter(Mandatory = $true)][string]$Root,
+        [string[]]$RelativePaths,
+        [Parameter(Mandatory = $true)][string]$Label,
+        [long]$MaximumBytes = $MaxWorktreeSnapshotBytes,
+        [int]$MaximumFiles = $MaxWorktreeFiles,
+        [switch]$Compact
+    )
     $paths = @($RelativePaths)
     [Array]::Sort($paths, [StringComparer]::Ordinal)
-    if ($paths.Count -gt $MaxWorktreeFiles) { Stop-Launcher "WORKTREE-SNAPSHOT" "too many $Label files" 6 }
+    if ($paths.Count -gt $MaximumFiles) { Stop-Launcher "WORKTREE-SNAPSHOT" "too many $Label files" 6 }
     $seen = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
     $files = New-Object Collections.Generic.List[object]
     $total = 0L
-    foreach ($relativeValue in $paths) {
-        $relative = ([string]$relativeValue).Replace('\', '/').Normalize([Text.NormalizationForm]::FormC)
-        if ([string]::IsNullOrWhiteSpace($relative) -or -not $seen.Add($relative) -or $relative -match '[\x00:]|(^|[\\/])\.\.?(?:[\\/]|$)' -or [IO.Path]::IsPathRooted($relative)) { Stop-Launcher "WORKTREE-SNAPSHOT" "unsafe or duplicate $Label path: $relative" }
-        $full = [IO.Path]::GetFullPath((Join-Path $Root $relative.Replace('/', [IO.Path]::DirectorySeparatorChar)))
-        if (-not $full.StartsWith($Root + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $full -PathType Leaf)) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file changed during snapshot: $relative" }
-        Assert-NoReparseComponent $full "WORKTREE-SNAPSHOT"
-        $item = Get-Item -LiteralPath $full -Force
-        if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0 -or [long]$item.Length -gt $MaxWorktreeFileBytes) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file is a reparse point or exceeds $MaxWorktreeFileBytes bytes: $relative" 6 }
-        $total += [long]$item.Length
-        if ($total -gt $MaxWorktreeSnapshotBytes) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file inventory exceeds $MaxWorktreeSnapshotBytes bytes" 6 }
-        $files.Add([ordered]@{path=$relative;length=[long]$item.Length;sha256=(Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash.ToLowerInvariant()})
+    $utf8 = New-Object Text.UTF8Encoding -ArgumentList $false
+    $digest = [Security.Cryptography.SHA256]::Create()
+    try {
+        foreach ($relativeValue in $paths) {
+            $relative = ([string]$relativeValue).Replace('\', '/').Normalize([Text.NormalizationForm]::FormC)
+            if ([string]::IsNullOrWhiteSpace($relative) -or -not $seen.Add($relative) -or $relative -match '[\x00:]|(^|[\\/])\.\.?(?:[\\/]|$)' -or [IO.Path]::IsPathRooted($relative)) { Stop-Launcher "WORKTREE-SNAPSHOT" "unsafe or duplicate $Label path: $relative" }
+            $full = [IO.Path]::GetFullPath((Join-Path $Root $relative.Replace('/', [IO.Path]::DirectorySeparatorChar)))
+            if (-not $full.StartsWith($Root + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $full -PathType Leaf)) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file changed during snapshot: $relative" }
+            Assert-NoReparseComponent $full "WORKTREE-SNAPSHOT"
+            $item = Get-Item -LiteralPath $full -Force
+            if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0 -or [long]$item.Length -gt $MaxWorktreeFileBytes) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file is a reparse point or exceeds $MaxWorktreeFileBytes bytes: $relative" 6 }
+            $total += [long]$item.Length
+            if ($total -gt $MaximumBytes) { Stop-Launcher "WORKTREE-SNAPSHOT" "$Label file inventory exceeds $MaximumBytes bytes" 6 }
+            $record = [ordered]@{path=$relative;length=[long]$item.Length;sha256=(Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash.ToLowerInvariant()}
+            $recordBytes = $utf8.GetBytes(($record | ConvertTo-Json -Depth 4 -Compress) + "`n")
+            $null = $digest.TransformBlock($recordBytes, 0, $recordBytes.Length, $recordBytes, 0)
+            if (-not $Compact) { $files.Add($record) }
+        }
+        $null = $digest.TransformFinalBlock([byte[]]@(), 0, 0)
+        $inventoryHash = ([BitConverter]::ToString($digest.Hash)).Replace('-', '').ToLowerInvariant()
+    } finally {
+        $digest.Dispose()
     }
-    return [ordered]@{total_bytes=$total;files=$files.ToArray()}
+    $fileOutput = if ($Compact) { @() } else { @($files.ToArray()) }
+    return [ordered]@{total_bytes=$total;file_count=$paths.Count;inventory_sha256=$inventoryHash;files=$fileOutput}
+}
+
+function Test-VolatileIgnoredPath([string]$RelativePath) {
+    $normalized = ([string]$RelativePath).Replace('\', '/')
+    switch -Regex ($normalized) {
+        '^(?:\.pytest_cache|\.ruff_cache)/' { return $true }
+        '(^|/)__pycache__/' { return $true }
+        '\.pyc$' { return $true }
+        '^frontend/(?:dist|playwright-report|test-results)/' { return $true }
+        '^frontend/tsconfig\.tsbuildinfo$' { return $true }
+        '^backend/[^/]+\.egg-info/' { return $true }
+        '^docs/qa/screenshots/[^/]+\.png$' { return $true }
+        default { return $false }
+    }
 }
 
 function Get-WorktreeSnapshot([string]$GitCommand, [string]$Root, [string]$ExcludedRunRelative) {
@@ -966,7 +1002,13 @@ function Get-WorktreeSnapshot([string]$GitCommand, [string]$Root, [string]$Exclu
         Split-NulDelimitedText $ignoredText
     )
     $untrackedInventory = Get-BoundedFileInventory $Root $untrackedPaths "untracked"
-    $ignoredInventory = Get-BoundedFileInventory $Root $ignoredPaths "ignored"
+    $volatileIgnoredPaths = @($ignoredPaths | Where-Object { Test-VolatileIgnoredPath $_ })
+    $protectedIgnoredPaths = @($ignoredPaths | Where-Object { -not (Test-VolatileIgnoredPath $_) })
+    $ignoredInventory = Get-BoundedFileInventory $Root $protectedIgnoredPaths "protected ignored" -MaximumBytes $MaxIgnoredWorktreeSnapshotBytes -MaximumFiles $MaxIgnoredWorktreeFiles -Compact
+    $volatileInventory = Get-BoundedFileInventory $Root $volatileIgnoredPaths "volatile ignored" -MaximumBytes $MaxIgnoredWorktreeSnapshotBytes -MaximumFiles $MaxIgnoredWorktreeFiles -Compact
+    $volatileIgnoredPaths = @($volatileIgnoredPaths)
+    [Array]::Sort($volatileIgnoredPaths, [StringComparer]::Ordinal)
+    $volatilePathDigest = String-Sha256 ($volatileIgnoredPaths -join "`0")
     return [ordered]@{
         status_sha256 = Bytes-Sha256 $statusBefore.Bytes
         tracked_diff_sha256 = Bytes-Sha256 $trackedDiff.Bytes
@@ -974,8 +1016,15 @@ function Get-WorktreeSnapshot([string]$GitCommand, [string]$Root, [string]$Exclu
         index_state_sha256 = Bytes-Sha256 $indexState.Bytes
         untracked_path_list_sha256 = Bytes-Sha256 $untrackedResult.Bytes
         ignored_path_list_sha256 = Bytes-Sha256 $ignoredResult.Bytes
-        untracked_inventory_sha256 = Snapshot-Digest $untrackedInventory
-        ignored_inventory_sha256 = Snapshot-Digest $ignoredInventory
+        untracked_inventory_sha256 = $untrackedInventory.inventory_sha256
+        ignored_inventory_sha256 = $ignoredInventory.inventory_sha256
+        ignored_file_count = [int]$ignoredInventory.file_count + [int]$volatileInventory.file_count
+        ignored_total_bytes = [long]$ignoredInventory.total_bytes + [long]$volatileInventory.total_bytes
+        protected_ignored_file_count = [int]$ignoredInventory.file_count
+        protected_ignored_total_bytes = [long]$ignoredInventory.total_bytes
+        protected_ignored_inventory_sha256 = [string]$ignoredInventory.inventory_sha256
+        volatile_ignored_file_count = [int]$volatileInventory.file_count
+        volatile_ignored_path_list_sha256 = $volatilePathDigest
         untracked = @($untrackedInventory.files)
         ignored = @($ignoredInventory.files)
     }
@@ -2420,7 +2469,15 @@ if ($Mode -ceq "VerifyCandidate" -or $Mode -ceq "VerifyAccepted") {
     Invoke-ReadOnlyReleaseVerification $Mode $AttestationBundlePath $resolvedRoot $resolvedAttestationRoot $resolvedTrustPath $protectedTrustRootsSnapshot $gitCommand $ghCommand $gpgCommand $trustedPowerShellCommand $trustedValidatorBytes $trustedWorkflowByCheck $allowedGithubActors $trustedFingerprints $trustedToolInventory $releaseTrust.trusted_tools $gitControlPlaneSnapshot $gitReferenceSnapshot $baseline $baselineHash $trustedInventory $trustedRequirementsRegistry
 }
 
-if ($DryRun) { Write-Host "DRY-RUN: all preflight checks passed; Codex not invoked."; exit 0 }
+if ($DryRun) {
+    $dryRunExclusion = '.artifacts/codex/00000000T000000Z-00000000'
+    $dryRunSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $dryRunExclusion
+    if ([string]$dryRunSnapshot.protected_ignored_inventory_sha256 -notmatch '^[0-9a-f]{64}$') { Stop-Launcher "WORKTREE-SNAPSHOT" "protected ignored inventory digest is invalid" 6 }
+    Write-Host "PROTECTED_IGNORED_INVENTORY_SHA256: $($dryRunSnapshot.protected_ignored_inventory_sha256)"
+    Write-Pass "PRE-WORKTREE-SNAPSHOT protected ignored dependency and workspace inventory"
+    Write-Host "DRY-RUN: all preflight checks passed; Codex not invoked."
+    exit 0
+}
 
 $isResume = -not [string]::IsNullOrWhiteSpace($ResumeRun)
 if ($isResume -and $ResumeRun -notmatch '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { Stop-Launcher "RESUME-ID" "invalid run id" }

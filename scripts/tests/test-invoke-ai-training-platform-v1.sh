@@ -184,6 +184,38 @@ post_git_line="$(grep -nF '$afterHead = SafeGit ' "$RUNNER" | awk -F: -v start="
   || fail 'tool bytes and Git control plane are not checked immediately after Codex and before post-run Git'
 pass 'bounded process, protected executable working directory, exclusive resume, and immediate post-Codex trust recheck'
 
+# Worktree snapshots keep the standard untracked limits while compacting
+# dependency-sized protected ignored inventories and separating only the
+# explicitly generated volatile paths.
+for token in \
+  '$MaxWorktreeSnapshotBytes = 268435456' '$MaxWorktreeFiles = 20000' \
+  '$MaxWorktreeFileBytes = 67108864' '$MaxIgnoredWorktreeSnapshotBytes = 2147483648L' \
+  '$MaxIgnoredWorktreeFiles = 200000' 'function Get-BoundedFileInventory' \
+  '-MaximumBytes $MaxIgnoredWorktreeSnapshotBytes' '-MaximumFiles $MaxIgnoredWorktreeFiles' '-Compact' \
+  'function Test-VolatileIgnoredPath' 'protected_ignored_inventory_sha256' \
+  'volatile_ignored_path_list_sha256' 'ignored_file_count' 'ignored_total_bytes' \
+  'Assert-NoReparseComponent $full "WORKTREE-SNAPSHOT"'; do
+  assert_fixed "$token" "compact worktree snapshot contract missing: $token"
+done
+snapshot_line="$(grep -nF '$dryRunSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $dryRunExclusion' "$RUNNER" | cut -d: -f1)"
+marker_line="$(grep -nF 'DRY-RUN: all preflight checks passed; Codex not invoked.' "$RUNNER" | cut -d: -f1)"
+[[ -n "$snapshot_line" && -n "$marker_line" && "$snapshot_line" -lt "$marker_line" ]] || fail 'Dry-run does not execute the real worktree snapshot gate before its marker'
+"$PYTHON_BIN" - "$RUNNER" <<'PY'
+import re, sys
+text=open(sys.argv[1], encoding='utf-8-sig').read()
+m=re.search(r'function Test-VolatileIgnoredPath\(\[string\]\$RelativePath\).*?\n}\n\nfunction Get-WorktreeSnapshot', text, re.S)
+if not m:
+    raise SystemExit('FAIL: exact volatile ignored-path allowlist is missing')
+block=m.group(0)
+for required in ('.pytest_cache', '.ruff_cache', '__pycache__', '.pyc$', 'frontend/(?:dist|playwright-report|test-results)', 'frontend/tsconfig\\.tsbuildinfo', 'backend/[^/]+\\.egg-info', 'docs/qa/screenshots/[^/]+\\.png'):
+    if required not in block:
+        raise SystemExit(f'FAIL: volatile allowlist entry missing: {required}')
+for forbidden in ('.venv', 'frontend/node_modules', '.env', 'storage', '.artifacts', 'zip'):
+    if forbidden in block:
+        raise SystemExit(f'FAIL: forbidden ignored path is volatile: {forbidden}')
+print('PASS: exact volatile allowlist protects dependency/private ignored paths')
+PY
+pass 'bounded compact protected ignored snapshot and real Dry-run gate'
 # Constructible S -> R release identity; R contains only the six final roots.
 for token in \
   'Get-ReleaseCandidateIdentity' 'R must have exactly one parent S' \
