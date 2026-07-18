@@ -2,6 +2,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$ResultPath,
     [string]$ExpectedRunId = "",
+    [string]$ExpectedReleaseId = "",
     [string]$ProjectRoot = "D:\Views\yonlab-inuri-site",
     [string]$ExpectedAttemptStartedAt = ""
 )
@@ -137,6 +138,7 @@ if ([string]$result.baseline_id -cne "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1") 
 if ([string]$result.run_id -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]{7,95}$') { Invalid "run_id is invalid" }
 if (-not [string]::IsNullOrWhiteSpace($ExpectedRunId) -and [string]$result.run_id -cne $ExpectedRunId) { Invalid "run_id differs from active guarded run" }
 if ([string]$result.release_id -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+-(rc|RC)[0-9]+$') { Invalid "release_id must be a safe RC SemVer identifier" }
+if (-not [string]::IsNullOrWhiteSpace($ExpectedReleaseId) -and [string]$result.release_id -cne $ExpectedReleaseId) { Invalid "release_id differs from active guarded release" }
 if (-not (Test-UtcTimestamp ([string]$result.generated_at))) { Invalid "generated_at must be a real UTC RFC3339 timestamp" }
 if (-not [string]::IsNullOrWhiteSpace($ExpectedAttemptStartedAt)) {
     if (-not (Test-UtcTimestamp $ExpectedAttemptStartedAt)) { Invalid "ExpectedAttemptStartedAt is not UTC RFC3339" }

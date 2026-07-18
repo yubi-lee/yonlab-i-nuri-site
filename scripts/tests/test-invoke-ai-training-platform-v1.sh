@@ -72,7 +72,10 @@ pass 'canonical repository and four-mode boundary'
 for token in \
   'function New-CodexRuntimeEnvelope' 'run_id=$RunId' \
   'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' \
-  'runtime_output_schema_sha256' 'codex-run-manifest.v7' \
+  'runtime_output_schema_sha256' 'codex-run-manifest.v8' \
+  '[string]$ReleaseId = ""' 'function Assert-GuardedReleaseId' \
+  'release_id=$ReleaseId' 'release_id MUST equal exactly' \
+  'properties.release_id' 'manifest release_id' 'state release_id' 'ExpectedReleaseId' \
   '--output-schema' '$runtimeOutputSchema' \
   'PRE-RUNTIME-IDENTITY exact guarded run prompt and schema binding' \
   'Assert-RuntimeCodexOutputSchemaBinding' \
@@ -99,7 +102,7 @@ assert_absent '$expectedPrefix=@(' 'legacy fixed argv prefix remains'
 assert_fixed 'if ($Mode -ceq "PolicySelfTest") { Invoke-PolicySelfTest $PolicyFixture; exit 0 }' 'Linux-only policy fixture exception is not explicit'
 assert_fixed '$CanonicalRunnerHost = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"' 'resume guidance does not pin the canonical production host'
 assert_fixed '$CanonicalRunnerPath = "D:\Views\yonlab-inuri-site\scripts\invoke-ai-training-platform-v1.ps1"' 'resume guidance does not pin the canonical runner path'
-assert_fixed "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File '\$CanonicalRunnerPath' -Mode Implement -ResumeRun" 'resume guidance does not preserve the exact production host prefix and Implement mode'
+assert_fixed "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File '\$CanonicalRunnerPath' -Mode Implement -ReleaseId '\$ReleaseId' -ResumeRun" 'resume guidance does not preserve the exact production host prefix, release ID, and Implement mode'
 assert_absent "RESUME: powershell -ExecutionPolicy" 'legacy relative resume command remains'
 host_guard_line="$(grep -nF 'Assert-CanonicalProductionHostInvocation $Mode $PSCommandPath' "$RUNNER" | cut -d: -f1)"
 root_guard_line="$(grep -nF '$literalProjectRoot = $ProjectRoot.TrimEnd' "$RUNNER" | cut -d: -f1)"
@@ -187,7 +190,7 @@ pass 'no-follow BFS protects Git, GPG, and artifact subtrees'
 for token in \
   '$MaxNativeCaptureBytes' '$MaxJsonlBytes' '$MaxJsonlLineBytes' \
   '$MaxNativeSeconds' '$MaxCodexSeconds' 'New-BoundedCaptureStream' \
-  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v7' 'run.lock' \
+  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v8' 'run.lock' \
   'Assert-ResumeBindingObservation' 'execution_boundary_inventory_sha256' \
   'Get-TrustedExecutableWorkingDirectory' '$psi.WorkingDirectory = Get-TrustedExecutableWorkingDirectory'; do
   assert_fixed "$token" "bounded/resume contract missing: $token"

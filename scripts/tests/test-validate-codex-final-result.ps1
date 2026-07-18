@@ -22,7 +22,7 @@ function New-Unsigned {
     $gates = [ordered]@{}; foreach ($id in $gateIds) { $gates[$id] = New-Gate }
     $kpis = [ordered]@{}; foreach ($id in $kpiPolicy.Keys) { $kpis[$id] = New-Kpi $id }
     return [ordered]@{
-        schema_version="codex-final-result.v1";baseline_id="YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1";run_id="run-20260713-0001";release_id="v1.0.0-rc1";generated_at="2026-07-13T12:00:00Z";release_state="NOT_READY";candidate_phase="UNSIGNED_CANDIDATE / REVIEW PENDING";summary="verified"
+        schema_version="codex-final-result.v1";baseline_id="YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1";run_id="run-20260713-0001";release_id="v0.1.0-rc5";generated_at="2026-07-13T12:00:00Z";release_state="NOT_READY";candidate_phase="UNSIGNED_CANDIDATE / REVIEW PENDING";summary="verified"
         repository=[ordered]@{root="D:\Views\yonlab-inuri-site";remote="https://github.com/yubi-lee/yonlab-i-nuri-site.git";branch="feat/ai-training-platform-v1";baseline_commit=("a"*40);implementation_commit=("b"*40);implementation_tree=("c"*40);implementation_tree_sha256=("d"*64);release_snapshot_commit=("e"*40);worktree_clean=$true;push_status="PUSHED";pull_request_url="https://github.com/yubi-lee/yonlab-i-nuri-site/pull/1"}
         gates=$gates;kpi_results=$kpis;acceptance_data=@();blockers=@();generated_documents=@("docs/qa/evidence.json");commits=@([ordered]@{hash=("b"*40);subject="feat: complete"},[ordered]@{hash=("e"*40);subject="docs: create release snapshot"})
         verification_commands=@([ordered]@{command="verify";status="PASS";exit_code=0;finished_at="2026-07-13T12:00:00Z";acceptance_id=$null;evidence_path="docs/qa/evidence.json"})
@@ -32,7 +32,7 @@ function New-Unsigned {
 }
 function Copy-Object($Value) { return (($Value | ConvertTo-Json -Depth 30) | ConvertFrom-Json) }
 function Write-Fixture([string]$Name, $Value) { $path = Join-Path $temp "$Name.json"; [IO.File]::WriteAllText($path, ($Value | ConvertTo-Json -Depth 30), (New-Object Text.UTF8Encoding -ArgumentList $false)); return $path }
-function Invoke-Validator([string]$Path) {
+function Invoke-Validator([string]$Path, [string]$ExpectedReleaseId = "v0.1.0-rc5") {
     $previousErrorActionPreference = $ErrorActionPreference
     $output = @()
     $exitCode = $null
@@ -49,6 +49,7 @@ function Invoke-Validator([string]$Path) {
                 -File $validator `
                 -ResultPath $Path `
                 -ExpectedRunId "run-20260713-0001" `
+                -ExpectedReleaseId $ExpectedReleaseId `
                 -ProjectRoot $temp `
                 2>&1 |
                 ForEach-Object {
@@ -98,6 +99,7 @@ try {
 
     $cases = [ordered]@{}
     $item=Copy-Object $unsigned; $item.release_id="../../escape"; $cases["unsafe-release"]=$item
+    $item=Copy-Object $unsigned; $item.release_id="v0.1.0-rc4"; $cases["wrong-guarded-release"]=$item
     $item=Copy-Object $unsigned; $item.run_id="other-run"; $cases["wrong-run"]=$item
     $item=Copy-Object $unsigned; $item.repository.root="C:\other"; $cases["wrong-root"]=$item
     $item=Copy-Object $unsigned; $item.repository.remote="https://github.com/attacker/repo.git"; $cases["wrong-remote"]=$item
