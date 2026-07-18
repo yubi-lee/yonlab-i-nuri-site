@@ -67,6 +67,101 @@ function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) {
     }
     exit $ExitCode
 }
+
+function New-CodexRuntimeEnvelope {
+    param(
+        [Parameter(Mandatory = $true)][string]$RunId,
+        [Parameter(Mandatory = $true)][string]$AttemptId,
+        [Parameter(Mandatory = $true)][string]$AttemptStartedAt,
+        [Parameter(Mandatory = $true)][string]$InitialHead,
+        [Parameter(Mandatory = $true)][string]$ModeName,
+        [Parameter(Mandatory = $true)][string]$ResumeCommand
+    )
+    if ($RunId -notmatch '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') {
+        Stop-Launcher 'RUNTIME-IDENTITY' 'invalid guarded runtime run ID' 6
+    }
+    return @"
+[GUARDED RUNTIME IDENTITY — LAUNCHER SUPPLIED]
+
+The following values are authoritative and must not be guessed, renamed,
+reformatted, or replaced:
+
+run_id=$RunId
+attempt_id=$AttemptId
+attempt_started_at=$AttemptStartedAt
+initial_head=$InitialHead
+mode=$ModeName
+resume_command=$ResumeCommand
+
+Final JSON requirements:
+
+- run_id MUST equal exactly $RunId.
+- Do not generate a value beginning with run-.
+- Do not derive run_id from date, branch, task, candidate phase, or release ID.
+- repository.baseline_commit MUST equal exactly $InitialHead.
+- When reporting a blocked result, preserve the same exact run_id.
+- When resuming, preserve the original run_id and thread identity.
+- If these values cannot be honored, produce no substitute identity.
+
+[END GUARDED RUNTIME IDENTITY]
+"@
+}
+
+function New-RuntimeCodexOutputSchemaText {
+    param(
+        [Parameter(Mandatory = $true)][string]$TrustedSchemaText,
+        [Parameter(Mandatory = $true)][string]$RunId
+    )
+    if ($RunId -notmatch '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') {
+        Stop-Launcher 'RUNTIME-SCHEMA' 'invalid guarded run ID for runtime schema' 6
+    }
+    $schema = ConvertFrom-StrictJsonText $TrustedSchemaText 'trusted model-facing output schema'
+    if ($null -eq $schema.properties -or $null -eq $schema.properties.PSObject.Properties['run_id']) {
+        Stop-Launcher 'RUNTIME-SCHEMA' 'trusted schema has no run_id property' 6
+    }
+    $runProperty = $schema.properties.PSObject.Properties['run_id'].Value
+    if ([string]$runProperty.type -cne 'string') {
+        Stop-Launcher 'RUNTIME-SCHEMA' 'trusted schema run_id is not a string' 6
+    }
+    if ($null -ne $runProperty.PSObject.Properties['enum']) {
+        Stop-Launcher 'RUNTIME-SCHEMA' 'trusted base schema unexpectedly fixes run_id' 6
+    }
+    $runProperty | Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@($RunId))
+    return ($schema | ConvertTo-Json -Depth 100 -Compress)
+}
+
+function Assert-RuntimeCodexOutputSchemaBinding {
+    param(
+        [Parameter(Mandatory = $true)][string]$SchemaPath,
+        [Parameter(Mandatory = $true)][string]$RunDirectory,
+        [Parameter(Mandatory = $true)][string]$RunId,
+        [Parameter(Mandatory = $true)][string]$AttemptId,
+        [Parameter(Mandatory = $true)][string]$ExpectedSha256
+    )
+    $expectedPath = [IO.Path]::GetFullPath((Join-Path $RunDirectory "runtime-output-schema-$AttemptId.json"))
+    $actualPath = [IO.Path]::GetFullPath($SchemaPath)
+    if ($actualPath -cne $expectedPath -or -not $actualPath.StartsWith([IO.Path]::GetFullPath($RunDirectory) + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+        Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema path is not the exact active-attempt path" 6
+    }
+    Assert-NoReparseComponent $actualPath "RUNTIME-SCHEMA"
+    [void](Assert-BoundedFile $actualPath $MaxJsonBytes "RUNTIME-SCHEMA-SIZE" "runtime output schema")
+    $actualSha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $actualPath).Hash.ToLowerInvariant()
+    if ($actualSha256 -cne $ExpectedSha256) { Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema hash changed" 6 }
+    $schemaText = Read-Utf8NoBomText $actualPath $MaxJsonBytes "runtime output schema"
+    $schema = ConvertFrom-StrictJsonText $schemaText "runtime output schema"
+    if ($null -eq $schema.properties -or $null -eq $schema.properties.PSObject.Properties['run_id']) {
+        Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema has no run_id property" 6
+    }
+    $runProperty = $schema.properties.PSObject.Properties['run_id'].Value
+    if ([string]$runProperty.type -cne 'string' -or $null -eq $runProperty.PSObject.Properties['enum']) {
+        Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema run_id binding is incomplete" 6
+    }
+    $enumValues = @($runProperty.enum)
+    if ($enumValues.Count -ne 1 -or [string]$enumValues[0] -cne $RunId) {
+        Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema run_id enum is not the exact active guarded run" 6
+    }
+    return $schema
+}
 function Write-Pass([string]$Message) { Write-Host "PASS: $Message" }
 function Canonical([string]$Path) { return [IO.Path]::GetFullPath($Path).TrimEnd([char[]]@('\','/')) }
 function Get-WindowsPowerShellModulePathPolicy([string]$Edition, [string]$PsHomePath, [string]$WindowsDirectory, [string[]]$CurrentEntries) {
@@ -1059,13 +1154,28 @@ function Invoke-TrustedValidatorProcess([string]$PowerShellCommand, [byte[]]$Tru
     # pre-Codex validator bytes cross an anonymous stdin pipe to avoid the
     # Windows command-line limit and any post-Codex target-file execution.
     $wrapper = @'
-$payload = [Console]::In.ReadToEnd() | ConvertFrom-Json
-$utf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
-$validatorText = $utf8.GetString([Convert]::FromBase64String([string]$payload.validator_base64))
-$parameters = $payload.parameters
-$validator = [scriptblock]::Create($validatorText)
-& $validator -ResultPath $parameters.ResultPath -ExpectedRunId $parameters.ExpectedRunId -ProjectRoot $parameters.ProjectRoot -ExpectedAttemptStartedAt $parameters.ExpectedAttemptStartedAt
-exit $LASTEXITCODE
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+try {
+    $payload = [Console]::In.ReadToEnd() | ConvertFrom-Json
+    $validatorBytes = [Convert]::FromBase64String([string]$payload.validator_base64)
+    if ($validatorBytes.Length -ge 3 -and $validatorBytes[0] -eq 0xEF -and $validatorBytes[1] -eq 0xBB -and $validatorBytes[2] -eq 0xBF) {
+        $normalizedBytes = New-Object byte[] ($validatorBytes.Length - 3)
+        if ($normalizedBytes.Length -gt 0) { [Buffer]::BlockCopy($validatorBytes, 3, $normalizedBytes, 0, $normalizedBytes.Length) }
+    } else {
+        $normalizedBytes = $validatorBytes
+    }
+    $strictUtf8 = New-Object Text.UTF8Encoding -ArgumentList $false, $true
+    $validatorText = $strictUtf8.GetString($normalizedBytes)
+    $validator = [scriptblock]::Create($validatorText)
+    $parameters = $payload.parameters
+    & $validator -ResultPath $parameters.ResultPath -ExpectedRunId $parameters.ExpectedRunId -ProjectRoot $parameters.ProjectRoot -ExpectedAttemptStartedAt $parameters.ExpectedAttemptStartedAt
+    throw 'trusted validator returned without explicit process exit'
+} catch {
+    $hostMessage = 'ParserError: ' + [string]$_.Exception.Message
+    [Console]::Error.WriteLine('FAIL [TRUSTED-VALIDATOR-HOST]: ' + $hostMessage)
+    exit 6
+}
 '@
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($wrapper))
     $psi = New-Object Diagnostics.ProcessStartInfo
@@ -2470,11 +2580,23 @@ if ($Mode -ceq "VerifyCandidate" -or $Mode -ceq "VerifyAccepted") {
 }
 
 if ($DryRun) {
+    $dryRunSyntheticRunId = '00000000T000000Z-00000000'
+    $dryRunAttemptId = '00000000T000000Z-000000000000'
+    $dryRunResumeCommand = Get-ResumeCommand -RunId $dryRunSyntheticRunId
+    $dryRunEnvelope = New-CodexRuntimeEnvelope $dryRunSyntheticRunId $dryRunAttemptId '2000-01-01T00:00:00.0000000+00:00' $preHead.Text 'initial' $dryRunResumeCommand
+    $dryRunBaseSchemaText = Read-Utf8NoBomText $outputSchemaPath $MaxJsonBytes 'trusted model-facing output schema'
+    $dryRunSchemaText = New-RuntimeCodexOutputSchemaText $dryRunBaseSchemaText $dryRunSyntheticRunId
+    $dryRunSchema = ConvertFrom-StrictJsonText $dryRunSchemaText 'runtime output schema'
+    $dryRunRunProperty = $dryRunSchema.properties.PSObject.Properties['run_id'].Value
+    if (-not $dryRunEnvelope.Contains("run_id=$dryRunSyntheticRunId") -or @($dryRunRunProperty.enum).Count -ne 1 -or [string]@($dryRunRunProperty.enum)[0] -cne $dryRunSyntheticRunId -or (String-Sha256 $dryRunSchemaText) -notmatch '^[0-9a-f]{64}$') {
+        Stop-Launcher "RUNTIME-IDENTITY" "dry-run runtime prompt/schema binding is not exact" 6
+    }
     $dryRunExclusion = '.artifacts/codex/00000000T000000Z-00000000'
     $dryRunSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $dryRunExclusion
     if ([string]$dryRunSnapshot.protected_ignored_inventory_sha256 -notmatch '^[0-9a-f]{64}$') { Stop-Launcher "WORKTREE-SNAPSHOT" "protected ignored inventory digest is invalid" 6 }
     Write-Host "PROTECTED_IGNORED_INVENTORY_SHA256: $($dryRunSnapshot.protected_ignored_inventory_sha256)"
     Write-Pass "PRE-WORKTREE-SNAPSHOT protected ignored dependency and workspace inventory"
+    Write-Pass "PRE-RUNTIME-IDENTITY exact guarded run prompt and schema binding"
     Write-Host "DRY-RUN: all preflight checks passed; Codex not invoked."
     exit 0
 }
@@ -2493,13 +2615,20 @@ $attemptStartedAt = [DateTimeOffset]::UtcNow
 $finalResult = Join-Path $runDirectory "final-result-$attemptId.json"
 $progressLog = Join-Path $runDirectory "progress-$attemptId.jsonl"; $errorLog = Join-Path $runDirectory "errors-$attemptId.log"; $postEvidence = Join-Path $runDirectory "post-run-evidence-$attemptId.json"; $docEvidence = Join-Path $runDirectory "final-document-verification-$attemptId.json"
 foreach ($attemptPath in @($finalResult, $progressLog, $errorLog, $postEvidence, $docEvidence)) { if (Test-Path -LiteralPath $attemptPath) { Stop-Launcher "ATTEMPT-IDENTITY" "attempt artifact already exists: $attemptPath" } }
+$runtimeOutputSchema = Join-Path $runDirectory "runtime-output-schema-$attemptId.json"
+if (Test-Path -LiteralPath $runtimeOutputSchema) { Stop-Launcher "ATTEMPT-IDENTITY" "runtime output schema already exists: $runtimeOutputSchema" }
 
 $promptHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $promptPath).Hash.ToLowerInvariant(); $outputSchemaHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $outputSchemaPath).Hash.ToLowerInvariant(); $strictSchemaHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $strictSchemaPath).Hash.ToLowerInvariant(); $contractHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $contractPath).Hash.ToLowerInvariant(); $inventoryHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $inventoryPath).Hash.ToLowerInvariant()
 $head = SafeGit $gitCommand @("-C", $resolvedRoot, "rev-parse", "HEAD"); Native-OK $head "PRE-GIT" "HEAD"
 $activeRunRelative = "$ArtifactRelative/$runId"
+$runtimeBaseSchemaText = Read-Utf8NoBomText $outputSchemaPath $MaxJsonBytes "trusted model-facing output schema"
+$runtimeSchemaText = New-RuntimeCodexOutputSchemaText $runtimeBaseSchemaText $runId
+Write-AtomicUtf8Text $runtimeOutputSchema $runtimeSchemaText
+$runtimeOutputSchemaSha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $runtimeOutputSchema).Hash.ToLowerInvariant()
+Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $attemptId $runtimeOutputSchemaSha256 | Out-Null
 $initialWorktreeSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $activeRunRelative
 if (-not $isResume) {
-    $manifest = [ordered]@{ manifest_version="codex-run-manifest.v6"; baseline_id=$baseline.baseline_id; run_id=$runId; mode="Implement"; created_at=[DateTime]::UtcNow.ToString("o"); repository=[ordered]@{root=$resolvedRoot;branch=$ExpectedBranch;remote=$ExpectedRemote;initial_head=$head.Text;worktree_snapshot=$initialWorktreeSnapshot;git_control_plane=$gitControlPlaneSnapshot}; inputs=[ordered]@{baseline_sha256=$baselineHash;prompt_sha256=$promptHash;output_schema_sha256=$outputSchemaHash;strict_schema_sha256=$strictSchemaHash;deliverable_contract_sha256=$contractHash;final_document_inventory_sha256=$inventoryHash;trusted_validator_sha256=$trustedValidatorSha256;trusted_input_sha256=$trustedInputHashes;release_trust_sha256=$releaseTrustSha256}; tools=[ordered]@{trusted_executable_inventory=$trustedToolInventory;codex_version=$codexVersion.Text;codex_help_contract_sha256=$codexHelpDigest;docker_version=$dockerServer.Text;compose_version=$composeVersion.Text;git_credential_helper_sha256=(String-Sha256 $script:GitHubCredentialHelper);gpg_home=$resolvedGpgHome;gpg_version=($gpgVersion.Text -split "`n")[0]}; policy=[ordered]@{sandbox="workspace-write";approval="on-request";json_events=$true;ignore_user_config=$true;ignore_rules=$true;strict_config=$true;pinned_github_credential_helper=$true} }
+    $manifest = [ordered]@{ manifest_version="codex-run-manifest.v7"; baseline_id=$baseline.baseline_id; run_id=$runId; mode="Implement"; created_at=[DateTime]::UtcNow.ToString("o"); repository=[ordered]@{root=$resolvedRoot;branch=$ExpectedBranch;remote=$ExpectedRemote;initial_head=$head.Text;worktree_snapshot=$initialWorktreeSnapshot;git_control_plane=$gitControlPlaneSnapshot}; inputs=[ordered]@{baseline_sha256=$baselineHash;prompt_sha256=$promptHash;output_schema_sha256=$outputSchemaHash;runtime_output_schema_sha256=$runtimeOutputSchemaSha256;strict_schema_sha256=$strictSchemaHash;deliverable_contract_sha256=$contractHash;final_document_inventory_sha256=$inventoryHash;trusted_validator_sha256=$trustedValidatorSha256;trusted_input_sha256=$trustedInputHashes;release_trust_sha256=$releaseTrustSha256}; tools=[ordered]@{trusted_executable_inventory=$trustedToolInventory;codex_version=$codexVersion.Text;codex_help_contract_sha256=$codexHelpDigest;docker_version=$dockerServer.Text;compose_version=$composeVersion.Text;git_credential_helper_sha256=(String-Sha256 $script:GitHubCredentialHelper);gpg_home=$resolvedGpgHome;gpg_version=($gpgVersion.Text -split "`n")[0]}; policy=[ordered]@{sandbox="workspace-write";approval="on-request";json_events=$true;ignore_user_config=$true;ignore_rules=$true;strict_config=$true;pinned_github_credential_helper=$true} }
     Write-AtomicUtf8Text $runManifest ($manifest | ConvertTo-Json -Depth 10)
     $digest = (Get-FileHash -Algorithm SHA256 -LiteralPath $runManifest).Hash.ToLowerInvariant(); Set-Content -Encoding ASCII -LiteralPath $runManifestHash -Value "$digest  run-manifest.json"
 } else {
@@ -2509,13 +2638,13 @@ if (-not $isResume) {
     $manifest = ConvertFrom-StrictJsonFile $runManifest "run manifest"; $state = ConvertFrom-StrictJsonFile $resumeStatePath "resume state"
     Assert-ExactObjectProperties $manifest @("manifest_version","baseline_id","run_id","mode","created_at","repository","inputs","tools","policy") "run manifest"
     Assert-ExactObjectProperties $manifest.repository @("root","branch","remote","initial_head","worktree_snapshot","git_control_plane") "run manifest repository"
-    Assert-ExactObjectProperties $manifest.inputs @("baseline_sha256","prompt_sha256","output_schema_sha256","strict_schema_sha256","deliverable_contract_sha256","final_document_inventory_sha256","trusted_validator_sha256","trusted_input_sha256","release_trust_sha256") "run manifest inputs"
+    Assert-ExactObjectProperties $manifest.inputs @("baseline_sha256","prompt_sha256","output_schema_sha256","runtime_output_schema_sha256","strict_schema_sha256","deliverable_contract_sha256","final_document_inventory_sha256","trusted_validator_sha256","trusted_input_sha256","release_trust_sha256") "run manifest inputs"
     Assert-ExactObjectProperties $manifest.tools @("trusted_executable_inventory","codex_version","codex_help_contract_sha256","docker_version","compose_version","git_credential_helper_sha256","gpg_home","gpg_version") "run manifest tools"
     Assert-ExactObjectProperties $manifest.policy @("sandbox","approval","json_events","ignore_user_config","ignore_rules","strict_config","pinned_github_credential_helper") "run manifest policy"
-    Assert-ExactObjectProperties $state @("run_id","attempt_id","attempt_started_at","final_result_path","thread_id","head","worktree_snapshot","manifest_sha256","baseline_sha256","prompt_sha256","output_schema_sha256","strict_schema_sha256","final_document_inventory_sha256","trusted_validator_sha256","release_trust_sha256","updated_at") "resume state"
+    Assert-ExactObjectProperties $state @("run_id","attempt_id","attempt_started_at","final_result_path","thread_id","head","worktree_snapshot","manifest_sha256","baseline_sha256","prompt_sha256","output_schema_sha256","runtime_output_schema_sha256","strict_schema_sha256","final_document_inventory_sha256","trusted_validator_sha256","release_trust_sha256","updated_at") "resume state"
     $persistedSessionId = (Read-Utf8NoBomText $sessionPath 128 "session receipt").Trim()
     if ($persistedSessionId -notmatch '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$' -or [string]$state.thread_id -cne $persistedSessionId) { Stop-Launcher "RESUME-IDENTITY" "session receipt/state UUID mismatch" }
-    if ($manifest.manifest_version -cne "codex-run-manifest.v6" -or [string]$manifest.run_id -cne $runId -or [string]$manifest.mode -cne "Implement" -or [string]$state.run_id -cne $runId -or $manifest.inputs.baseline_sha256 -cne $baselineHash -or $manifest.inputs.prompt_sha256 -cne $promptHash -or $manifest.inputs.output_schema_sha256 -cne $outputSchemaHash -or $manifest.inputs.strict_schema_sha256 -cne $strictSchemaHash -or $manifest.inputs.deliverable_contract_sha256 -cne $contractHash -or $manifest.inputs.final_document_inventory_sha256 -cne $inventoryHash -or $manifest.inputs.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $manifest.inputs.release_trust_sha256 -cne $releaseTrustSha256 -or $manifest.tools.codex_help_contract_sha256 -cne $codexHelpDigest -or ($manifest.tools.trusted_executable_inventory | ConvertTo-Json -Depth 8 -Compress) -cne ($trustedToolInventory | ConvertTo-Json -Depth 8 -Compress) -or $manifest.tools.git_credential_helper_sha256 -cne (String-Sha256 $script:GitHubCredentialHelper) -or $manifest.tools.gpg_home -cne $resolvedGpgHome -or $state.manifest_sha256 -cne $digest -or $state.head -cne $head.Text -or $state.baseline_sha256 -cne $baselineHash -or $state.prompt_sha256 -cne $promptHash -or $state.output_schema_sha256 -cne $outputSchemaHash -or $state.strict_schema_sha256 -cne $strictSchemaHash -or $state.final_document_inventory_sha256 -cne $inventoryHash -or $state.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $state.release_trust_sha256 -cne $releaseTrustSha256) { Stop-Launcher "RESUME-IDENTITY" "run/HEAD/manifest/input/CLI/trust contract changed" }
+    if ($manifest.manifest_version -cne "codex-run-manifest.v7" -or [string]$manifest.run_id -cne $runId -or [string]$manifest.mode -cne "Implement" -or [string]$state.run_id -cne $runId -or $manifest.inputs.baseline_sha256 -cne $baselineHash -or $manifest.inputs.prompt_sha256 -cne $promptHash -or $manifest.inputs.output_schema_sha256 -cne $outputSchemaHash -or $manifest.inputs.runtime_output_schema_sha256 -cne $runtimeOutputSchemaSha256 -or $manifest.inputs.strict_schema_sha256 -cne $strictSchemaHash -or $manifest.inputs.deliverable_contract_sha256 -cne $contractHash -or $manifest.inputs.final_document_inventory_sha256 -cne $inventoryHash -or $manifest.inputs.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $manifest.inputs.release_trust_sha256 -cne $releaseTrustSha256 -or $manifest.tools.codex_help_contract_sha256 -cne $codexHelpDigest -or ($manifest.tools.trusted_executable_inventory | ConvertTo-Json -Depth 8 -Compress) -cne ($trustedToolInventory | ConvertTo-Json -Depth 8 -Compress) -or $manifest.tools.git_credential_helper_sha256 -cne (String-Sha256 $script:GitHubCredentialHelper) -or $manifest.tools.gpg_home -cne $resolvedGpgHome -or $state.manifest_sha256 -cne $digest -or $state.head -cne $head.Text -or $state.baseline_sha256 -cne $baselineHash -or $state.prompt_sha256 -cne $promptHash -or $state.output_schema_sha256 -cne $outputSchemaHash -or $state.runtime_output_schema_sha256 -cne $runtimeOutputSchemaSha256 -or $state.strict_schema_sha256 -cne $strictSchemaHash -or $state.final_document_inventory_sha256 -cne $inventoryHash -or $state.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $state.release_trust_sha256 -cne $releaseTrustSha256) { Stop-Launcher "RESUME-IDENTITY" "run/HEAD/manifest/input/CLI/trust contract changed" }
     if (-not (Compare-GitControlPlaneSnapshot $manifest.repository.git_control_plane $gitControlPlaneSnapshot)) { Stop-Launcher "RESUME-IDENTITY" "Git control-plane differs from the original attempt" }
     Assert-TrustedRuntimeInputs $gitCommand $resolvedRoot ([string]$manifest.repository.initial_head) $manifest.inputs.trusted_input_sha256 $trustedRelativePaths
     if ((Snapshot-Digest $initialWorktreeSnapshot) -cne (Snapshot-Digest $state.worktree_snapshot)) { Stop-Launcher "RESUME-IDENTITY" "worktree snapshot differs from the interrupted attempt receipt" }
@@ -2524,10 +2653,12 @@ if (-not $isResume) {
     $script:ResumeAvailable = $true
 }
 
-$promptText = $(if ($isResume) { "Resume the interrupted implementation using the exact plan and preserve verified work. Produce the required final JSON." } else { Get-Content -Raw -Encoding UTF8 -LiteralPath $promptPath })
-$CodexArguments = $(if ($isResume) { $sessionId = $persistedSessionId; @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "resume", $sessionId, "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $outputSchemaPath, "-") } else { @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $outputSchemaPath, "-") })
-Assert-SafeCodexArguments $CodexArguments
 $resumeCommand = Get-ResumeCommand -RunId $runId
+$runtimeEnvelope = New-CodexRuntimeEnvelope $runId $attemptId $attemptStartedAt.ToString("o") ([string]$manifest.repository.initial_head) $(if ($isResume) { "resume" } else { "initial" }) $resumeCommand
+$basePromptText = $(if ($isResume) { "Resume the interrupted implementation using the exact plan and preserve verified work. Produce the required final JSON." } else { Get-Content -Raw -Encoding UTF8 -LiteralPath $promptPath })
+$promptText = "$runtimeEnvelope`n`n$basePromptText"
+$CodexArguments = $(if ($isResume) { $sessionId = $persistedSessionId; @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "resume", $sessionId, "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") } else { @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") })
+Assert-SafeCodexArguments $CodexArguments
 Write-Host "RUN: run_id=$runId, mode=$(if ($isResume) { 'resume' } else { 'initial' })"
 Write-Host "EVIDENCE: $runDirectory"
 Write-Host "RESUME: $resumeCommand (available after exact thread.started UUID validation)"
@@ -2536,6 +2667,7 @@ $executionBoundarySnapshot=Get-WorktreeSnapshot $gitCommand $resolvedRoot $activ
 $boundaryDigest=Snapshot-Digest $executionBoundarySnapshot; $expectedBoundaryDigest=Snapshot-Digest $initialWorktreeSnapshot
 Assert-ResumeBindingObservation ([pscustomobject]@{run_id=$runId;requested_run_id=$(if($isResume){$ResumeRun}else{$runId});manifest_run_id=[string]$manifest.run_id;state_run_id=$(if($isResume){[string]$state.run_id}else{$runId});canonical_run_directory=[IO.Path]::GetFullPath((Join-Path $resolvedRoot (Join-Path $ArtifactRelative $runId)));observed_run_directory=[IO.Path]::GetFullPath($runDirectory);manifest_sha256=$digest;state_manifest_sha256=$(if($isResume){[string]$state.manifest_sha256}else{$digest});before_inventory_sha256=$expectedBoundaryDigest;execution_boundary_inventory_sha256=$boundaryDigest;exact_property_set=$true;exclusive_lock_held=(-not $runLock.SafeFileHandle.IsClosed)})
 $codexExit = Invoke-Utf8Process -Command $codexCommand -Arguments $CodexArguments -InputText $promptText -StdoutPath $progressLog -StderrPath $errorLog -RunId $runId -HeartbeatSeconds 5 -ResumeCommand $resumeCommand -SessionReceiptPath $sessionPath -ExpectedThreadId $expectedThreadId
+Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $attemptId $runtimeOutputSchemaSha256 | Out-Null
 Assert-TrustedExecutableInventoryUnchanged $trustedToolInventory $releaseTrust.trusted_tools $resolvedRoot
 Assert-GitControlPlaneSnapshot $gitControlPlaneSnapshot
 Assert-ProtectedTrustRootsUnchanged $protectedTrustRootsSnapshot $resolvedTrustPath $ProtectedHooksPath $ProtectedGpgHome $resolvedAttestationRoot
@@ -2555,7 +2687,7 @@ if ($receiptSessionId -cne $sessionId) { Stop-Launcher "SESSION-ID" "early sessi
 $afterHead = SafeGit $gitCommand @("-C", $resolvedRoot, "rev-parse", "HEAD"); Native-OK $afterHead "POST-GIT" "post-run HEAD"
 $attemptWorktreeSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $activeRunRelative
 if ([string]$attemptWorktreeSnapshot.ignored_inventory_sha256 -cne [string]$initialWorktreeSnapshot.ignored_inventory_sha256) { Stop-Launcher "POST-IGNORED" "ignored files outside the isolated run evidence directory changed during Codex execution" 6 }
-$stateObject = [ordered]@{ run_id=$runId; attempt_id=$attemptId; attempt_started_at=$attemptStartedAt.ToString("o"); final_result_path=$finalResult; thread_id=$sessionId; head=$afterHead.Text; worktree_snapshot=$attemptWorktreeSnapshot; manifest_sha256=$digest; baseline_sha256=$baselineHash; prompt_sha256=$promptHash; output_schema_sha256=$outputSchemaHash; strict_schema_sha256=$strictSchemaHash; final_document_inventory_sha256=$inventoryHash; trusted_validator_sha256=$trustedValidatorSha256; release_trust_sha256=$releaseTrustSha256; updated_at=[DateTime]::UtcNow.ToString("o") }; Write-AtomicUtf8Text $resumeStatePath ($stateObject | ConvertTo-Json -Depth 10) -Replace
+$stateObject = [ordered]@{ run_id=$runId; attempt_id=$attemptId; attempt_started_at=$attemptStartedAt.ToString("o"); final_result_path=$finalResult; thread_id=$sessionId; head=$afterHead.Text; worktree_snapshot=$attemptWorktreeSnapshot; manifest_sha256=$digest; baseline_sha256=$baselineHash; prompt_sha256=$promptHash; output_schema_sha256=$outputSchemaHash; runtime_output_schema_sha256=$runtimeOutputSchemaSha256; strict_schema_sha256=$strictSchemaHash; final_document_inventory_sha256=$inventoryHash; trusted_validator_sha256=$trustedValidatorSha256; release_trust_sha256=$releaseTrustSha256; updated_at=[DateTime]::UtcNow.ToString("o") }; Write-AtomicUtf8Text $resumeStatePath ($stateObject | ConvertTo-Json -Depth 10) -Replace
 $script:ResumeAvailable = $true
 if ($null -ne $parsedEvents.ParseError) { Stop-Launcher "PROGRESS-JSONL" ([string]$parsedEvents.ParseError) 3 }
 if ($codexExit -ne 0) { [Console]::Error.WriteLine("FAIL [CODEX-EXEC]: exit $codexExit"); [Console]::Error.WriteLine("RESUME: $resumeCommand"); exit $codexExit }

@@ -75,14 +75,17 @@ $safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] = "7"
 $safePsi.EnvironmentVariables["GIT_CONFIG_KEY_99"] = "attacker-key"
 $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_99"] = "attacker-value"
 Set-SafeProcessEnvironment $safePsi
-if ($safePsi.EnvironmentVariables["GIT_PAGER"] -ne $null -or
+$pagerWasPreserved = $safePsi.EnvironmentVariables.ContainsKey("GIT_PAGER")
+$forgedKeyWasPreserved = $safePsi.EnvironmentVariables.ContainsKey("GIT_CONFIG_KEY_99")
+$forgedValueWasPreserved = $safePsi.EnvironmentVariables.ContainsKey("GIT_CONFIG_VALUE_99")
+if ($pagerWasPreserved -or
     $safePsi.EnvironmentVariables["GIT_CONFIG_SYSTEM"] -cne "NUL" -or
     $safePsi.EnvironmentVariables["GIT_CONFIG_GLOBAL"] -cne "NUL" -or
     $safePsi.EnvironmentVariables["GIT_CONFIG_NOSYSTEM"] -cne "1" -or
     $safePsi.EnvironmentVariables["GIT_ATTR_NOSYSTEM"] -cne "1" -or
     $safePsi.EnvironmentVariables["GIT_CONFIG_COUNT"] -cne "1" -or
-    $safePsi.EnvironmentVariables["GIT_CONFIG_KEY_99"] -ne $null -or
-    $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_99"] -ne $null) { throw "safe Git child environment did not isolate system/global config and pager" }
+    $forgedKeyWasPreserved -or
+    $forgedValueWasPreserved) { throw "safe Git child environment did not isolate system/global config and pager" }
 if (@(Get-SafeGitArguments @("status")) -notcontains "core.hooksPath=C:\ProgramData\YOnLab\empty-git-hooks") { throw "SafeGit did not pin the protected empty hooks path" }
 if ($safePsi.EnvironmentVariables["GIT_CONFIG_KEY_0"] -cne "credential.https://github.com.helper" -or $safePsi.EnvironmentVariables["GIT_CONFIG_VALUE_0"] -cne '!"C:/Program Files/GitHub CLI/gh.exe" auth git-credential') { throw "pinned gh credential helper injection mismatch" }
 $script:GitHubCredentialHelper = $null
@@ -521,6 +524,57 @@ for ($i = 1; $i -le 20000; $i += 1) {
     Write-Host "PASS: process helper rejects .cmd/.bat shell shims"
 
     $validatorWorkingDirectory = [IO.Path]::GetFullPath((Split-Path -Parent $currentPowerShell)).Replace("'", "''")
+    $utf8NoBom = New-Object Text.UTF8Encoding -ArgumentList $false
+    $bomValidator = @'
+[CmdletBinding()]
+param(
+    [string]$ResultPath,
+    [string]$ExpectedRunId,
+    [string]$ProjectRoot,
+    [string]$ExpectedAttemptStartedAt
+)
+[Console]::Error.WriteLine(
+    'REVIEW_PENDING [RESULT-UNSIGNED] bom-validator'
+)
+exit 5
+'@
+    $bomPreamble = (New-Object Text.UTF8Encoding -ArgumentList $true).GetPreamble()
+    $bodyBytes = $utf8NoBom.GetBytes($bomValidator)
+    $bomBytes = New-Object byte[] ($bomPreamble.Length + $bodyBytes.Length)
+    [Buffer]::BlockCopy($bomPreamble, 0, $bomBytes, 0, $bomPreamble.Length)
+    [Buffer]::BlockCopy($bodyBytes, 0, $bomBytes, $bomPreamble.Length, $bodyBytes.Length)
+    $bomResult = Invoke-TrustedValidatorProcess `
+        -PowerShellCommand $currentPowerShell `
+        -TrustedValidatorBytes $bomBytes `
+        -ResultPath (Join-Path $temp 'unused-bom.json') `
+        -ExpectedRunId 'bom-validator-test' `
+        -ProjectRoot $temp `
+        -ExpectedAttemptStartedAt ([DateTimeOffset]::UtcNow.ToString('o'))
+    if ($bomResult.ExitCode -ne 5 -or $bomResult.Text -notmatch 'REVIEW_PENDING \[RESULT-UNSIGNED\]' -or $bomResult.Text -notmatch 'bom-validator' -or $bomResult.Text -match 'ParseException|CLIXML') { throw "BOM validator did not execute with exit 5: $($bomResult.Text)" }
+    Write-Host 'PASS: BOM-prefixed trusted validator executes with exact original-byte trust binding'
+
+    $malformedBytes = $utf8NoBom.GetBytes('[CmdletBinding()] param(')
+    $malformedResult = Invoke-TrustedValidatorProcess `
+        -PowerShellCommand $currentPowerShell `
+        -TrustedValidatorBytes $malformedBytes `
+        -ResultPath (Join-Path $temp 'unused-malformed.json') `
+        -ExpectedRunId 'malformed-validator-test' `
+        -ProjectRoot $temp `
+        -ExpectedAttemptStartedAt ([DateTimeOffset]::UtcNow.ToString('o'))
+    if ($malformedResult.ExitCode -ne 6 -or $malformedResult.Text -notmatch 'FAIL \[TRUSTED-VALIDATOR-HOST\]' -or $malformedResult.Text -notmatch 'ParserError|Incomplete|Unexpected') { throw "malformed validator did not fail closed with exit 6: $($malformedResult.Text)" }
+    Write-Host 'PASS: malformed trusted validator fails closed with exit 6'
+
+    $unexpectedReturnBytes = $utf8NoBom.GetBytes('@("unexpected-return")')
+    $unexpectedReturn = Invoke-TrustedValidatorProcess `
+        -PowerShellCommand $currentPowerShell `
+        -TrustedValidatorBytes $unexpectedReturnBytes `
+        -ResultPath (Join-Path $temp 'unused-return.json') `
+        -ExpectedRunId 'unexpected-return-test' `
+        -ProjectRoot $temp `
+        -ExpectedAttemptStartedAt ([DateTimeOffset]::UtcNow.ToString('o'))
+    if ($unexpectedReturn.ExitCode -ne 6 -or $unexpectedReturn.Text -notmatch 'trusted validator returned without explicit process exit') { throw "unexpected validator return was not fail-closed: $($unexpectedReturn.Text)" }
+    Write-Host 'PASS: trusted validator unexpected return fails closed with exit 6'
+
     $largeValidator = ("# trusted validator padding`n" * 4096) + @'
 param([string]$ResultPath,[string]$ExpectedRunId,[string]$ProjectRoot,[string]$ExpectedAttemptStartedAt)
 if ($ExpectedRunId -cne "large-validator-test") { exit 9 }

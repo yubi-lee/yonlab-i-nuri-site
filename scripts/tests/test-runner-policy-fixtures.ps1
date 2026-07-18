@@ -268,6 +268,46 @@ function Invoke-ProtectedRootSnapshotRuntimeShapeRegression {
     )
 }
 
+function Invoke-RuntimeIdentityRegression {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $tokens = $null
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
+    if ($errors.Count -ne 0) { throw 'runner parse failed while loading runtime identity functions' }
+    foreach ($name in @('New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
+        $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
+        if ($null -eq $functionAst) { throw "missing runner function $name" }
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+    function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$ExitCode`: $Message" }
+
+    $runId = '20260718T050335Z-45c3f0a9'
+    $attemptId = '20260718T012345Z-0123456789ab'
+    $started = '2026-07-18T05:03:35.0000000Z'
+    $head = '38a9a78b9089323633bf92ac152925ee0bfca15f'
+    $resumeCommand = "& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File 'D:\Views\yonlab-inuri-site\scripts\invoke-ai-training-platform-v1.ps1' -Mode Implement -ResumeRun '$runId'"
+    $initial = New-CodexRuntimeEnvelope $runId $attemptId $started $head 'initial' $resumeCommand
+    $resume = New-CodexRuntimeEnvelope $runId $attemptId $started $head 'resume' $resumeCommand
+    foreach ($text in @($initial, $resume)) {
+        if (-not $text.Contains("run_id=$runId") -or -not $text.Contains('run_id MUST equal exactly') -or -not $text.Contains('Do not generate a value beginning with run-') -or -not $text.Contains("attempt_id=$attemptId") -or -not $text.Contains("initial_head=$head") -or -not $text.Contains("resume_command=$resumeCommand") -or $text.Contains('<RUN_ID>') -or $text.Contains('${RunId}')) { throw 'runtime envelope did not bind exact launcher identity' }
+    }
+    if ($initial -cne $resume.Replace('mode=resume', 'mode=initial')) { throw 'runtime envelope was not deterministic apart from mode' }
+    try { $null = New-CodexRuntimeEnvelope 'run-invalid' $attemptId $started $head 'initial' $resumeCommand; throw 'invalid runtime run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime run ID was accepted') { throw } }
+
+    $schemaText = '{"type":"object","properties":{"run_id":{"type":"string"},"summary":{"type":"string"}}}'
+    $schemaA = New-RuntimeCodexOutputSchemaText $schemaText $runId
+    $schemaB = New-RuntimeCodexOutputSchemaText $schemaText $runId
+    if ($schemaA -cne $schemaB) { throw 'runtime output schema was not byte deterministic' }
+    $schema = ConvertFrom-StrictJsonText $schemaA 'runtime output schema regression'
+    if ([string]$schema.properties.run_id.type -cne 'string' -or @($schema.properties.run_id.enum).Count -ne 1 -or [string]$schema.properties.run_id.enum[0] -cne $runId -or [string]$schema.properties.summary.type -cne 'string' -or $null -ne $schema.properties.run_id.PSObject.Properties['const']) { throw 'runtime output schema did not bind exact run ID enum' }
+    $wrongSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText '20260718T050335Z-deadbeef') 'wrong runtime schema regression'
+    if (@($wrongSchema.properties.run_id.enum) -contains $runId) { throw 'runtime schema accepted the wrong run ID' }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText 'run-invalid'; throw 'invalid runtime schema run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema run ID was accepted') { throw } }
+    Write-Host 'PASS: runtime envelope and exact per-run output schema binding'
+}
+
+    Invoke-RuntimeIdentityRegression $RunnerPath
     Invoke-CompactIgnoredInventoryRegression $RunnerPath
 try {
     Invoke-ProtectedRootSnapshotRuntimeShapeRegression $RunnerPath

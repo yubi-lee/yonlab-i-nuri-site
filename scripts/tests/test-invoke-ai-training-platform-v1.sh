@@ -67,6 +67,25 @@ push_probe_line="$(grep -nF '$pushProbe = SafeGit ' "$RUNNER" | cut -d: -f1)"
 [[ -n "$push_guard_line" && -n "$push_probe_line" && "$push_guard_line" -lt "$push_probe_line" ]] || fail 'push dry-run is not restricted to Implement'
 pass 'canonical repository and four-mode boundary'
 
+# Guarded runtime identity must be injected by the launcher and bound into a
+# per-attempt model-facing schema; the static base schema remains unchanged.
+for token in \
+  'function New-CodexRuntimeEnvelope' 'run_id=$RunId' \
+  'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' \
+  'runtime_output_schema_sha256' 'codex-run-manifest.v7' \
+  '--output-schema' '$runtimeOutputSchema' \
+  'PRE-RUNTIME-IDENTITY exact guarded run prompt and schema binding' \
+  'Assert-RuntimeCodexOutputSchemaBinding' \
+  '$validatorBytes[0] -eq 0xEF' '$validatorBytes[1] -eq 0xBB' '$validatorBytes[2] -eq 0xBF' '[Buffer]::BlockCopy' \
+  'FAIL [TRUSTED-VALIDATOR-HOST]' \
+  'trusted validator returned without explicit process exit' \
+  '$ProgressPreference =' ; do
+  assert_fixed "$token" "runtime identity/BOM host contract missing: $token"
+done
+assert_absent '.TrimStart([char]0xFEFF)' 'broad BOM trimming remains in the trusted validator host'
+assert_absent 'while ($validatorBytes' 'broad validator-byte BOM stripping remains in the trusted validator host'
+pass 'guarded runtime identity, dynamic schema, and fail-closed BOM host contract'
+
 # Production modes must enter through a direct canonical Windows PowerShell
 # host, without profiles or command/encoded-command startup paths.
 for token in 'Assert-CanonicalProductionHostInvocation' 'Assert-HostInvocationObservation' '[Environment]::GetCommandLineArgs()' '[Environment]::SystemDirectory' 'WindowsPowerShell\v1.0\powershell.exe' '-NoProfile' '-NonInteractive' 'file_target_matches'; do
@@ -168,7 +187,7 @@ pass 'no-follow BFS protects Git, GPG, and artifact subtrees'
 for token in \
   '$MaxNativeCaptureBytes' '$MaxJsonlBytes' '$MaxJsonlLineBytes' \
   '$MaxNativeSeconds' '$MaxCodexSeconds' 'New-BoundedCaptureStream' \
-  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v6' 'run.lock' \
+  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v7' 'run.lock' \
   'Assert-ResumeBindingObservation' 'execution_boundary_inventory_sha256' \
   'Get-TrustedExecutableWorkingDirectory' '$psi.WorkingDirectory = Get-TrustedExecutableWorkingDirectory'; do
   assert_fixed "$token" "bounded/resume contract missing: $token"
@@ -180,8 +199,8 @@ codex_line="$(grep -nF '$codexExit = Invoke-Utf8Process -Command $codexCommand' 
 tool_line="$(grep -nF 'Assert-TrustedExecutableInventoryUnchanged $trustedToolInventory $releaseTrust.trusted_tools $resolvedRoot' "$RUNNER" | awk -F: -v start="$codex_line" '$1 > start {print $1; exit}')"
 control_line="$(grep -nF 'Assert-GitControlPlaneSnapshot $gitControlPlaneSnapshot' "$RUNNER" | awk -F: -v start="$codex_line" '$1 > start {print $1; exit}')"
 post_git_line="$(grep -nF '$afterHead = SafeGit ' "$RUNNER" | awk -F: -v start="$codex_line" '$1 > start {print $1; exit}')"
-[[ -n "$codex_line" && "$tool_line" -eq $((codex_line + 1)) && "$control_line" -eq $((codex_line + 2)) && "$control_line" -lt "$post_git_line" ]] \
-  || fail 'tool bytes and Git control plane are not checked immediately after Codex and before post-run Git'
+[[ -n "$codex_line" && "$tool_line" -gt "$codex_line" && "$control_line" -eq $((tool_line + 1)) && "$control_line" -lt "$post_git_line" ]] \
+  || fail 'tool bytes and Git control plane are not checked after Codex and before post-run Git'
 pass 'bounded process, protected executable working directory, exclusive resume, and immediate post-Codex trust recheck'
 
 # Worktree snapshots keep the standard untracked limits while compacting
@@ -199,7 +218,8 @@ for token in \
 done
 snapshot_line="$(grep -nF '$dryRunSnapshot = Get-WorktreeSnapshot $gitCommand $resolvedRoot $dryRunExclusion' "$RUNNER" | cut -d: -f1)"
 marker_line="$(grep -nF 'DRY-RUN: all preflight checks passed; Codex not invoked.' "$RUNNER" | cut -d: -f1)"
-[[ -n "$snapshot_line" && -n "$marker_line" && "$snapshot_line" -lt "$marker_line" ]] || fail 'Dry-run does not execute the real worktree snapshot gate before its marker'
+runtime_identity_line="$(grep -nF 'PRE-RUNTIME-IDENTITY exact guarded run prompt and schema binding' "$RUNNER" | cut -d: -f1)"
+[[ -n "$snapshot_line" && -n "$runtime_identity_line" && -n "$marker_line" && "$snapshot_line" -lt "$runtime_identity_line" && "$runtime_identity_line" -lt "$marker_line" ]] || fail 'Dry-run gates are not ordered before the final marker'
 "$PYTHON_BIN" - "$RUNNER" <<'PY'
 import re, sys
 text=open(sys.argv[1], encoding='utf-8-sig').read()
