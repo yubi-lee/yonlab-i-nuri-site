@@ -275,16 +275,18 @@ function Invoke-RuntimeIdentityRegression {
     $errors = $null
     $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
     if ($errors.Count -ne 0) { throw 'runner parse failed while loading runtime identity functions' }
-    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'ConvertTo-UtcRfc3339Z', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
+    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'ConvertTo-UtcRfc3339Z', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'Assert-RuntimeCodexOutputSchemaBinding', 'Assert-PriorRuntimeSchemaBinding', 'Assert-NoReparseComponent', 'Assert-BoundedFile', 'Read-Utf8NoBomText', 'String-Sha256', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
         $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
         if ($null -eq $functionAst) { throw "missing runner function $name" }
         . ([scriptblock]::Create($functionAst.Extent.Text))
     }
     function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$ExitCode`: $Message" }
+    $script:MaxJsonBytes = 67108864L
 
     $runId = '20260718T050335Z-45c3f0a9'
     $attemptId = '20260718T012345Z-0123456789ab'
     $started = '2026-07-18T05:03:35.0000000Z'
+    $generatedAt = '2026-07-18T05:03:35.0000000Z'
     $offsetValue = [DateTimeOffset]::ParseExact('2026-07-18T23:39:34.6606660+09:00', "yyyy-MM-dd'T'HH:mm:ss.fffffffzzz", [Globalization.CultureInfo]::InvariantCulture)
     $utcValue = [DateTimeOffset]::ParseExact('2026-07-18T14:39:34.6606660+00:00', "yyyy-MM-dd'T'HH:mm:ss.fffffffzzz", [Globalization.CultureInfo]::InvariantCulture)
     $expectedUtcText = '2026-07-18T14:39:34.6606660Z'
@@ -297,31 +299,67 @@ function Invoke-RuntimeIdentityRegression {
     $resumeCommand = Get-ResumeCommand $runId $releaseId
     $expectedResumeCommand = "& '$CanonicalRunnerHost' -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File '$CanonicalRunnerPath' -Mode Implement -ReleaseId '$releaseId' -ResumeRun '$runId'"
     if ($resumeCommand -cne $expectedResumeCommand) { throw 'resume command did not bind exact release ID and run ID' }
-    $initial = New-CodexRuntimeEnvelope $runId $attemptId $started $head $releaseId 'initial' $resumeCommand
-    $resume = New-CodexRuntimeEnvelope $runId $attemptId $started $head $releaseId 'resume' $resumeCommand
+    $initial = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand
+    $resume = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'resume' $resumeCommand
     foreach ($text in @($initial, $resume)) {
         if (-not $text.Contains("run_id=$runId") -or -not $text.Contains('run_id MUST equal exactly') -or -not $text.Contains("release_id=$releaseId") -or -not $text.Contains('release_id MUST equal exactly') -or -not $text.Contains('Do not invent, increment, normalize, or replace release_id') -or -not $text.Contains('Use the same release_id for generated document path expansion') -or -not $text.Contains('Do not generate a value beginning with run-') -or -not $text.Contains("attempt_id=$attemptId") -or -not $text.Contains("initial_head=$head") -or -not $text.Contains("resume_command=$resumeCommand") -or $text.Contains('<RUN_ID>') -or $text.Contains(([char]36 + '{RunId}'))) { throw 'runtime envelope did not bind exact launcher identity' }
     }
+    foreach ($text in @($initial, $resume)) {
+        if (-not $text.Contains("attempt_started_at=$started") -or -not $text.Contains("generated_at=$generatedAt") -or -not $text.Contains('generated_at MUST equal exactly') -or -not $text.Contains('launcher-supplied metadata') -or -not $text.Contains('Do not calculate, round, truncate, advance, or replace generated_at') -or -not $text.Contains('preserve the exact generated_at')) { throw 'runtime envelope did not bind exact generated_at metadata' }
+    }
     if ($initial -cne $resume.Replace('mode=resume', 'mode=initial')) { throw 'runtime envelope was not deterministic apart from mode' }
-    try { $null = New-CodexRuntimeEnvelope 'run-invalid' $attemptId $started $head $releaseId 'initial' $resumeCommand; throw 'invalid runtime run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime run ID was accepted') { throw } }
-    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started $head 'v0.1.0' 'initial' $resumeCommand; throw 'invalid runtime release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime release ID was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope 'run-invalid' $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand; throw 'invalid runtime run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime run ID was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head 'v0.1.0' 'initial' $resumeCommand; throw 'invalid runtime release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime release ID was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started '2026-07-18T05:03:35.0000000+00:00' $head $releaseId 'initial' $resumeCommand; throw 'offset generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset generated_at was accepted') { throw } }
 
-    $schemaText = '{"type":"object","properties":{"run_id":{"type":"string"},"release_id":{"type":"string"},"summary":{"type":"string"}}}'
-    $schemaA = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId
-    $schemaB = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId
+    $schemaText = '{"type":"object","properties":{"run_id":{"type":"string"},"release_id":{"type":"string"},"generated_at":{"type":"string"},"summary":{"type":"string"}}}'
+    $schemaA = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt
+    $schemaB = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt
     if ($schemaA -cne $schemaB) { throw 'runtime output schema was not byte deterministic' }
     $schema = ConvertFrom-StrictJsonText $schemaA 'runtime output schema regression'
-    if ([string]$schema.properties.run_id.type -cne 'string' -or @($schema.properties.run_id.enum).Count -ne 1 -or [string]$schema.properties.run_id.enum[0] -cne $runId -or [string]$schema.properties.release_id.type -cne 'string' -or @($schema.properties.release_id.enum).Count -ne 1 -or [string]$schema.properties.release_id.enum[0] -cne $releaseId -or [string]$schema.properties.summary.type -cne 'string' -or $null -ne $schema.properties.run_id.PSObject.Properties['const'] -or $null -ne $schema.properties.release_id.PSObject.Properties['const']) { throw 'runtime output schema did not bind exact run and release ID enums' }
-    $wrongSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText '20260718T050335Z-deadbeef' $releaseId) 'wrong runtime schema regression'
+    if ([string]$schema.properties.run_id.type -cne 'string' -or @($schema.properties.run_id.enum).Count -ne 1 -or [string]$schema.properties.run_id.enum[0] -cne $runId -or [string]$schema.properties.release_id.type -cne 'string' -or @($schema.properties.release_id.enum).Count -ne 1 -or [string]$schema.properties.release_id.enum[0] -cne $releaseId -or [string]$schema.properties.generated_at.type -cne 'string' -or @($schema.properties.generated_at.enum).Count -ne 1 -or [string]$schema.properties.generated_at.enum[0] -cne $generatedAt -or [string]$schema.properties.summary.type -cne 'string' -or $null -ne $schema.properties.run_id.PSObject.Properties['const'] -or $null -ne $schema.properties.release_id.PSObject.Properties['const'] -or $null -ne $schema.properties.generated_at.PSObject.Properties['const']) { throw 'runtime output schema did not bind exact run, release, and generated_at enums' }
+    $wrongSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText '20260718T050335Z-deadbeef' $releaseId $generatedAt) 'wrong runtime schema regression'
     if (@($wrongSchema.properties.run_id.enum) -contains $runId) { throw 'runtime schema accepted the wrong run ID' }
-    $wrongReleaseSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText $runId 'v0.1.0-rc4') 'wrong runtime release schema regression'
+    $wrongReleaseSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText $runId 'v0.1.0-rc4' $generatedAt) 'wrong runtime release schema regression'
     if (@($wrongReleaseSchema.properties.release_id.enum) -contains $releaseId) { throw 'runtime schema accepted the wrong release ID' }
+
+    $resumeSchemaDirectory = Join-Path $root "resume-schema-$runId"
+    New-Item -ItemType Directory -Path $resumeSchemaDirectory -Force | Out-Null
+    $priorAttemptId = '20260718T050335Z-0123456789ab'
+    $priorSchemaPath = Join-Path $resumeSchemaDirectory "runtime-output-schema-$priorAttemptId.json"
+    [IO.File]::WriteAllText($priorSchemaPath, $schemaA, (New-Object Text.UTF8Encoding -ArgumentList $false))
+    $priorSchemaHash = String-Sha256 $schemaA
+    $priorState = [ordered]@{ run_id=$runId; release_id=$releaseId; attempt_id=$priorAttemptId; attempt_started_at=$generatedAt; runtime_output_schema_sha256=$priorSchemaHash }
+    if ([string]$priorState.runtime_output_schema_sha256 -cne $priorSchemaHash -or [string]$priorState.attempt_started_at -cne $generatedAt) { throw 'prior resume state did not retain exact schema hash and generated_at' }
+    Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at)
+
+    $currentGeneratedAt = '2026-07-18T05:03:36.0000000Z'
+    $currentAttemptId = '20260718T050336Z-abcdef123456'
+    $currentSchema = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $currentGeneratedAt
+    $currentSchemaHash = String-Sha256 $currentSchema
+    if ($priorSchemaHash -ceq $currentSchemaHash -or $currentSchemaHash -notmatch '^[0-9a-f]{64}$') { throw 'resume prior/current schema hashes did not diverge deterministically' }
+    $currentSchemaPath = Join-Path $resumeSchemaDirectory "runtime-output-schema-$currentAttemptId.json"
+    [IO.File]::WriteAllText($currentSchemaPath, $currentSchema, (New-Object Text.UTF8Encoding -ArgumentList $false))
+    Assert-RuntimeCodexOutputSchemaBinding $currentSchemaPath $resumeSchemaDirectory $runId $releaseId $currentGeneratedAt $currentAttemptId $currentSchemaHash | Out-Null
+    $tamperedPrior = $schemaA.Replace($generatedAt, '2026-07-18T05:03:35.0000001Z')
+    [IO.File]::WriteAllText($priorSchemaPath, $tamperedPrior, (New-Object Text.UTF8Encoding -ArgumentList $false))
+    try {
+        Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at)
+        throw 'tampered prior runtime schema was accepted'
+    } catch {
+        if ($_.Exception.Message -match 'tampered prior runtime schema was accepted') { throw }
+    }
+    Write-Host 'PASS: resume prior/current runtime schemas bind state hashes, diverge per attempt, and reject tampering'
+
     foreach ($invalidReleaseId in @('', 'v1.0', '1.0.0-rc1', 'v1.0.0', 'v1.0.0-beta1', 'v1.0.0-rc', 'v1.0.0-rc1/escape', 'v1.0.0-rc1 with-space', 'refs/tags/v1.0.0-rc1')) {
         try { $null = Assert-GuardedReleaseId $invalidReleaseId; throw "invalid release ID was accepted: $invalidReleaseId" } catch { if ($_.Exception.Message -match 'invalid release ID was accepted') { throw } }
     }
     $null = Assert-GuardedReleaseId $releaseId
-    try { $null = New-RuntimeCodexOutputSchemaText $schemaText 'run-invalid' $releaseId; throw 'invalid runtime schema run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema run ID was accepted') { throw } }
-    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId 'v1.0.0'; throw 'invalid runtime schema release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema release ID was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText 'run-invalid' $releaseId $generatedAt; throw 'invalid runtime schema run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema run ID was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId 'v1.0.0' $generatedAt; throw 'invalid runtime schema release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema release ID was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId '2026-07-18T05:03:35.0000000+00:00'; throw 'offset runtime schema generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset runtime schema generated_at was accepted') { throw } }
+    $runnerText = [IO.File]::ReadAllText($Path)
+    if (-not $runnerText.Contains('codex-run-manifest.v9') -or -not $runnerText.Contains('Assert-PriorRuntimeSchemaBinding') -or -not $runnerText.Contains('generated_at differs from guarded attempt timestamp')) { throw 'manifest v9, prior schema binding, or exact validator binding contract is missing' }
     Write-Host 'PASS: runtime envelope, exact run/release schema binding, guarded input, and resume command'
 }
     Invoke-RuntimeIdentityRegression $RunnerPath

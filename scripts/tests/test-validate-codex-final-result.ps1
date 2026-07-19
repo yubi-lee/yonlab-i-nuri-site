@@ -97,11 +97,20 @@ try {
     $zAttemptResult = Invoke-Validator (Write-Fixture "accept-z-attempt-start" $unsigned) "v0.1.0-rc5" "2026-07-13T12:00:00.0000000Z"
     if ($zAttemptResult.ExitCode -ne 5 -or -not $zAttemptResult.Output.Contains("REVIEW_PENDING")) { throw "validator rejected canonical UTC-Z guarded attempt timestamp: $($zAttemptResult.Output)" }
     Write-Host "PASS: validator accepts canonical UTC-Z guarded attempt timestamp -> 5"
+    $future = Copy-Object $unsigned; $future.generated_at = '2026-07-19T00:00:00Z'
+    $futureResult = Invoke-Validator (Write-Fixture "reject-future-generated-at" $future) "v0.1.0-rc5" "2026-07-18T16:46:16.5810991Z"
+    if ($futureResult.ExitCode -ne 3 -or -not $futureResult.Output.Contains('generated_at differs from guarded attempt timestamp')) { throw "validator accepted future generated_at: $($futureResult.Output)" }
+    Write-Host "PASS: validator rejects future generated_at exact-binding mismatch -> 3"
+    $tick = Copy-Object $unsigned; $tick.generated_at = '2026-07-13T12:00:00.0000001Z'
+    $tickResult = Invoke-Validator (Write-Fixture "reject-tick-generated-at" $tick) "v0.1.0-rc5" "2026-07-13T12:00:00.0000000Z"
+    if ($tickResult.ExitCode -ne 3 -or -not $tickResult.Output.Contains('generated_at differs from guarded attempt timestamp')) { throw "validator accepted one-tick generated_at mismatch: $($tickResult.Output)" }
+    Write-Host "PASS: validator rejects one-tick generated_at mismatch -> 3"
     $pending = Copy-Object $unsigned; $pending.release_state = "CODE_COMPLETE / ACCEPTANCE DATA PENDING"
     Expect "reject-codex-signed-candidate" $pending 3
     $accepted = Copy-Object $unsigned; $accepted.release_state = "ACCEPTED"
     Expect "reject-codex-accepted" $accepted 3
     $notReady = Copy-Object $unsigned; $notReady.candidate_phase="IMPLEMENTATION_BLOCKED"; $notReady.blockers=@([ordered]@{id="BLOCK";status="FAIL";description="failed";owner="dev";recovery="fix"}); $notReady.next_action=[ordered]@{kind="REMEDIATE";description="fix";command="resume"}
+    $notReady.generated_at = "2026-07-13T12:00:00.0000000Z"
     Expect "not-ready" $notReady 5
 
     $cases = [ordered]@{}

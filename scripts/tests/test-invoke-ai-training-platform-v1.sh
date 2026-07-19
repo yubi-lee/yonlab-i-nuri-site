@@ -45,6 +45,7 @@ fail() { printf 'FAIL: %s\n' "$1" >&2; exit 1; }
 pass() { printf 'PASS: %s\n' "$1"; }
 assert_fixed() { grep -Fq -- "$1" "$RUNNER" || fail "$2"; }
 assert_absent() { ! grep -Fq -- "$1" "$RUNNER" || fail "$2"; }
+assert_validator_fixed() { grep -Fq -- "$1" "$VALIDATOR" || fail "$2"; }
 
 for file in "$RUNNER" "$VALIDATOR" "$STRICT_SCHEMA" "$OUTPUT_SCHEMA" "$TRUST_EXAMPLE"; do
   [[ -s "$file" ]] || fail "required runner contract file missing or empty: $file"
@@ -72,10 +73,10 @@ pass 'canonical repository and four-mode boundary'
 for token in \
   'function New-CodexRuntimeEnvelope' 'function ConvertTo-UtcRfc3339Z' 'ToUniversalTime()' \
   "\"yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'\"" '$attemptStartedAtText' \
-  '-ExpectedAttemptStartedAt $attemptStartedAtText' 'attempt_started_at=$attemptStartedAtText' \
+  '-ExpectedAttemptStartedAt $generatedAtText' 'attempt_started_at=$attemptStartedAtText' \
   '2000-01-01T00:00:00.0000000Z' 'run_id=$RunId' \
   'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' \
-  'runtime_output_schema_sha256' 'codex-run-manifest.v8' \
+  'runtime_output_schema_sha256' 'codex-run-manifest.v9' 'generated_at=$GeneratedAt' 'generated_at MUST equal exactly' 'properties.generated_at' 'Assert-PriorRuntimeSchemaBinding' 'state.runtime_output_schema_sha256' 'PRE-RESULT-TIMESTAMP' \
   '[string]$ReleaseId = ""' 'function Assert-GuardedReleaseId' \
   'release_id=$ReleaseId' 'release_id MUST equal exactly' \
   'properties.release_id' 'manifest release_id' 'state release_id' 'ExpectedReleaseId' \
@@ -89,8 +90,11 @@ for token in \
   assert_fixed "$token" "runtime identity/BOM host contract missing: $token"
 done
 assert_absent '.TrimStart([char]0xFEFF)' 'broad BOM trimming remains in the trusted validator host'
+assert_validator_fixed 'generated_at differs from guarded attempt timestamp' 'exact generated_at validator diagnostic is missing'
 assert_absent '$attemptStartedAt.ToString("o")' 'offset-form attempt timestamp serialization remains'
 assert_absent '.Replace("+00:00", "Z")' 'string replacement timestamp normalization remains'
+assert_absent 'manifest.inputs.runtime_output_schema_sha256' 'immutable manifest retains per-attempt runtime schema hash'
+assert_absent 'codex-run-manifest.v8' 'manifest v8 remains in the runner contract'
 assert_absent 'while ($validatorBytes' 'broad validator-byte BOM stripping remains in the trusted validator host'
 pass 'guarded runtime identity, dynamic schema, and fail-closed BOM host contract'
 
@@ -195,7 +199,7 @@ pass 'no-follow BFS protects Git, GPG, and artifact subtrees'
 for token in \
   '$MaxNativeCaptureBytes' '$MaxJsonlBytes' '$MaxJsonlLineBytes' \
   '$MaxNativeSeconds' '$MaxCodexSeconds' 'New-BoundedCaptureStream' \
-  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v8' 'run.lock' \
+  'CopyToAsync' 'hard timeout' 'codex-run-manifest.v9' 'run.lock' \
   'Assert-ResumeBindingObservation' 'execution_boundary_inventory_sha256' \
   'Get-TrustedExecutableWorkingDirectory' '$psi.WorkingDirectory = Get-TrustedExecutableWorkingDirectory'; do
   assert_fixed "$token" "bounded/resume contract missing: $token"

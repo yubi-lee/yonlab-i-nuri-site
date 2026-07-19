@@ -144,6 +144,7 @@ if (-not [string]::IsNullOrWhiteSpace($ExpectedAttemptStartedAt)) {
     if (-not (Test-UtcTimestamp $ExpectedAttemptStartedAt)) { Invalid "ExpectedAttemptStartedAt is not UTC RFC3339" }
     $generated = [DateTimeOffset]::Parse([string]$result.generated_at, [Globalization.CultureInfo]::InvariantCulture)
     $attemptStarted = [DateTimeOffset]::Parse($ExpectedAttemptStartedAt, [Globalization.CultureInfo]::InvariantCulture)
+    if ([string]$result.generated_at -cne $ExpectedAttemptStartedAt) { Invalid "generated_at differs from guarded attempt timestamp" }
     if ($generated -lt $attemptStarted -or $generated -gt [DateTimeOffset]::UtcNow.AddMinutes(5)) { Invalid "generated_at is not fresh for the current attempt" }
 }
 if ([string]::IsNullOrWhiteSpace([string]$result.summary)) { Invalid "summary must be nonempty" }
