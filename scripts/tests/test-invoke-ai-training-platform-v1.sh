@@ -213,6 +213,20 @@ control_line="$(grep -nF 'Assert-GitControlPlaneSnapshot $gitControlPlaneSnapsho
 post_git_line="$(grep -nF '$afterHead = SafeGit ' "$RUNNER" | awk -F: -v start="$codex_line" '$1 > start {print $1; exit}')"
 [[ -n "$codex_line" && "$tool_line" -gt "$codex_line" && "$control_line" -eq $((tool_line + 1)) && "$control_line" -lt "$post_git_line" ]] \
   || fail 'tool bytes and Git control plane are not checked after Codex and before post-run Git'
+
+# Current-process membership must use the GC-stable Win32 pseudo-handle; the
+# Job Object kill-on-close and nested-job policy must remain unchanged.
+assert_fixed 'public static extern IntPtr GetCurrentProcess();' 'NativeJob does not expose GetCurrentProcess'
+assert_fixed '[YOnLab.NativeJob]::GetCurrentProcess()' 'runner does not obtain the current-process pseudo-handle'
+assert_fixed '$currentProcessPseudoHandle' 'runner does not retain the pseudo-handle for membership probing'
+assert_fixed 'IsProcessInJob' 'runner does not probe Job membership'
+assert_fixed '0x00002000' 'kill-on-close Job limit flag is missing'
+assert_fixed 'SetInformationJobObject($job, 9' 'Job Object extended-limit policy is missing'
+assert_fixed 'BestEffortReadOnly' 'read-only Job assignment fallback mode is missing'
+assert_absent '[Diagnostics.Process]::GetCurrentProcess().Handle' 'managed Process-owned handle remains in the membership probe'
+assert_absent '[IntPtr](-1)' 'pseudo-handle is hardcoded instead of obtained from Win32'
+assert_absent 'CloseHandle($currentProcessPseudoHandle)' 'pseudo-handle is incorrectly closed'
+pass 'GC-stable current-process pseudo-handle and unchanged Job Object policy'
 pass 'bounded process, protected executable working directory, exclusive resume, and immediate post-Codex trust recheck'
 
 # Worktree snapshots keep the standard untracked limits while compacting

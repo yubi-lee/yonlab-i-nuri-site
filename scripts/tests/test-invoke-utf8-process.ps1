@@ -1,6 +1,11 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $runner = Join-Path (Split-Path -Parent $PSScriptRoot) "invoke-ai-training-platform-v1.ps1"
+$runnerText = Get-Content -Raw -LiteralPath $runner
+if ($runnerText -notmatch 'public static extern IntPtr GetCurrentProcess\(\);') { throw "NativeJob must expose the Win32 GetCurrentProcess pseudo-handle" }
+if ($runnerText -match '\[Diagnostics\.Process\]::GetCurrentProcess\(\)\.Handle') { throw "NativeJob must not borrow a managed Process-owned handle for membership checks" }
+if ($runnerText -match '\[IntPtr\]\(-1\)') { throw "NativeJob must not hardcode the pseudo-handle value" }
+if ($runnerText -match 'CloseHandle\(\$currentProcessPseudoHandle\)') { throw "NativeJob must not close the GetCurrentProcess pseudo-handle" }
 $tokens = $null; $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile($runner, [ref]$tokens, [ref]$errors)
 if ($errors.Count -gt 0) { throw "runner parse failed" }
@@ -30,6 +35,43 @@ $MaxWorktreeFiles = 20000
 $ProtectedGpgHome = "C:\ProgramData\YOnLab\gnupg"
 $ProtectedHooksPath = "C:\ProgramData\YOnLab\empty-git-hooks"
 $script:GitHubCredentialHelper = $null
+$jobStressPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+$jobStressEncoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('Start-Sleep -Seconds 10'))
+$jobStressPseudoHandle = [IntPtr]::Zero
+for ($jobStressIteration = 1; $jobStressIteration -le 3; $jobStressIteration++) {
+    $jobStressPsi = New-Object Diagnostics.ProcessStartInfo
+    $jobStressPsi.UseShellExecute = $false
+    $jobStressPsi.CreateNoWindow = $true
+    $jobStressPsi.FileName = $jobStressPowerShell
+    $jobStressPsi.Arguments = "-NoLogo -NoProfile -NonInteractive -EncodedCommand $jobStressEncoded"
+    $jobStressProcess = New-Object Diagnostics.Process
+    $jobStressProcess.StartInfo = $jobStressPsi
+    $jobStressStarted = $false
+    $jobStressJob = [IntPtr]::Zero
+    try {
+        if (-not $jobStressProcess.Start()) { throw "job stress child did not start on iteration $jobStressIteration" }
+        $jobStressStarted = $true
+        $jobStressJob = New-KillOnCloseJob $jobStressProcess 'Required'
+        if ($jobStressJob -eq [IntPtr]::Zero) { throw "job stress returned a zero Job handle on iteration $jobStressIteration" }
+        if ($jobStressPseudoHandle -eq [IntPtr]::Zero) {
+            $jobStressPseudoHandle = [YOnLab.NativeJob]::GetCurrentProcess()
+            if ($jobStressPseudoHandle -eq [IntPtr]::Zero) { throw 'GetCurrentProcess returned zero in regression fixture' }
+        }
+        [GC]::Collect()
+        [GC]::WaitForPendingFinalizers()
+        $jobStressInJob = $false
+        if (-not [YOnLab.NativeJob]::IsProcessInJob($jobStressPseudoHandle, [IntPtr]::Zero, [ref]$jobStressInJob)) {
+            throw "GC-stressed pseudo-handle membership probe failed on iteration $jobStressIteration with Win32 error $([Runtime.InteropServices.Marshal]::GetLastWin32Error())"
+        }
+    } finally {
+        if ($jobStressJob -ne [IntPtr]::Zero) { Close-KillOnCloseJob $jobStressJob; $jobStressJob = [IntPtr]::Zero }
+        if ($jobStressStarted -and -not $jobStressProcess.HasExited) {
+            try { Stop-NativeProcessTree $jobStressProcess } catch { }
+            try { $jobStressProcess.WaitForExit() } catch { }
+        }
+        $jobStressProcess.Dispose()
+    }
+}Write-Host 'PASS: current-process Job membership uses a GC-stable Win32 pseudo-handle'
 $savedGitDir = $env:GIT_DIR
 $nativeReadOnlyPowerShell = [Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
 $nativeReadOnlyScript = '[Console]::Out.Write("readonly")'

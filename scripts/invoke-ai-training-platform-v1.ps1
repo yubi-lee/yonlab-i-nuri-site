@@ -984,6 +984,7 @@ namespace YOnLab {
     [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] public static extern IntPtr CreateJobObject(IntPtr attributes, string name);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool SetInformationJobObject(IntPtr job, int infoClass, IntPtr info, uint length);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+    [DllImport("kernel32.dll", SetLastError=false)] public static extern IntPtr GetCurrentProcess();
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool IsProcessInJob(IntPtr process, IntPtr job, out bool result);
     [DllImport("kernel32.dll", SetLastError=true)] public static extern bool CloseHandle(IntPtr handle);
   }
@@ -991,7 +992,15 @@ namespace YOnLab {
 '@
     }
     $inJob = $false
-    if (-not [YOnLab.NativeJob]::IsProcessInJob([Diagnostics.Process]::GetCurrentProcess().Handle, [IntPtr]::Zero, [ref]$inJob)) { throw "IsProcessInJob failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
+    $currentProcessPseudoHandle = [YOnLab.NativeJob]::GetCurrentProcess()
+    if ($currentProcessPseudoHandle -eq [IntPtr]::Zero) {
+        throw 'GetCurrentProcess returned an invalid pseudo-handle'
+    }
+    $membershipSucceeded = [YOnLab.NativeJob]::IsProcessInJob($currentProcessPseudoHandle, [IntPtr]::Zero, [ref]$inJob)
+    $membershipError = if ($membershipSucceeded) { 0 } else { [Runtime.InteropServices.Marshal]::GetLastWin32Error() }
+    if (-not $membershipSucceeded) {
+        throw ('IsProcessInJob failed: ' + $membershipError)
+    }
     $job = [YOnLab.NativeJob]::CreateJobObject([IntPtr]::Zero, $null)
     if ($job -eq [IntPtr]::Zero) { throw "CreateJobObject failed: $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }
     $limit = New-Object YOnLab.NativeJob+ExtendedLimit
