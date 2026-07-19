@@ -159,7 +159,15 @@ foreach ($name in @("root", "remote", "branch", "baseline_commit", "implementati
 if ($repository.worktree_clean -isnot [bool]) { Invalid "repository.worktree_clean must be boolean" }
 if ($null -ne $repository.pull_request_url -and $repository.pull_request_url -isnot [string]) { Invalid "repository.pull_request_url must be string or null" }
 if ([string]$repository.root -cne "D:\Views\yonlab-inuri-site" -or [string]$repository.remote -cne "https://github.com/yubi-lee/yonlab-i-nuri-site.git" -or [string]$repository.branch -cne "feat/ai-training-platform-v1") { Invalid "repository identity mismatch" }
-if ([string]$repository.baseline_commit -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_commit -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_tree -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_tree_sha256 -notmatch '^[0-9a-f]{64}$' -or [string]$repository.release_snapshot_commit -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_commit -ceq [string]$repository.release_snapshot_commit) { Invalid "repository must report distinct implementation S and release snapshot R with exact tree identities" }
+if ([string]$repository.baseline_commit -notmatch '^[0-9a-f]{40}$') { Invalid "repository.baseline_commit must be a full 40-hex commit" }
+if ([string]$result.candidate_phase -ceq "IMPLEMENTATION_BLOCKED") {
+    if ([string]$repository.implementation_commit -cne "" -or [string]$repository.implementation_tree -cne "" -or [string]$repository.implementation_tree_sha256 -cne "" -or [string]$repository.release_snapshot_commit -cne "") {
+        Invalid "IMPLEMENTATION_BLOCKED must not report implementation or release snapshot identities"
+    }
+    if ($null -ne $repository.pull_request_url) { Invalid "IMPLEMENTATION_BLOCKED must not report a pull request URL" }
+} elseif ([string]$repository.implementation_commit -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_tree -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_tree_sha256 -notmatch '^[0-9a-f]{64}$' -or [string]$repository.release_snapshot_commit -notmatch '^[0-9a-f]{40}$' -or [string]$repository.implementation_commit -ceq [string]$repository.release_snapshot_commit) {
+    Invalid "repository must report distinct implementation S and release snapshot R with exact tree identities"
+}
 if (@("PUSHED", "NOT_PUSHED", "BLOCKED") -cnotcontains [string]$repository.push_status) { Invalid "unknown repository push_status" }
 $prUri = $null; $prValue = [string]$repository.pull_request_url
 $prValid = -not [string]::IsNullOrWhiteSpace($prValue) -and [Uri]::TryCreate($prValue, [UriKind]::Absolute, [ref]$prUri) -and $prUri.Scheme -ceq "https" -and $prUri.Host -ceq "github.com" -and $prUri.AbsolutePath -match '^/yubi-lee/yonlab-i-nuri-site/pull/[0-9]+$'
@@ -385,7 +393,7 @@ if ([string]$result.candidate_phase -ceq "UNSIGNED_CANDIDATE / REVIEW PENDING") 
     if (@("RESUME", "REMEDIATE") -cnotcontains [string]$next.kind -or [string]::IsNullOrWhiteSpace([string]$next.command)) { Invalid "NOT_READY next_action must be RESUME/REMEDIATE with a command" }
     if (@($result.blockers).Count -eq 0) { Invalid "NOT_READY requires blockers" }
     if ($technicalOwners.Count -ne 0 -or $null -ne $releaseAttestation.artifact_integrity -or $null -ne $releaseAttestation.acceptance_approval -or $null -ne $releaseAttestation.annotated_tag) { Invalid "NOT_READY may not carry self-asserted signatures or tag" }
-    [Console]::Error.WriteLine("FAIL [RESULT-NOT-READY]: evidence preserved")
+    [Console]::Error.WriteLine("IMPLEMENTATION_BLOCKED [RESULT-NOT-READY]: evidence preserved")
     exit 5
 } else {
     Invalid "unknown candidate phase: $($result.candidate_phase)"

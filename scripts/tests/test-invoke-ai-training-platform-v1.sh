@@ -347,6 +347,16 @@ assert_fixed 'Implement produced independently verified, unsigned S -> R handoff
 assert_fixed 'exit 5' 'fail-closed Implement exit is missing'
 pass 'NOT_READY release_state and separate Implement candidate_phase'
 
+# IMPLEMENTATION_BLOCKED has an independent Git/trust/control-plane closure.
+for token in \
+  'POST-BLOCKED independent Git/trust/control-plane facts match blocked result' \
+  'current HEAD differs from resume-state.head' \
+  'blocked result push_status differs from independent remote synchronization' \
+  'blocked result commit list does not match actual baseline..HEAD range' \
+  'RESULT: NOT_READY / IMPLEMENTATION_BLOCKED'; do
+  assert_fixed "$token" "blocked result independent verification missing: $token"
+done
+pass 'blocked result identity and Git synchronization closure'
 # Evidence is an exact closed set and all consumers bind registry evidence.
 for token in \
   'Assert-ExactEvidencePackage' 'registry-derived evidence set' \

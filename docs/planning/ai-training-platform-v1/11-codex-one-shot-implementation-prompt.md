@@ -36,8 +36,9 @@
 
 [guarded release 불변식]
 - 이 프롬프트는 launcher의 `Implement` mode에서만 실행된다. Codex의 `release_state`는 항상 `NOT_READY`다. 별도 `candidate_phase`만 `IMPLEMENTATION_BLOCKED` 또는 `UNSIGNED_CANDIDATE / REVIEW PENDING` 중 하나로 출력한다. `CODE_COMPLETE / ACCEPTANCE DATA PENDING`과 `ACCEPTED`를 출력하거나 서명·승인·tag를 생성하지 마라.
-- 구현과 구현 시험을 모두 포함한 full 40-hex commit을 `S`로 만든다. `S`의 tree OID와 tracked source bytes에서 계산한 `source-tree-hash.v1` SHA-256을 기록한다.
-- 마지막에 문서·운영·QA·매뉴얼·릴리스·배포 문서만 정리한 full 40-hex commit `R`을 만든다. `R`은 부모가 정확히 하나이고 그 유일한 부모이자 direct first parent가 `S`여야 하며 `R != S`여야 한다.
+- `UNSIGNED_CANDIDATE / REVIEW PENDING`에서만 구현과 구현 시험을 모두 포함한 full 40-hex commit을 `S`로 만든다. `S`의 tree OID와 tracked source bytes에서 계산한 `source-tree-hash.v1` SHA-256을 기록한다.
+- `UNSIGNED_CANDIDATE / REVIEW PENDING`에서만 마지막에 문서·운영·QA·매뉴얼·릴리스·배포 문서만 정리한 full 40-hex commit `R`을 만든다. `R`은 부모가 정확히 하나이고 그 유일한 부모이자 direct first parent가 `S`여야 하며 `R != S`여야 한다.
+- `IMPLEMENTATION_BLOCKED`이고 최종 후보 `S`·`R`을 만들지 못했다면 네 repository final identity 필드(`implementation_commit`, `implementation_tree`, `implementation_tree_sha256`, `release_snapshot_commit`)는 정확히 빈 문자열로 출력한다. baseline HEAD 또는 임의 hash를 `S`·`R`로 재사용하지 말고, `pull_request_url`은 null, blockers와 RESUME/REMEDIATE recovery action은 non-empty로 기록한다.
 - `S..R` 변경 경로는 `docs/design/ai-training-platform/`, `docs/operations/ai-training-platform/`, `docs/qa/ai-training-platform/`, `docs/manuals/ai-training-platform/`, `docs/releases/ai-training-platform/`, `dist/docs/` 아래 regular file로만 제한한다. 이외 경로 변경, merge commit, submodule, symlink 또는 reparse point가 있으면 `NOT_READY`다.
 - tracked evidence index, artifact manifest, checksum, source provenance와 최종 문서의 source identity는 모두 `S`와 `S`의 tree/hash에 결속한다. 아직 생성 중인 `R`의 OID·tag·PR·CI run URL을 tracked file에 넣어 자기참조를 만들지 마라. `R`은 최종 JSON의 `repository.release_snapshot_commit`과 외부 검증 입력으로만 보고한다.
 - `S`와 `R`을 push하고 head가 `R`인 exact one non-fork feature→main PR을 준비한다. CI의 신뢰 workflow는 이 candidate가 생성·수정하는 파일이 아니라 사전에 `main`에 설치되고 외부 trust store에 workflow ID·path·SHA-256이 고정된 전제조건이다. `.github/workflows/`를 candidate에서 변경하지 마라.
@@ -191,13 +192,13 @@ H. Pilot·Operations
 - 실행하지 않은 시험, 누락 명령, 오래된 결과, 환경 부재는 PASS가 아니다.
 - `candidate_phase=UNSIGNED_CANDIDATE / REVIEW PENDING`은 모든 구현 가능 gate가 fresh PASS이고, 허용된 외부 수용 gate만 fresh `REQUIRES_ACCEPTANCE_DATA`이며, `blockers=[]`, clean worktree, origin push, head `R` PR, nonempty 생성 문서·commit 목록을 모두 요구한다.
 - `generated_documents`는 `final-document-inventory.json`의 `${release_id}` literal expansion으로 계산한 147개 exact path와 같아야 한다. 하나라도 없으면 `NOT_READY`와 blocker로 기록한다.
-- `repository.implementation_commit=S`, `repository.implementation_tree=<S tree OID>`, `repository.implementation_tree_sha256=<source-tree-hash.v1>`, `repository.release_snapshot_commit=R`를 실제 40-hex 값으로 기록한다. tracked evidence·manifest·checksum의 source commit은 모두 `S`여야 하며 `R`을 담으면 `NOT_READY`다.
+- `UNSIGNED_CANDIDATE / REVIEW PENDING` 후보는 실제 40자 `S`·`R`, `S` tree/hash, push 상태, PR URL, 최종 clean 여부를 거짓 없이 기록한다. `IMPLEMENTATION_BLOCKED`는 아직 존재하지 않는 S/R을 보고하지 않으며 네 final identity 필드를 빈 문자열, PR URL을 null로 기록한다. PR URL은 model result에만 보고하고 tracked evidence에 복사하지 마라.
 - `release_attestation`의 technical approval, artifact signature, acceptance approval, tag/verification 필드는 비어 있거나 null이어야 한다. 서명·receipt·tag를 자기 생성하지 마라.
 - gate/KPI/verification command가 가리키는 모든 증거는 `docs/qa/ai-training-platform/evidence-index.json`의 고유 row에 exact `artifact_path`, actual SHA-256, source commit `S`, `FRESH`, 미래 expiry로 등록한다. index 전체의 FAIL/BLOCKED/MISSING/STALE을 숨기지 않는다.
 - PASS 또는 `REQUIRES_ACCEPTANCE_DATA` gate는 fresh·nonempty evidence를 가져야 하며, PASS verification command의 exit code는 0이어야 한다.
-- `candidate_phase=IMPLEMENTATION_BLOCKED`에는 모든 FAIL/BLOCKED/MISSING/STALE 원인과 복구 방법을 `blockers`에 기록한다.
+- `candidate_phase=IMPLEMENTATION_BLOCKED`에는 모든 FAIL/BLOCKED/MISSING/STALE 원인과 복구 방법을 `blockers`에 기록한다. final S/R/tree/hash 필드는 빈 문자열이어야 하고 `pull_request_url`은 null이어야 한다. `next_action.kind`는 `RESUME` 또는 `REMEDIATE`이고 command는 non-empty여야 하며, worktree_clean·push_status·commits는 실제 Git 상태와 일치하게 보고한다.
 - 구현 기능·화면·아키텍처, 재사용/재작성, AI routing/privacy, HWP, migration/seed/운영 결과는 `summary`, `generated_documents`, `verification_commands`와 evidence에 추적 가능하게 남긴다.
-- 실제 40자 `S`·`R`, push 상태, PR URL 또는 null, 최종 clean 여부를 거짓 없이 기록한다. PR URL은 model result에만 보고하고 tracked evidence에 복사하지 마라.
+- phase별 계약에 맞는 identity(`UNSIGNED_CANDIDATE / REVIEW PENDING`의 실제 S/R 또는 `IMPLEMENTATION_BLOCKED`의 빈 문자열), push 상태, PR URL 또는 null, 최종 clean 여부를 거짓 없이 기록한다. PR URL은 model result에만 보고하고 tracked evidence에 복사하지 마라.
 - 중단 후 재개가 필요하면 `next_action.kind=RESUME`과 guarded launcher가 출력한 resume command를 기록한다.
 
 진행 중에는 60초 이상 무응답하지 말고 간결한 진척·검증 결과를 공유하라. 단순 계획 보고로 끝내지 말고 위 중단 조건이 아닌 한 구현, 시험, 문서, commit, push, PR까지 계속 진행하라.

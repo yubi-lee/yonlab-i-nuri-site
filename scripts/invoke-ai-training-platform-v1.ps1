@@ -2860,6 +2860,70 @@ if (-not [string]::IsNullOrWhiteSpace($validatorResult.Text)) { [Console]::Error
 $result = ConvertFrom-StrictJsonFile $finalResult "Codex final result"
 if ([string]$result.release_state -cne "NOT_READY") { Stop-Launcher "RESULT-STATE" "Implement may not claim a signed release state" 6 }
 if ([string]$result.candidate_phase -ceq "IMPLEMENTATION_BLOCKED") {
+    Assert-TrustedExecutableInventoryUnchanged $trustedToolInventory $releaseTrust.trusted_tools $resolvedRoot
+    Assert-GitControlPlaneSnapshot $gitControlPlaneSnapshot
+    Assert-ProtectedTrustRootsUnchanged $protectedTrustRootsSnapshot $resolvedTrustPath $ProtectedHooksPath $ProtectedGpgHome $resolvedAttestationRoot
+    Assert-TrustedRuntimeInputs $gitCommand $resolvedRoot ([string]$manifest.repository.initial_head) $manifest.inputs.trusted_input_sha256 $trustedRelativePaths
+    if ((Bytes-Sha256 $trustedValidatorBytes) -cne [string]$manifest.inputs.trusted_validator_sha256 -or (Get-FileHash -LiteralPath $resolvedTrustPath -Algorithm SHA256).Hash.ToLowerInvariant() -cne [string]$manifest.inputs.release_trust_sha256) {
+        Stop-Launcher "POST-BLOCKED" "trusted validator or release trust changed before blocked handoff" 6
+    }
+
+    $blockedState = ConvertFrom-StrictJsonFile $resumeStatePath "blocked resume state"
+    $blockedHead = SafeGit $gitCommand @("-C",$resolvedRoot,"rev-parse","HEAD"); Native-OK $blockedHead "POST-BLOCKED" "current HEAD"
+    $blockedStatus = SafeGit $gitCommand @("-C",$resolvedRoot,"status","--porcelain=v1","--untracked-files=normal"); Native-OK $blockedStatus "POST-BLOCKED" "current worktree"
+    $blockedBranch = SafeGit $gitCommand @("-C",$resolvedRoot,"rev-parse","--abbrev-ref","HEAD"); Native-OK $blockedBranch "POST-BLOCKED" "current branch"
+    $blockedRemote = SafeGit $gitCommand @("-C",$resolvedRoot,"remote","get-url","origin"); Native-OK $blockedRemote "POST-BLOCKED" "origin remote"
+    $blockedUpstream = SafeGit $gitCommand @("-C",$resolvedRoot,"rev-parse","--abbrev-ref","--symbolic-full-name","@{u}"); Native-OK $blockedUpstream "POST-BLOCKED" "upstream"
+    $blockedSync = SafeGit $gitCommand @("-C",$resolvedRoot,"rev-list","--left-right","--count","HEAD...@{u}"); Native-OK $blockedSync "POST-BLOCKED" "upstream synchronization"
+    $blockedRemoteHead = SafeGit $gitCommand @("-C",$resolvedRoot,"rev-parse","origin/$ExpectedBranch"); Native-OK $blockedRemoteHead "POST-BLOCKED" "remote branch HEAD"
+
+    if ([string]$blockedState.run_id -cne $runId -or [string]$blockedState.head -cne [string]$blockedHead.Text) {
+        Stop-Launcher "POST-BLOCKED" "current HEAD differs from resume-state.head" 6
+    }
+    if ([string]$blockedBranch -cne $ExpectedBranch -or [string]$blockedRemote -cne $ExpectedRemote -or [string]$blockedUpstream -cne "origin/$ExpectedBranch" -or [string]$blockedSync.Text -notmatch '^[0] +[0]$') {
+        Stop-Launcher "POST-BLOCKED" "blocked Git branch/remote/upstream synchronization is not exact" 6
+    }
+    if ([string]$result.repository.root -cne $ExpectedRoot -or [string]$result.repository.remote -cne $ExpectedRemote -or [string]$result.repository.branch -cne $ExpectedBranch -or
+        [string]$result.repository.baseline_commit -cne [string]$manifest.repository.initial_head) {
+        Stop-Launcher "POST-BLOCKED" "blocked result repository identity differs from guarded baseline" 6
+    }
+    $blockedClean = [string]::IsNullOrWhiteSpace([string]$blockedStatus.Text)
+    if ($result.repository.worktree_clean -ne $blockedClean) {
+        Stop-Launcher "POST-BLOCKED" "blocked result worktree_clean differs from actual Git porcelain" 6
+    }
+    if ([string]$result.repository.implementation_commit -cne "" -or [string]$result.repository.implementation_tree -cne "" -or
+        [string]$result.repository.implementation_tree_sha256 -cne "" -or [string]$result.repository.release_snapshot_commit -cne "" -or
+        $null -ne $result.repository.pull_request_url) {
+        Stop-Launcher "POST-BLOCKED" "blocked result must report empty S/R/tree/hash identities and null PR" 6
+    }
+
+    $expectedBlockedPushStatus = $null
+    if ([string]$blockedHead.Text -ceq [string]$manifest.repository.initial_head -and [string]$blockedRemoteHead.Text -ceq [string]$manifest.repository.initial_head) {
+        $expectedBlockedPushStatus = "BLOCKED"
+    } elseif ([string]$blockedHead.Text -cne [string]$manifest.repository.initial_head -and [string]$blockedRemoteHead.Text -ceq [string]$blockedHead.Text) {
+        $expectedBlockedPushStatus = "PUSHED"
+    } else {
+        Stop-Launcher "POST-BLOCKED" "blocked local and remote HEADs are not synchronized to a valid recovery state" 6
+    }
+    if ([string]$result.repository.push_status -cne $expectedBlockedPushStatus) {
+        Stop-Launcher "POST-BLOCKED" "blocked result push_status differs from independent remote synchronization" 6
+    }
+
+    $blockedCommitLog = SafeGit $gitCommand @("-C",$resolvedRoot,"log","--no-ext-diff","--no-textconv","--reverse","--format=%H%x09%s","$([string]$manifest.repository.initial_head)..$([string]$blockedHead.Text)")
+    Native-OK $blockedCommitLog "POST-BLOCKED" "baseline to current commit range"
+    $actualBlockedCommits=@($blockedCommitLog.Text -split ([char]10) | Where-Object { $_ } | ForEach-Object {
+        $parts=$_.TrimEnd([char]13) -split ([char]9),2
+        [pscustomobject]@{hash=$parts[0];subject=$parts[1]}
+    })
+    if (@($result.commits).Count -ne $actualBlockedCommits.Count) {
+        Stop-Launcher "POST-BLOCKED" "blocked result commit list does not match actual baseline..HEAD range" 6
+    }
+    for ($blockedIndex=0; $blockedIndex -lt $actualBlockedCommits.Count; $blockedIndex+=1) {
+        if ([string]$result.commits[$blockedIndex].hash -cne [string]$actualBlockedCommits[$blockedIndex].hash -or [string]$result.commits[$blockedIndex].subject -cne [string]$actualBlockedCommits[$blockedIndex].subject) {
+            Stop-Launcher "POST-BLOCKED" "blocked result commit list/order differs from actual baseline..HEAD range" 6
+        }
+    }
+    Write-Pass "POST-BLOCKED independent Git/trust/control-plane facts match blocked result"
     Write-Host "RESULT: NOT_READY / IMPLEMENTATION_BLOCKED"
     Write-Host "RUN: $runDirectory"
     exit 5

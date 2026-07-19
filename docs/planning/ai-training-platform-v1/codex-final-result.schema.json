@@ -91,20 +91,16 @@
           "pattern": "^[0-9a-f]{40}$"
         },
         "implementation_commit": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{40}$"
+          "type": "string"
         },
         "implementation_tree": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{40}$"
+          "type": "string"
         },
         "implementation_tree_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
+          "type": "string"
         },
         "release_snapshot_commit": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{40}$"
+          "type": "string"
         },
         "worktree_clean": {
           "type": "boolean"
@@ -1030,6 +1026,25 @@
       },
       "then": {
         "properties": {
+          "repository": {
+            "properties": {
+              "implementation_commit": {
+                "const": ""
+              },
+              "implementation_tree": {
+                "const": ""
+              },
+              "implementation_tree_sha256": {
+                "const": ""
+              },
+              "release_snapshot_commit": {
+                "const": ""
+              },
+              "pull_request_url": {
+                "type": "null"
+              }
+            }
+          },
           "blockers": {
             "minItems": 1
           },
@@ -1065,6 +1080,22 @@
         "properties": {
           "repository": {
             "properties": {
+              "implementation_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "implementation_tree": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "implementation_tree_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "release_snapshot_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
               "worktree_clean": { "const": true },
               "push_status": { "const": "PUSHED" },
               "pull_request_url": { "type": "string" }

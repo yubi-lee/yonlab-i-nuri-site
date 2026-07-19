@@ -30,6 +30,40 @@ function New-Unsigned {
         next_action=[ordered]@{kind="HUMAN_REVIEW";description="external technical review and detached signatures required";command=$null}
     }
 }
+function New-Blocked {
+    $blocked = Copy-Object (New-Unsigned)
+    $blocked.candidate_phase = "IMPLEMENTATION_BLOCKED"
+    $blocked.repository.implementation_commit = ""
+    $blocked.repository.implementation_tree = ""
+    $blocked.repository.implementation_tree_sha256 = ""
+    $blocked.repository.release_snapshot_commit = ""
+    $blocked.repository.worktree_clean = $true
+    $blocked.repository.push_status = "BLOCKED"
+    $blocked.repository.pull_request_url = $null
+    $blocked.commits = @()
+    $blocked.blockers = @([ordered]@{id="BLOCK";status="BLOCKED";description="implementation blocked";owner="launcher";recovery="resume with write permissions"})
+    $blocked.next_action = [ordered]@{kind="REMEDIATE";description="resume after remediation";command="resume"}
+    foreach ($id in $gateIds) {
+        $blocked.gates.$id.status = "BLOCKED"
+        $blocked.gates.$id.freshness = "MISSING"
+        $blocked.gates.$id.evidence_paths = @()
+    }
+    foreach ($id in $kpiPolicy.Keys) {
+        $blocked.kpi_results.$id.status = "BLOCKED"
+        $blocked.kpi_results.$id.freshness = "MISSING"
+        $blocked.kpi_results.$id.value = $null
+        $blocked.kpi_results.$id.auxiliary_value = $null
+        $blocked.kpi_results.$id.acceptance_id = $null
+        $blocked.kpi_results.$id.evidence_paths = @()
+    }
+    foreach ($command in @($blocked.verification_commands)) {
+        $command.status = "BLOCKED"
+        $command.exit_code = $null
+        $command.acceptance_id = $null
+        $command.evidence_path = "docs/qa/evidence.json"
+    }
+    return $blocked
+}
 function Copy-Object($Value) { return (($Value | ConvertTo-Json -Depth 30) | ConvertFrom-Json) }
 function Write-Fixture([string]$Name, $Value) { $path = Join-Path $temp "$Name.json"; [IO.File]::WriteAllText($path, ($Value | ConvertTo-Json -Depth 30), (New-Object Text.UTF8Encoding -ArgumentList $false)); return $path }
 function Invoke-Validator([string]$Path, [string]$ExpectedReleaseId = "v0.1.0-rc5", [string]$ExpectedAttemptStartedAt = "2026-07-13T12:00:00.0000000Z") {
@@ -109,11 +143,23 @@ try {
     Expect "reject-codex-signed-candidate" $pending 3
     $accepted = Copy-Object $unsigned; $accepted.release_state = "ACCEPTED"
     Expect "reject-codex-accepted" $accepted 3
-    $notReady = Copy-Object $unsigned; $notReady.candidate_phase="IMPLEMENTATION_BLOCKED"; $notReady.blockers=@([ordered]@{id="BLOCK";status="FAIL";description="failed";owner="dev";recovery="fix"}); $notReady.next_action=[ordered]@{kind="REMEDIATE";description="fix";command="resume"}
+    $notReady = New-Blocked
     $notReady.generated_at = "2026-07-13T12:00:00.0000000Z"
-    Expect "not-ready" $notReady 5
+    $notReadyResult = Invoke-Validator (Write-Fixture "not-ready" $notReady)
+    if ($notReadyResult.ExitCode -ne 5 -or -not $notReadyResult.Output.Contains("IMPLEMENTATION_BLOCKED")) { throw "blocked no-S/R expected exit 5 with marker: $($notReadyResult.Output)" }
+    Write-Host "PASS: validator blocked no-S/R -> 5 with IMPLEMENTATION_BLOCKED marker"
 
     $cases = [ordered]@{}
+    $blockedCases = [ordered]@{}
+    $item = Copy-Object $notReady; $item.repository.implementation_commit = ("b" * 40); $item.repository.implementation_tree = ("c" * 40); $item.repository.implementation_tree_sha256 = ("d" * 64); $item.repository.release_snapshot_commit = ("e" * 40); $blockedCases["blocked-fake-identities"] = $item
+    $item = Copy-Object $notReady; $item.repository.pull_request_url = "https://github.com/yubi-lee/yonlab-i-nuri-site/pull/1"; $blockedCases["blocked-pr-url"] = $item
+    $item = Copy-Object $notReady; $item.blockers = @(); $blockedCases["blocked-empty-blockers"] = $item
+    $item = Copy-Object $notReady; $item.release_attestation.technical_approvals = @([ordered]@{owner_id="OWN-ARCH";scope_id="ARCHITECTURE";decision="APPROVED";subject_commit=("e" * 40);signature_path="docs/qa/evidence.json";signature_sha256=("c" * 64);verification_receipt_path="docs/qa/evidence.json"}); $blockedCases["blocked-signed-attestation"] = $item
+    foreach ($entry in $blockedCases.GetEnumerator()) { Expect $entry.Key $entry.Value 3 }
+
+    $item = Copy-Object $unsigned; $item.repository.implementation_commit = ""; $item.repository.implementation_tree = ""; $item.repository.implementation_tree_sha256 = ""; $item.repository.release_snapshot_commit = ""; $cases["review-pending-empty-identities"] = $item
+    $item = Copy-Object $unsigned; $item.repository.release_snapshot_commit = $item.repository.implementation_commit; $cases["review-pending-identities-equal"] = $item
+
     $item=Copy-Object $unsigned; $item.release_id="../../escape"; $cases["unsafe-release"]=$item
     $item=Copy-Object $unsigned; $item.release_id="v0.1.0-rc4"; $cases["wrong-guarded-release"]=$item
     $item=Copy-Object $unsigned; $item.run_id="other-run"; $cases["wrong-run"]=$item
