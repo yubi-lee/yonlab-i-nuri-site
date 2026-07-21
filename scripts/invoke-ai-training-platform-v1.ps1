@@ -93,6 +93,97 @@ function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) {
     exit $ExitCode
 }
 
+function Test-TrustedJsonNumber($Value) {
+    if ($null -eq $Value -or $Value -is [bool]) { return $false }
+    if ($Value -is [byte] -or $Value -is [sbyte] -or $Value -is [int16] -or $Value -is [uint16] -or
+        $Value -is [int32] -or $Value -is [uint32] -or $Value -is [int64] -or $Value -is [uint64] -or $Value -is [decimal]) { return $true }
+    if ($Value -is [single]) { return -not ([single]::IsNaN($Value) -or [single]::IsInfinity($Value)) }
+    if ($Value -is [double]) { return -not ([double]::IsNaN($Value) -or [double]::IsInfinity($Value)) }
+    return $false
+}
+function Get-TrustedKpiPolicy {
+    param([Parameter(Mandatory = $true)]$Baseline)
+    if ($null -eq $Baseline -or $Baseline -isnot [psobject]) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline must be a JSON object" 6 }
+    $kp = $Baseline.PSObject.Properties['kpis']
+    if ($null -eq $kp -or $kp.Value -isnot [Array]) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline kpis must be a JSON array" 6 }
+    $expected = @(1..10 | ForEach-Object { "KPI-{0:D3}" -f $_ })
+    $expectedSet = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::Ordinal)
+    foreach ($id in $expected) { [void]$expectedSet.Add($id) }
+    $kpis = @($kp.Value)
+    if ($kpis.Count -ne 10) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline must contain exactly ten KPI definitions" 6 }
+    $seen = New-Object 'Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::Ordinal)
+    $policy = [ordered]@{}
+    foreach ($kpi in $kpis) {
+        if ($null -eq $kpi -or $kpi -isnot [psobject]) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline KPI definition must be an object" 6 }
+        $idp = $kpi.PSObject.Properties['id']
+        if ($null -eq $idp -or $idp.Value -isnot [string] -or [string]::IsNullOrWhiteSpace([string]$idp.Value)) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline KPI id is invalid" 6 }
+        $id = [string]$idp.Value
+        if (-not $expectedSet.Contains($id)) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline contains unknown KPI id: $id" 6 }
+        if (-not $seen.Add($id)) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline contains duplicate KPI id: $id" 6 }
+        $cp = $kpi.PSObject.Properties['comparison']
+        if ($null -eq $cp -or $cp.Value -isnot [string] -or @(">=", "<=") -notcontains [string]$cp.Value) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline comparison is invalid for $id" 6 }
+        $comparison = [string]$cp.Value
+        $tp = $(if ($comparison -ceq ">=") { $kpi.PSObject.Properties['minimum'] } else { $kpi.PSObject.Properties['maximum'] })
+        if ($null -eq $tp) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline threshold source is missing for $id" 6 }
+        if (-not (Test-TrustedJsonNumber $tp.Value)) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline threshold must be a finite JSON number for $id" 6 }
+        $policy[$id] = [pscustomobject]@{ id=$id; comparison=$comparison; threshold=$tp.Value }
+    }
+    $actual = @($policy.Keys | Sort-Object); $wanted = @($expected | Sort-Object)
+    if ($actual.Count -ne $wanted.Count -or @(Compare-Object $wanted $actual).Count -ne 0) { Stop-Launcher "PRE-KPI-POLICY" "trusted baseline KPI id set is not exactly KPI-001 through KPI-010" 6 }
+    return $policy
+}
+function Get-KpiPolicyMetadataText {
+    param([Parameter(Mandatory = $true)][System.Collections.IDictionary]$TrustedKpiPolicy)
+    $items = @()
+    foreach ($id in @($TrustedKpiPolicy.Keys)) {
+        $d = $TrustedKpiPolicy[$id]
+        if ($null -eq $d -or [string]$d.id -cne [string]$id -or @(">=", "<=") -notcontains [string]$d.comparison -or -not (Test-TrustedJsonNumber $d.threshold)) { Stop-Launcher "PRE-KPI-POLICY" "runtime KPI policy metadata is not a validated trusted policy" 6 }
+        $items += "{0} {1} {2}" -f $id, [string]$d.comparison, [Convert]::ToString($d.threshold, [Globalization.CultureInfo]::InvariantCulture)
+    }
+    return [string]::Join(";", $items)
+}
+function Assert-RuntimeKpiPolicyBinding {
+    param(
+        [Parameter(Mandatory = $true)]$Schema,
+        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$TrustedKpiPolicy
+    )
+    $ids = @($TrustedKpiPolicy.Keys)
+    if ($ids.Count -ne 10) { Stop-Launcher "RUNTIME-SCHEMA" "trusted runtime KPI policy must contain exactly ten IDs" 6 }
+    $kp = if ($null -eq $Schema -or $null -eq $Schema.properties) { $null } else { $Schema.properties.PSObject.Properties['kpi_results'] }
+    if ($null -eq $kp) { Stop-Launcher "RUNTIME-SCHEMA" "runtime schema has no kpi_results property" 6 }
+    $results = $kp.Value
+    if ([string]$results.type -cne "object" -or $results.additionalProperties -ne $false -or $null -eq $results.properties -or $null -eq $results.required) { Stop-Launcher "RUNTIME-SCHEMA" "runtime kpi_results schema structure is incomplete" 6 }
+    $wanted = @($ids | Sort-Object); $actual = @($results.properties.PSObject.Properties.Name | Sort-Object)
+    if ($actual.Count -ne $wanted.Count -or @(Compare-Object $wanted $actual).Count -ne 0) { Stop-Launcher "RUNTIME-SCHEMA" "runtime kpi_results properties must be exactly KPI-001 through KPI-010" 6 }
+    $required = @($results.required | ForEach-Object { [string]$_ } | Sort-Object)
+    if ($required.Count -ne $wanted.Count -or @(Compare-Object $wanted $required).Count -ne 0) { Stop-Launcher "RUNTIME-SCHEMA" "runtime kpi_results required IDs must be exact" 6 }
+    $defs = $Schema.PSObject.Properties['$defs']
+    $templateProperty = if ($null -eq $defs -or $null -eq $defs.Value) { $null } else { $defs.Value.PSObject.Properties['kpi_result'] }
+    if ($null -eq $templateProperty) { Stop-Launcher "RUNTIME-SCHEMA" "runtime schema has no kpi_result template" 6 }
+    $template = $templateProperty.Value
+    $fields = @("status","freshness","value","comparison","threshold","auxiliary_value","acceptance_id","evidence_paths")
+    $fieldSet = @($fields | Sort-Object)
+    $templateFields = @($template.properties.PSObject.Properties.Name | Sort-Object)
+    $templateRequired = @($template.required | ForEach-Object { [string]$_ } | Sort-Object)
+    if ([string]$template.type -cne "object" -or $template.additionalProperties -ne $false -or $templateFields.Count -ne $fieldSet.Count -or @(Compare-Object $fieldSet $templateFields).Count -ne 0 -or $templateRequired.Count -ne $fieldSet.Count -or @(Compare-Object $fieldSet $templateRequired).Count -ne 0) { Stop-Launcher "RUNTIME-SCHEMA" "runtime kpi_result template structure is not the trusted expected shape" 6 }
+    foreach ($id in $ids) {
+        $item = $results.properties.PSObject.Properties[$id].Value
+        if ($null -eq $item -or $null -ne $item.PSObject.Properties['$ref']) { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id retains generic kpi_result ref" 6 }
+        $itemFields = @($item.properties.PSObject.Properties.Name | Sort-Object); $itemRequired = @($item.required | ForEach-Object { [string]$_ } | Sort-Object)
+        if ($itemFields.Count -ne $fieldSet.Count -or @(Compare-Object $fieldSet $itemFields).Count -ne 0 -or $itemRequired.Count -ne $fieldSet.Count -or @(Compare-Object $fieldSet $itemRequired).Count -ne 0) { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id lost trusted field rules" 6 }
+        $cp = $item.properties.PSObject.Properties['comparison']; $tp = $item.properties.PSObject.Properties['threshold']; $d = $TrustedKpiPolicy[$id]
+        if ($null -eq $cp -or $null -eq $tp -or [string]$cp.Value.type -cne "string" -or [string]$tp.Value.type -cne "number") { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id comparison/threshold types are invalid" 6 }
+        $ce = @($cp.Value.enum); $te = @($tp.Value.enum)
+        if ($ce.Count -ne 1 -or [string]$ce[0] -cne [string]$d.comparison) { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id comparison enum is not exact trusted metadata" 6 }
+        if ($te.Count -ne 1 -or -not (Test-TrustedJsonNumber $te[0]) -or [double]$te[0] -ne [double]$d.threshold) { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id threshold enum is not exact trusted metadata" 6 }
+        $templateAllOf = $template.PSObject.Properties['allOf']
+        if ($null -ne $templateAllOf) {
+            $itemAllOf = $item.PSObject.Properties['allOf']
+            if ($null -eq $itemAllOf -or ($itemAllOf.Value | ConvertTo-Json -Depth 100 -Compress) -cne ($templateAllOf.Value | ConvertTo-Json -Depth 100 -Compress)) { Stop-Launcher "RUNTIME-SCHEMA" "runtime KPI $id allOf rules differ from trusted template" 6 }
+        }
+    }
+    return $true
+}
 function New-CodexRuntimeEnvelope {
     param(
         [Parameter(Mandatory = $true)][string]$RunId,
@@ -102,7 +193,8 @@ function New-CodexRuntimeEnvelope {
         [Parameter(Mandatory = $true)][string]$InitialHead,
         [Parameter(Mandatory = $true)][string]$ReleaseId,
         [Parameter(Mandatory = $true)][string]$ModeName,
-        [Parameter(Mandatory = $true)][string]$ResumeCommand
+        [Parameter(Mandatory = $true)][string]$ResumeCommand,
+        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$TrustedKpiPolicy
     )
     if ($RunId -notmatch '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') {
         Stop-Launcher 'RUNTIME-IDENTITY' 'invalid guarded runtime run ID' 6
@@ -132,6 +224,7 @@ generated_at=$GeneratedAt
 initial_head=$InitialHead
 mode=$ModeName
 resume_command=$ResumeCommand
+kpi_policy_metadata=$(Get-KpiPolicyMetadataText $TrustedKpiPolicy)
 
 Final JSON requirements:
 
@@ -151,6 +244,10 @@ Final JSON requirements:
 - Do not generate a value beginning with run-.
 - Do not derive run_id from date, branch, task, candidate phase, or release ID.
 - repository.baseline_commit MUST equal exactly $InitialHead.
+- KPI comparison and threshold are launcher-owned immutable metadata; measured value is distinct from threshold.
+- PASS, FAIL, BLOCKED, and REQUIRES_ACCEPTANCE_DATA preserve the same comparison/threshold metadata.
+- Acceptance data may leave value=null, but threshold remains baseline metadata when value is null.
+- Never replace threshold with 0, null, or the measured value.
 - When reporting a blocked result, preserve the same exact run_id.
 - When resuming, preserve the original run_id and thread identity.
 - If these values cannot be honored, produce no substitute identity.
@@ -164,7 +261,8 @@ function New-RuntimeCodexOutputSchemaText {
         [Parameter(Mandatory = $true)][string]$TrustedSchemaText,
         [Parameter(Mandatory = $true)][string]$RunId,
         [Parameter(Mandatory = $true)][string]$ReleaseId,
-        [Parameter(Mandatory = $true)][string]$GeneratedAt
+        [Parameter(Mandatory = $true)][string]$GeneratedAt,
+        [Parameter(Mandatory = $true)]$TrustedBaseline
     )
     if ($RunId -notmatch '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') {
         Stop-Launcher 'RUNTIME-SCHEMA' 'invalid guarded run ID for runtime schema' 6
@@ -174,6 +272,7 @@ function New-RuntimeCodexOutputSchemaText {
         Stop-Launcher 'RUNTIME-SCHEMA' 'generated_at is not canonical UTC RFC3339 Z' 6
     }
     $schema = ConvertFrom-StrictJsonText $TrustedSchemaText 'trusted model-facing output schema'
+    $trustedKpiPolicy = Get-TrustedKpiPolicy $TrustedBaseline
     if ($null -eq $schema.properties -or $null -eq $schema.properties.PSObject.Properties['run_id']) {
         Stop-Launcher 'RUNTIME-SCHEMA' 'trusted schema has no run_id property' 6
     }
@@ -208,6 +307,22 @@ function New-RuntimeCodexOutputSchemaText {
     $runProperty | Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@($RunId))
     $releaseProperty | Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@($ReleaseId))
     $generatedProperty | Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@($GeneratedAt))
+    $kpiResultsProperty = $schema.properties.PSObject.Properties['kpi_results']
+    $defsProperty = $schema.PSObject.Properties['$defs']
+    $templateProperty = if ($null -eq $defsProperty -or $null -eq $defsProperty.Value) { $null } else { $defsProperty.Value.PSObject.Properties['kpi_result'] }
+    if ($null -eq $kpiResultsProperty -or $null -eq $templateProperty -or [string]$kpiResultsProperty.Value.type -cne "object" -or $kpiResultsProperty.Value.additionalProperties -ne $false -or $null -eq $kpiResultsProperty.Value.properties -or $null -eq $kpiResultsProperty.Value.required) { Stop-Launcher "RUNTIME-SCHEMA" "trusted model-facing schema KPI structure is incomplete" 6 }
+    $expectedKpiIds=@($trustedKpiPolicy.Keys|Sort-Object);$actualKpiIds=@($kpiResultsProperty.Value.properties.PSObject.Properties.Name|Sort-Object);$requiredKpiIds=@($kpiResultsProperty.Value.required|ForEach-Object{[string]$_}|Sort-Object)
+    if($actualKpiIds.Count-ne $expectedKpiIds.Count -or @(Compare-Object $expectedKpiIds $actualKpiIds).Count-ne 0 -or $requiredKpiIds.Count-ne $expectedKpiIds.Count -or @(Compare-Object $expectedKpiIds $requiredKpiIds).Count-ne 0){Stop-Launcher "RUNTIME-SCHEMA" "trusted model-facing schema KPI properties are not exactly baseline IDs" 6}
+    $templateJson=$templateProperty.Value|ConvertTo-Json -Depth 100 -Compress
+    foreach($id in $trustedKpiPolicy.Keys){
+        $inlineSchema=ConvertFrom-StrictJsonText $templateJson "runtime KPI schema template"
+        $cp=$inlineSchema.properties.PSObject.Properties['comparison'];$tp=$inlineSchema.properties.PSObject.Properties['threshold']
+        if($null -eq $cp -or $null -eq $tp){Stop-Launcher "RUNTIME-SCHEMA" "trusted model-facing schema KPI template is missing comparison/threshold" 6}
+        $cp.Value|Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@([string]$trustedKpiPolicy[$id].comparison))-Force
+        $tp.Value|Add-Member -NotePropertyName enum -NotePropertyValue ([object[]]@($trustedKpiPolicy[$id].threshold))-Force
+        $kpiResultsProperty.Value.properties|Add-Member -NotePropertyName $id -NotePropertyValue $inlineSchema -Force
+    }
+    Assert-RuntimeKpiPolicyBinding $schema $trustedKpiPolicy|Out-Null
     return ($schema | ConvertTo-Json -Depth 100 -Compress)
 }
 
@@ -219,7 +334,8 @@ function Assert-RuntimeCodexOutputSchemaBinding {
         [Parameter(Mandatory = $true)][string]$ReleaseId,
         [Parameter(Mandatory = $true)][string]$GeneratedAt,
         [Parameter(Mandatory = $true)][string]$AttemptId,
-        [Parameter(Mandatory = $true)][string]$ExpectedSha256
+        [Parameter(Mandatory = $true)][string]$ExpectedSha256,
+        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$TrustedKpiPolicy
     )
     $expectedPath = [IO.Path]::GetFullPath((Join-Path $RunDirectory "runtime-output-schema-$AttemptId.json"))
     $actualPath = [IO.Path]::GetFullPath($SchemaPath)
@@ -235,6 +351,7 @@ function Assert-RuntimeCodexOutputSchemaBinding {
     }
     $schemaText = Read-Utf8NoBomText $actualPath $MaxJsonBytes "runtime output schema"
     $schema = ConvertFrom-StrictJsonText $schemaText "runtime output schema"
+    Assert-RuntimeKpiPolicyBinding $schema $TrustedKpiPolicy | Out-Null
     if ($null -eq $schema.properties -or $null -eq $schema.properties.PSObject.Properties['run_id']) {
         Stop-Launcher "RUNTIME-SCHEMA" "runtime output schema has no run_id property" 6
     }
@@ -279,9 +396,10 @@ function Assert-PriorRuntimeSchemaBinding {
         [Parameter(Mandatory = $true)][string]$ReleaseId,
         [Parameter(Mandatory = $true)][string]$AttemptId,
         [Parameter(Mandatory = $true)][string]$ExpectedSha256,
-        [Parameter(Mandatory = $true)][string]$GeneratedAt
+        [Parameter(Mandatory = $true)][string]$GeneratedAt,
+        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$TrustedKpiPolicy
     )
-    Assert-RuntimeCodexOutputSchemaBinding $SchemaPath $RunDirectory $RunId $ReleaseId $GeneratedAt $AttemptId $ExpectedSha256 | Out-Null
+    Assert-RuntimeCodexOutputSchemaBinding $SchemaPath $RunDirectory $RunId $ReleaseId $GeneratedAt $AttemptId $ExpectedSha256 $TrustedKpiPolicy | Out-Null
 }
 function Write-Pass([string]$Message) { Write-Host "PASS: $Message" }
 function Canonical([string]$Path) { return [IO.Path]::GetFullPath($Path).TrimEnd([char[]]@('\','/')) }
@@ -2659,6 +2777,7 @@ $trustedValidatorBytes = [IO.File]::ReadAllBytes($validatorPath)
 $trustedValidatorSha256 = Bytes-Sha256 $trustedValidatorBytes
 if ($trustedInputHashes[$ValidatorRelative] -cne $trustedValidatorSha256) { Stop-Launcher "PRE-DESIGN" "trusted validator byte/hash mismatch" }
 $baseline = ConvertFrom-StrictJsonFile $baselinePath "design baseline"
+$trustedKpiPolicy = Get-TrustedKpiPolicy $baseline
 if ($baseline.baseline_id -cne "YONLAB-AI-TRAINING-PLATFORM-DESIGN-v1.1" -or $baseline.repository.windows_root -cne $ExpectedRoot -or $baseline.repository.remote -cne $ExpectedRemote -or $baseline.repository.work_branch -cne $ExpectedBranch) { Stop-Launcher "PRE-DESIGN" "baseline identity mismatch" }
 $trustedInventory = ConvertFrom-StrictJsonFile $inventoryPath "final document inventory"
 $trustedRequirementsRegistry = ConvertFrom-StrictJsonFile $requirementsRegistryPath "requirements/test registry"
@@ -2724,13 +2843,14 @@ if ($DryRun) {
     $dryRunAttemptId = '00000000T000000Z-000000000000'
     $dryRunResumeCommand = Get-ResumeCommand -RunId $dryRunSyntheticRunId -ReleaseId $guardedReleaseId
     $dryRunGeneratedAt = '2000-01-01T00:00:00.0000000Z'
-    $dryRunEnvelope = New-CodexRuntimeEnvelope $dryRunSyntheticRunId $dryRunAttemptId $dryRunGeneratedAt $dryRunGeneratedAt $preHead.Text $guardedReleaseId 'initial' $dryRunResumeCommand
+    $dryRunEnvelope = New-CodexRuntimeEnvelope $dryRunSyntheticRunId $dryRunAttemptId $dryRunGeneratedAt $dryRunGeneratedAt $preHead.Text $guardedReleaseId 'initial' $dryRunResumeCommand $trustedKpiPolicy
     $dryRunBaseSchemaText = Read-Utf8NoBomText $outputSchemaPath $MaxJsonBytes 'trusted model-facing output schema'
-    $dryRunSchemaText = New-RuntimeCodexOutputSchemaText $dryRunBaseSchemaText $dryRunSyntheticRunId $guardedReleaseId $dryRunGeneratedAt
+    $dryRunSchemaText = New-RuntimeCodexOutputSchemaText $dryRunBaseSchemaText $dryRunSyntheticRunId $guardedReleaseId $dryRunGeneratedAt $baseline
     $dryRunSchema = ConvertFrom-StrictJsonText $dryRunSchemaText 'runtime output schema'
     $dryRunRunProperty = $dryRunSchema.properties.PSObject.Properties['run_id'].Value
     $dryRunReleaseProperty = $dryRunSchema.properties.PSObject.Properties['release_id'].Value
     $dryRunGeneratedAtProperty = $dryRunSchema.properties.PSObject.Properties['generated_at'].Value
+    Assert-RuntimeKpiPolicyBinding $dryRunSchema $trustedKpiPolicy | Out-Null
     if (-not $dryRunEnvelope.Contains("run_id=$dryRunSyntheticRunId") -or -not $dryRunEnvelope.Contains("release_id=$guardedReleaseId") -or -not $dryRunEnvelope.Contains("attempt_started_at=$dryRunGeneratedAt") -or -not $dryRunEnvelope.Contains("generated_at=$dryRunGeneratedAt") -or $dryRunEnvelope.Contains("generated_at=2000-01-01T00:00:00.0000000+00:00") -or @($dryRunRunProperty.enum).Count -ne 1 -or [string]@($dryRunRunProperty.enum)[0] -cne $dryRunSyntheticRunId -or @($dryRunReleaseProperty.enum).Count -ne 1 -or [string]@($dryRunReleaseProperty.enum)[0] -cne $guardedReleaseId -or [string]$dryRunGeneratedAtProperty.type -cne 'string' -or @($dryRunGeneratedAtProperty.enum).Count -ne 1 -or [string]$dryRunGeneratedAtProperty.enum[0] -cne $dryRunGeneratedAt -or (String-Sha256 $dryRunSchemaText) -notmatch '^[0-9a-f]{64}$') {
         Stop-Launcher "RUNTIME-IDENTITY" "dry-run runtime prompt/schema binding is not exact" 6
     }
@@ -2741,6 +2861,7 @@ if ($DryRun) {
     Write-Pass "PRE-WORKTREE-SNAPSHOT protected ignored dependency and workspace inventory"
     Write-Pass "PRE-RELEASE-IDENTITY exact guarded RC release binding"
     Write-Pass "PRE-RUNTIME-IDENTITY exact guarded run prompt and schema binding"
+    Write-Pass "PRE-KPI-POLICY exact guarded baseline comparison and threshold binding"
     Write-Pass "PRE-RESULT-TIMESTAMP exact guarded generated_at binding"
     Write-Host "DRY-RUN: all preflight checks passed; Codex not invoked."
     exit 0
@@ -2778,7 +2899,7 @@ if (-not $isResume) {
     $persistedSessionId = (Read-Utf8NoBomText $sessionPath 128 "session receipt").Trim()
     if ($persistedSessionId -notmatch '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$' -or [string]$state.thread_id -cne $persistedSessionId) { Stop-Launcher "RESUME-IDENTITY" "session receipt/state UUID mismatch" }
     $priorSchemaPath = Join-Path $runDirectory "runtime-output-schema-$([string]$state.attempt_id).json"
-    Assert-PriorRuntimeSchemaBinding $priorSchemaPath $runDirectory ([string]$state.run_id) ([string]$state.release_id) ([string]$state.attempt_id) ([string]$state.runtime_output_schema_sha256) ([string]$state.attempt_started_at)
+    Assert-PriorRuntimeSchemaBinding $priorSchemaPath $runDirectory ([string]$state.run_id) ([string]$state.release_id) ([string]$state.attempt_id) ([string]$state.runtime_output_schema_sha256) ([string]$state.attempt_started_at) $trustedKpiPolicy
     if ($manifest.manifest_version -cne "codex-run-manifest.v9" -or [string]$manifest.run_id -cne $runId -or [string]$manifest.release_id -cne $guardedReleaseId -or [string]$state.release_id -cne $guardedReleaseId -or [string]$manifest.mode -cne "Implement" -or [string]$state.run_id -cne $runId -or $manifest.inputs.baseline_sha256 -cne $baselineHash -or $manifest.inputs.prompt_sha256 -cne $promptHash -or $manifest.inputs.output_schema_sha256 -cne $outputSchemaHash -or $manifest.inputs.strict_schema_sha256 -cne $strictSchemaHash -or $manifest.inputs.deliverable_contract_sha256 -cne $contractHash -or $manifest.inputs.final_document_inventory_sha256 -cne $inventoryHash -or $manifest.inputs.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $manifest.inputs.release_trust_sha256 -cne $releaseTrustSha256 -or $manifest.tools.codex_help_contract_sha256 -cne $codexHelpDigest -or ($manifest.tools.trusted_executable_inventory | ConvertTo-Json -Depth 8 -Compress) -cne ($trustedToolInventory | ConvertTo-Json -Depth 8 -Compress) -or $manifest.tools.git_credential_helper_sha256 -cne (String-Sha256 $script:GitHubCredentialHelper) -or $manifest.tools.gpg_home -cne $resolvedGpgHome -or $state.manifest_sha256 -cne $digest -or $state.head -cne $head.Text -or $state.baseline_sha256 -cne $baselineHash -or $state.prompt_sha256 -cne $promptHash -or $state.output_schema_sha256 -cne $outputSchemaHash -or $state.strict_schema_sha256 -cne $strictSchemaHash -or $state.final_document_inventory_sha256 -cne $inventoryHash -or $state.trusted_validator_sha256 -cne $trustedValidatorSha256 -or $state.release_trust_sha256 -cne $releaseTrustSha256) { Stop-Launcher "RESUME-IDENTITY" "run/HEAD/manifest/input/CLI/trust contract changed" }
     if (-not (Compare-GitControlPlaneSnapshot $manifest.repository.git_control_plane $gitControlPlaneSnapshot)) { Stop-Launcher "RESUME-IDENTITY" "Git control-plane differs from the original attempt" }
     Assert-TrustedRuntimeInputs $gitCommand $resolvedRoot ([string]$manifest.repository.initial_head) $manifest.inputs.trusted_input_sha256 $trustedRelativePaths
@@ -2802,12 +2923,12 @@ foreach ($attemptPath in @($finalResult, $progressLog, $errorLog, $postEvidence,
 $runtimeOutputSchema = Join-Path $runDirectory "runtime-output-schema-$attemptId.json"
 if (Test-Path -LiteralPath $runtimeOutputSchema) { Stop-Launcher "ATTEMPT-IDENTITY" "runtime output schema already exists: $runtimeOutputSchema" }
 $runtimeBaseSchemaText = Read-Utf8NoBomText $outputSchemaPath $MaxJsonBytes "trusted model-facing output schema"
-$runtimeSchemaText = New-RuntimeCodexOutputSchemaText $runtimeBaseSchemaText $runId $guardedReleaseId $generatedAtText
+$runtimeSchemaText = New-RuntimeCodexOutputSchemaText $runtimeBaseSchemaText $runId $guardedReleaseId $generatedAtText $baseline
 Write-AtomicUtf8Text $runtimeOutputSchema $runtimeSchemaText
 $runtimeOutputSchemaSha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $runtimeOutputSchema).Hash.ToLowerInvariant()
-Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $guardedReleaseId $generatedAtText $attemptId $runtimeOutputSchemaSha256 | Out-Null
+Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $guardedReleaseId $generatedAtText $attemptId $runtimeOutputSchemaSha256 $trustedKpiPolicy | Out-Null
 $resumeCommand = Get-ResumeCommand -RunId $runId -ReleaseId $guardedReleaseId
-$runtimeEnvelope = New-CodexRuntimeEnvelope $runId $attemptId $attemptStartedAtText $generatedAtText ([string]$manifest.repository.initial_head) $guardedReleaseId $(if ($isResume) { "resume" } else { "initial" }) $resumeCommand
+$runtimeEnvelope = New-CodexRuntimeEnvelope $runId $attemptId $attemptStartedAtText $generatedAtText ([string]$manifest.repository.initial_head) $guardedReleaseId $(if ($isResume) { "resume" } else { "initial" }) $resumeCommand $trustedKpiPolicy
 $basePromptText = $(if ($isResume) { "Resume the interrupted implementation using the exact plan and preserve verified work. Produce the required final JSON." } else { Get-Content -Raw -Encoding UTF8 -LiteralPath $promptPath })
 $promptText = "$runtimeEnvelope`n`n$basePromptText"
 $CodexArguments = $(if ($isResume) { $sessionId = $persistedSessionId; @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "resume", $sessionId, "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") } else { @("-C", $resolvedRoot, "--sandbox", "workspace-write", "--ask-for-approval", "on-request", "exec", "--ignore-user-config", "--ignore-rules", "--strict-config", "--json", "--output-last-message", $finalResult, "--output-schema", $runtimeOutputSchema, "-") })
@@ -2820,7 +2941,7 @@ $executionBoundarySnapshot=Get-WorktreeSnapshot $gitCommand $resolvedRoot $activ
 $boundaryDigest=Snapshot-Digest $executionBoundarySnapshot; $expectedBoundaryDigest=Snapshot-Digest $initialWorktreeSnapshot
 Assert-ResumeBindingObservation ([pscustomobject]@{run_id=$runId;requested_run_id=$(if($isResume){$ResumeRun}else{$runId});manifest_run_id=[string]$manifest.run_id;state_run_id=$(if($isResume){[string]$state.run_id}else{$runId});canonical_run_directory=[IO.Path]::GetFullPath((Join-Path $resolvedRoot (Join-Path $ArtifactRelative $runId)));observed_run_directory=[IO.Path]::GetFullPath($runDirectory);manifest_sha256=$digest;state_manifest_sha256=$(if($isResume){[string]$state.manifest_sha256}else{$digest});before_inventory_sha256=$expectedBoundaryDigest;execution_boundary_inventory_sha256=$boundaryDigest;exact_property_set=$true;exclusive_lock_held=(-not $runLock.SafeFileHandle.IsClosed)})
 $codexExit = Invoke-Utf8Process -Command $codexCommand -Arguments $CodexArguments -InputText $promptText -StdoutPath $progressLog -StderrPath $errorLog -RunId $runId -HeartbeatSeconds 5 -ResumeCommand $resumeCommand -SessionReceiptPath $sessionPath -ExpectedThreadId $expectedThreadId
-Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $guardedReleaseId $generatedAtText $attemptId $runtimeOutputSchemaSha256 | Out-Null
+Assert-RuntimeCodexOutputSchemaBinding $runtimeOutputSchema $runDirectory $runId $guardedReleaseId $generatedAtText $attemptId $runtimeOutputSchemaSha256 $trustedKpiPolicy | Out-Null
 Assert-TrustedExecutableInventoryUnchanged $trustedToolInventory $releaseTrust.trusted_tools $resolvedRoot
 Assert-GitControlPlaneSnapshot $gitControlPlaneSnapshot
 Assert-ProtectedTrustRootsUnchanged $protectedTrustRootsSnapshot $resolvedTrustPath $ProtectedHooksPath $ProtectedGpgHome $resolvedAttestationRoot

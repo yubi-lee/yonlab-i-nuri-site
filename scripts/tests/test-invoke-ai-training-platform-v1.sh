@@ -75,7 +75,7 @@ for token in \
   "\"yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'\"" '$attemptStartedAtText' \
   '-ExpectedAttemptStartedAt $generatedAtText' 'attempt_started_at=$attemptStartedAtText' \
   '2000-01-01T00:00:00.0000000Z' 'run_id=$RunId' \
-  'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' \
+  'run_id MUST equal exactly' 'New-RuntimeCodexOutputSchemaText' 'function Get-TrustedKpiPolicy' 'function Test-TrustedJsonNumber' 'function Assert-RuntimeKpiPolicyBinding' 'Get-TrustedKpiPolicy ' 'kpi_policy_metadata=' 'KPI comparison and threshold are launcher-owned immutable metadata' 'measured value is distinct from threshold' 'threshold remains baseline metadata when value is null' 'Never replace threshold with 0, null, or the measured value.' 'PRE-KPI-POLICY exact guarded baseline comparison and threshold binding' \
   'runtime_output_schema_sha256' 'codex-run-manifest.v9' 'generated_at=$GeneratedAt' 'generated_at MUST equal exactly' 'properties.generated_at' 'Assert-PriorRuntimeSchemaBinding' 'state.runtime_output_schema_sha256' 'PRE-RESULT-TIMESTAMP' \
   '[string]$ReleaseId = ""' 'function Assert-GuardedReleaseId' \
   'release_id=$ReleaseId' 'release_id MUST equal exactly' \

@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$RunnerPath
 )
@@ -268,6 +268,78 @@ function Invoke-ProtectedRootSnapshotRuntimeShapeRegression {
     )
 }
 
+function Invoke-KpiPolicyBindingRegression {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $tokens = $null
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
+    if ($errors.Count -ne 0) { throw 'runner parse failed while loading KPI policy functions' }
+    foreach ($name in @('Get-TrustedKpiPolicy', 'Test-TrustedJsonNumber', 'Assert-RuntimeKpiPolicyBinding', 'Assert-GuardedReleaseId', 'New-RuntimeCodexOutputSchemaText', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
+        $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
+        if ($null -eq $functionAst) { throw "missing runner function $name" }
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+    function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$($ExitCode): $Message" }
+
+    $projectRoot = Split-Path -Parent (Split-Path -Parent $Path)
+    $baselinePath = Join-Path $projectRoot 'docs/planning/ai-training-platform-v1/design-baseline.json'
+    $schemaPath = Join-Path $projectRoot 'docs/planning/ai-training-platform-v1/codex-output.schema.json'
+    $baseline = ConvertFrom-StrictJsonText ([IO.File]::ReadAllText($baselinePath, [Text.Encoding]::UTF8)) 'runtime KPI baseline regression'
+    $policy = Get-TrustedKpiPolicy $baseline
+    $expected = @(
+        [pscustomobject]@{ id = 'KPI-001'; comparison = '>='; threshold = 0.85 },
+        [pscustomobject]@{ id = 'KPI-002'; comparison = '>='; threshold = 0.90 },
+        [pscustomobject]@{ id = 'KPI-003'; comparison = '>='; threshold = 0.95 },
+        [pscustomobject]@{ id = 'KPI-004'; comparison = '>='; threshold = 0.95 },
+        [pscustomobject]@{ id = 'KPI-005'; comparison = '>='; threshold = 0.998 },
+        [pscustomobject]@{ id = 'KPI-006'; comparison = '>='; threshold = 90 },
+        [pscustomobject]@{ id = 'KPI-007'; comparison = '>='; threshold = 0.90 },
+        [pscustomobject]@{ id = 'KPI-008'; comparison = '<='; threshold = 0.0 },
+        [pscustomobject]@{ id = 'KPI-009'; comparison = '<='; threshold = 0.0 },
+        [pscustomobject]@{ id = 'KPI-010'; comparison = '>='; threshold = 1 }
+    )
+    foreach ($item in $expected) {
+        if ([string]$policy[$item.id].comparison -cne $item.comparison -or [double]$policy[$item.id].threshold -ne [double]$item.threshold) {
+            throw "trusted policy value mismatch for $($item.id)"
+        }
+    }
+    $runtimeText = New-RuntimeCodexOutputSchemaText ([IO.File]::ReadAllText($schemaPath, [Text.Encoding]::UTF8)) '20260718T050335Z-45c3f0a9' 'v0.1.0-rc5' '2026-07-18T05:03:35.0000000Z' $baseline
+    $runtime = ConvertFrom-StrictJsonText $runtimeText 'runtime KPI schema regression'
+
+    foreach ($case in @(
+        [pscustomobject]@{ name = 'arbitrary KPI-001 threshold'; mutate = { param($item) $item.properties.kpi_results.properties.'KPI-001'.properties.threshold.enum = @(0.7) } },
+        [pscustomobject]@{ name = 'zero KPI-001 threshold'; mutate = { param($item) $item.properties.kpi_results.properties.'KPI-001'.properties.threshold.enum = @(0) } },
+        [pscustomobject]@{ name = 'invalid KPI-008 comparison'; mutate = { param($item) $item.properties.kpi_results.properties.'KPI-008'.properties.comparison.enum = @('>=') } }
+    )) {
+        $candidate = $runtime | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+        & $case.mutate $candidate
+        try {
+            Assert-RuntimeKpiPolicyBinding $candidate $policy
+            throw "$($case.name) was accepted"
+        } catch {
+            if ($_.Exception.Message -match 'was accepted') { throw }
+        }
+        Write-Host "PASS: runtime schema rejects $($case.name)"
+    }
+
+    foreach ($case in @(
+        [pscustomobject]@{ name = 'duplicate KPI ID'; mutate = { param($item) $item.kpis[1].id = 'KPI-001' } },
+        [pscustomobject]@{ name = 'unknown KPI ID'; mutate = { param($item) $item.kpis[9].id = 'KPI-999' } },
+        [pscustomobject]@{ name = 'missing KPI ID'; mutate = { param($item) $item.kpis = @($item.kpis | Where-Object { $_.id -cne 'KPI-010' }) } }
+    )) {
+        $candidate = $baseline | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+        & $case.mutate $candidate
+        try {
+            Get-TrustedKpiPolicy $candidate
+            throw "$($case.name) was accepted"
+        } catch {
+            if ($_.Exception.Message -match 'was accepted') { throw }
+        }
+        Write-Host "PASS: trusted baseline rejects $($case.name)"
+    }
+    Write-Host 'PASS: guarded KPI policy metadata is exact and fail-closed'
+}
 function Invoke-RuntimeIdentityRegression {
     param([Parameter(Mandatory = $true)][string]$Path)
 
@@ -275,13 +347,18 @@ function Invoke-RuntimeIdentityRegression {
     $errors = $null
     $ast = [Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
     if ($errors.Count -ne 0) { throw 'runner parse failed while loading runtime identity functions' }
-    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'ConvertTo-UtcRfc3339Z', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'Assert-RuntimeCodexOutputSchemaBinding', 'Assert-PriorRuntimeSchemaBinding', 'Assert-NoReparseComponent', 'Assert-BoundedFile', 'Read-Utf8NoBomText', 'String-Sha256', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
+    foreach ($name in @('Get-ResumeCommand', 'Assert-GuardedReleaseId', 'ConvertTo-UtcRfc3339Z', 'Get-TrustedKpiPolicy', 'Test-TrustedJsonNumber', 'Get-KpiPolicyMetadataText', 'Assert-RuntimeKpiPolicyBinding', 'New-CodexRuntimeEnvelope', 'New-RuntimeCodexOutputSchemaText', 'Assert-RuntimeCodexOutputSchemaBinding', 'Assert-PriorRuntimeSchemaBinding', 'Assert-NoReparseComponent', 'Assert-BoundedFile', 'Read-Utf8NoBomText', 'String-Sha256', 'ConvertFrom-StrictJsonText', 'Assert-StrictJsonLexical')) {
         $functionAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name }, $true)
         if ($null -eq $functionAst) { throw "missing runner function $name" }
         . ([scriptblock]::Create($functionAst.Extent.Text))
     }
     function Stop-Launcher([string]$Code, [string]$Message, [int]$ExitCode = 2) { throw "$Code/$ExitCode`: $Message" }
     $script:MaxJsonBytes = 67108864L
+    $projectRoot = Split-Path -Parent (Split-Path -Parent $Path)
+    $baselinePath = Join-Path $projectRoot 'docs/planning/ai-training-platform-v1/design-baseline.json'
+    $schemaPath = Join-Path $projectRoot 'docs/planning/ai-training-platform-v1/codex-output.schema.json'
+    $baseline = ConvertFrom-StrictJsonText ([IO.File]::ReadAllText($baselinePath, [Text.Encoding]::UTF8)) 'runtime identity baseline regression'
+    $trustedKpiPolicy = Get-TrustedKpiPolicy $baseline
 
     $runId = '20260718T050335Z-45c3f0a9'
     $attemptId = '20260718T012345Z-0123456789ab'
@@ -299,28 +376,30 @@ function Invoke-RuntimeIdentityRegression {
     $resumeCommand = Get-ResumeCommand $runId $releaseId
     $expectedResumeCommand = "& '$CanonicalRunnerHost' -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File '$CanonicalRunnerPath' -Mode Implement -ReleaseId '$releaseId' -ResumeRun '$runId'"
     if ($resumeCommand -cne $expectedResumeCommand) { throw 'resume command did not bind exact release ID and run ID' }
-    $initial = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand
-    $resume = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'resume' $resumeCommand
+    $initial = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand $trustedKpiPolicy
+    $resume = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head $releaseId 'resume' $resumeCommand $trustedKpiPolicy
+    $expectedPolicyMetadata = 'KPI-001 >= 0.85;KPI-002 >= 0.9;KPI-003 >= 0.95;KPI-004 >= 0.95;KPI-005 >= 0.998;KPI-006 >= 90;KPI-007 >= 0.9;KPI-008 <= 0;KPI-009 <= 0;KPI-010 >= 1'
     foreach ($text in @($initial, $resume)) {
+        if (-not $text.Contains("kpi_policy_metadata=$expectedPolicyMetadata") -or -not $text.Contains('KPI comparison and threshold are launcher-owned immutable metadata; measured value is distinct from threshold.') -or -not $text.Contains('Acceptance data may leave value=null, but threshold remains baseline metadata when value is null.') -or -not $text.Contains('Never replace threshold with 0, null, or the measured value.')) { throw 'runtime envelope did not preserve exact KPI policy metadata semantics' }
         if (-not $text.Contains("run_id=$runId") -or -not $text.Contains('run_id MUST equal exactly') -or -not $text.Contains("release_id=$releaseId") -or -not $text.Contains('release_id MUST equal exactly') -or -not $text.Contains('Do not invent, increment, normalize, or replace release_id') -or -not $text.Contains('Use the same release_id for generated document path expansion') -or -not $text.Contains('Do not generate a value beginning with run-') -or -not $text.Contains("attempt_id=$attemptId") -or -not $text.Contains("initial_head=$head") -or -not $text.Contains("resume_command=$resumeCommand") -or $text.Contains('<RUN_ID>') -or $text.Contains(([char]36 + '{RunId}'))) { throw 'runtime envelope did not bind exact launcher identity' }
     }
     foreach ($text in @($initial, $resume)) {
         if (-not $text.Contains("attempt_started_at=$started") -or -not $text.Contains("generated_at=$generatedAt") -or -not $text.Contains('generated_at MUST equal exactly') -or -not $text.Contains('launcher-supplied metadata') -or -not $text.Contains('Do not calculate, round, truncate, advance, or replace generated_at') -or -not $text.Contains('preserve the exact generated_at')) { throw 'runtime envelope did not bind exact generated_at metadata' }
     }
     if ($initial -cne $resume.Replace('mode=resume', 'mode=initial')) { throw 'runtime envelope was not deterministic apart from mode' }
-    try { $null = New-CodexRuntimeEnvelope 'run-invalid' $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand; throw 'invalid runtime run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime run ID was accepted') { throw } }
-    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head 'v0.1.0' 'initial' $resumeCommand; throw 'invalid runtime release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime release ID was accepted') { throw } }
-    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started '2026-07-18T05:03:35.0000000+00:00' $head $releaseId 'initial' $resumeCommand; throw 'offset generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset generated_at was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope 'run-invalid' $attemptId $started $generatedAt $head $releaseId 'initial' $resumeCommand $trustedKpiPolicy; throw 'invalid runtime run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime run ID was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started $generatedAt $head 'v0.1.0' 'initial' $resumeCommand $trustedKpiPolicy; throw 'invalid runtime release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime release ID was accepted') { throw } }
+    try { $null = New-CodexRuntimeEnvelope $runId $attemptId $started '2026-07-18T05:03:35.0000000+00:00' $head $releaseId 'initial' $resumeCommand $trustedKpiPolicy; throw 'offset generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset generated_at was accepted') { throw } }
 
-    $schemaText = '{"type":"object","properties":{"run_id":{"type":"string"},"release_id":{"type":"string"},"generated_at":{"type":"string"},"summary":{"type":"string"}}}'
-    $schemaA = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt
-    $schemaB = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt
+    $schemaText = [IO.File]::ReadAllText($schemaPath, [Text.Encoding]::UTF8)
+    $schemaA = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt $baseline
+    $schemaB = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $generatedAt $baseline
     if ($schemaA -cne $schemaB) { throw 'runtime output schema was not byte deterministic' }
     $schema = ConvertFrom-StrictJsonText $schemaA 'runtime output schema regression'
     if ([string]$schema.properties.run_id.type -cne 'string' -or @($schema.properties.run_id.enum).Count -ne 1 -or [string]$schema.properties.run_id.enum[0] -cne $runId -or [string]$schema.properties.release_id.type -cne 'string' -or @($schema.properties.release_id.enum).Count -ne 1 -or [string]$schema.properties.release_id.enum[0] -cne $releaseId -or [string]$schema.properties.generated_at.type -cne 'string' -or @($schema.properties.generated_at.enum).Count -ne 1 -or [string]$schema.properties.generated_at.enum[0] -cne $generatedAt -or [string]$schema.properties.summary.type -cne 'string' -or $null -ne $schema.properties.run_id.PSObject.Properties['const'] -or $null -ne $schema.properties.release_id.PSObject.Properties['const'] -or $null -ne $schema.properties.generated_at.PSObject.Properties['const']) { throw 'runtime output schema did not bind exact run, release, and generated_at enums' }
-    $wrongSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText '20260718T050335Z-deadbeef' $releaseId $generatedAt) 'wrong runtime schema regression'
+    $wrongSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText '20260718T050335Z-deadbeef' $releaseId $generatedAt $baseline) 'wrong runtime schema regression'
     if (@($wrongSchema.properties.run_id.enum) -contains $runId) { throw 'runtime schema accepted the wrong run ID' }
-    $wrongReleaseSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText $runId 'v0.1.0-rc4' $generatedAt) 'wrong runtime release schema regression'
+    $wrongReleaseSchema = ConvertFrom-StrictJsonText (New-RuntimeCodexOutputSchemaText $schemaText $runId 'v0.1.0-rc4' $generatedAt $baseline) 'wrong runtime release schema regression'
     if (@($wrongReleaseSchema.properties.release_id.enum) -contains $releaseId) { throw 'runtime schema accepted the wrong release ID' }
 
     $resumeSchemaDirectory = Join-Path $root "resume-schema-$runId"
@@ -331,20 +410,20 @@ function Invoke-RuntimeIdentityRegression {
     $priorSchemaHash = String-Sha256 $schemaA
     $priorState = [ordered]@{ run_id=$runId; release_id=$releaseId; attempt_id=$priorAttemptId; attempt_started_at=$generatedAt; runtime_output_schema_sha256=$priorSchemaHash }
     if ([string]$priorState.runtime_output_schema_sha256 -cne $priorSchemaHash -or [string]$priorState.attempt_started_at -cne $generatedAt) { throw 'prior resume state did not retain exact schema hash and generated_at' }
-    Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at)
+    Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at) $trustedKpiPolicy
 
     $currentGeneratedAt = '2026-07-18T05:03:36.0000000Z'
     $currentAttemptId = '20260718T050336Z-abcdef123456'
-    $currentSchema = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $currentGeneratedAt
+    $currentSchema = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId $currentGeneratedAt $baseline
     $currentSchemaHash = String-Sha256 $currentSchema
     if ($priorSchemaHash -ceq $currentSchemaHash -or $currentSchemaHash -notmatch '^[0-9a-f]{64}$') { throw 'resume prior/current schema hashes did not diverge deterministically' }
     $currentSchemaPath = Join-Path $resumeSchemaDirectory "runtime-output-schema-$currentAttemptId.json"
     [IO.File]::WriteAllText($currentSchemaPath, $currentSchema, (New-Object Text.UTF8Encoding -ArgumentList $false))
-    Assert-RuntimeCodexOutputSchemaBinding $currentSchemaPath $resumeSchemaDirectory $runId $releaseId $currentGeneratedAt $currentAttemptId $currentSchemaHash | Out-Null
+    Assert-RuntimeCodexOutputSchemaBinding $currentSchemaPath $resumeSchemaDirectory $runId $releaseId $currentGeneratedAt $currentAttemptId $currentSchemaHash $trustedKpiPolicy | Out-Null
     $tamperedPrior = $schemaA.Replace($generatedAt, '2026-07-18T05:03:35.0000001Z')
     [IO.File]::WriteAllText($priorSchemaPath, $tamperedPrior, (New-Object Text.UTF8Encoding -ArgumentList $false))
     try {
-        Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at)
+        Assert-PriorRuntimeSchemaBinding $priorSchemaPath $resumeSchemaDirectory $runId $releaseId $priorAttemptId ([string]$priorState.runtime_output_schema_sha256) ([string]$priorState.attempt_started_at) $trustedKpiPolicy
         throw 'tampered prior runtime schema was accepted'
     } catch {
         if ($_.Exception.Message -match 'tampered prior runtime schema was accepted') { throw }
@@ -355,13 +434,14 @@ function Invoke-RuntimeIdentityRegression {
         try { $null = Assert-GuardedReleaseId $invalidReleaseId; throw "invalid release ID was accepted: $invalidReleaseId" } catch { if ($_.Exception.Message -match 'invalid release ID was accepted') { throw } }
     }
     $null = Assert-GuardedReleaseId $releaseId
-    try { $null = New-RuntimeCodexOutputSchemaText $schemaText 'run-invalid' $releaseId $generatedAt; throw 'invalid runtime schema run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema run ID was accepted') { throw } }
-    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId 'v1.0.0' $generatedAt; throw 'invalid runtime schema release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema release ID was accepted') { throw } }
-    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId '2026-07-18T05:03:35.0000000+00:00'; throw 'offset runtime schema generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset runtime schema generated_at was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText 'run-invalid' $releaseId $generatedAt $baseline; throw 'invalid runtime schema run ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema run ID was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId 'v1.0.0' $generatedAt $baseline; throw 'invalid runtime schema release ID was accepted' } catch { if ($_.Exception.Message -match 'invalid runtime schema release ID was accepted') { throw } }
+    try { $null = New-RuntimeCodexOutputSchemaText $schemaText $runId $releaseId '2026-07-18T05:03:35.0000000+00:00' $baseline; throw 'offset runtime schema generated_at was accepted' } catch { if ($_.Exception.Message -match 'offset runtime schema generated_at was accepted') { throw } }
     $runnerText = [IO.File]::ReadAllText($Path)
     if (-not $runnerText.Contains('codex-run-manifest.v9') -or -not $runnerText.Contains('Assert-PriorRuntimeSchemaBinding') -or -not $runnerText.Contains('generated_at differs from guarded attempt timestamp')) { throw 'manifest v9, prior schema binding, or exact validator binding contract is missing' }
     Write-Host 'PASS: runtime envelope, exact run/release schema binding, guarded input, and resume command'
 }
+    Invoke-KpiPolicyBindingRegression $RunnerPath
     Invoke-RuntimeIdentityRegression $RunnerPath
     Invoke-CompactIgnoredInventoryRegression $RunnerPath
 try {

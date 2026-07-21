@@ -148,6 +148,15 @@ try {
     $notReadyResult = Invoke-Validator (Write-Fixture "not-ready" $notReady)
     if ($notReadyResult.ExitCode -ne 5 -or -not $notReadyResult.Output.Contains("IMPLEMENTATION_BLOCKED")) { throw "blocked no-S/R expected exit 5 with marker: $($notReadyResult.Output)" }
     Write-Host "PASS: validator blocked no-S/R -> 5 with IMPLEMENTATION_BLOCKED marker"
+    $blockedThresholdZero = Copy-Object $notReady
+    $blockedThresholdZero.kpi_results.'KPI-001'.threshold = 0
+    Expect "blocked-kpi-001-threshold-zero" $blockedThresholdZero 3
+    $reviewThresholdZero = Copy-Object $unsigned
+    $reviewThresholdZero.kpi_results.'KPI-001'.threshold = 0
+    Expect "review-pending-kpi-001-threshold-zero" $reviewThresholdZero 3
+    $invalidKpi008Comparison = Copy-Object $unsigned
+    $invalidKpi008Comparison.kpi_results.'KPI-008'.comparison = '>='
+    Expect "review-pending-kpi-008-invalid-comparison" $invalidKpi008Comparison 3
 
     $cases = [ordered]@{}
     $blockedCases = [ordered]@{}
