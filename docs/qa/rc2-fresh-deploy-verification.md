@@ -71,9 +71,9 @@ RESULT: failed=False blocked=False
 8. Optional manual Docker smoke:
 
 ```powershell
-$env:JWT_SECRET = "replace-with-a-strong-local-secret"
+$env:JWT_SECRET = "<set-locally>"
 $env:ADMIN_EMAIL = "admin@example.com"
-$env:ADMIN_PASSWORD = "replace-with-a-local-admin-password"
+$env:ADMIN_PASSWORD = "<set-locally>"
 docker compose up -d --build
 Invoke-WebRequest -UseBasicParsing -Uri http://localhost:8080 -TimeoutSec 10
 ```

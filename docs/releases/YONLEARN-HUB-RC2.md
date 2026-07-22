@@ -87,9 +87,9 @@ Run the isolated Docker verification gate:
 For manual Compose review, use the project Compose file with secrets supplied through environment or `.env`:
 
 ```powershell
-$env:JWT_SECRET = "replace-with-a-strong-local-secret"
+$env:JWT_SECRET = "<set-locally>"
 $env:ADMIN_EMAIL = "admin@example.com"
-$env:ADMIN_PASSWORD = "replace-with-a-local-admin-password"
+$env:ADMIN_PASSWORD = "<set-locally>"
 docker compose up -d --build
 ```
 
