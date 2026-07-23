@@ -1463,14 +1463,28 @@ try {
 
 function Write-AtomicUtf8Text([string]$Path, [string]$Value, [switch]$Replace) {
     $temporary = "$Path.tmp-$([Guid]::NewGuid().ToString('N'))"
+    $backup = $null
     $utf8NoBom = New-Object Text.UTF8Encoding -ArgumentList $false
     try {
         [IO.File]::WriteAllText($temporary, $Value, $utf8NoBom)
         if (Test-Path -LiteralPath $Path) {
             if (-not $Replace) { throw "atomic receipt destination already exists" }
-            [IO.File]::Replace($temporary, $Path, $null); $temporary = $null
+            $backup = "$Path.bak-$([Guid]::NewGuid().ToString('N'))"
+            [IO.File]::Replace($temporary, $Path, $backup)
+            $temporary = $null
+            if (Test-Path -LiteralPath $backup) {
+                Remove-Item -LiteralPath $backup -Force
+            }
+            $backup = $null
         } else { [IO.File]::Move($temporary, $Path); $temporary = $null }
-    } finally { if ($null -ne $temporary -and (Test-Path -LiteralPath $temporary)) { Remove-Item -LiteralPath $temporary -Force -ErrorAction SilentlyContinue } }
+    } finally {
+        if ($null -ne $temporary -and (Test-Path -LiteralPath $temporary)) {
+            Remove-Item -LiteralPath $temporary -Force -ErrorAction SilentlyContinue
+        }
+        if ($null -ne $backup -and (Test-Path -LiteralPath $backup)) {
+            Remove-Item -LiteralPath $backup -Force -ErrorAction SilentlyContinue
+        }
+    }
 }
 
 function Read-Utf8NoBomText([string]$Path, [long]$MaximumBytes, [string]$Context) {

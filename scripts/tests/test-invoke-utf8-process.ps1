@@ -177,6 +177,63 @@ Write-Host "PASS: dependency-free strict JSON grammar and duplicate-property sca
 $threadId = "01990000-0000-7000-8000-000000000001"
 if ((Get-ThreadId @([pscustomobject]@{type="thread.started";thread_id=$threadId})) -cne $threadId) { throw "Codex thread UUID was rejected" }
 Write-Host "PASS: validated exact Codex thread UUID extraction"
+$atomicReplaceRoot = Join-Path ([IO.Path]::GetTempPath()) ("yonlab-atomic-replace-" + [Guid]::NewGuid().ToString("N"))
+[IO.Directory]::CreateDirectory($atomicReplaceRoot) | Out-Null
+try {
+    $atomicReplacePath = Join-Path $atomicReplaceRoot "resume-state.json"
+    $firstValue = '{"attempt":"first"}'
+    $secondValue = '{"attempt":"second"}'
+
+    Write-AtomicUtf8Text -Path $atomicReplacePath -Value $firstValue
+
+    $replaceError = $null
+    try {
+        Write-AtomicUtf8Text -Path $atomicReplacePath -Value $secondValue -Replace
+    } catch {
+        $replaceError = $_
+    }
+
+    if ($null -ne $replaceError) {
+        throw (
+            "Write-AtomicUtf8Text replacement failed: " +
+            "$($replaceError.Exception.GetType().FullName): " +
+            "$($replaceError.Exception.Message)"
+        )
+    }
+
+    $actualValue = [IO.File]::ReadAllText($atomicReplacePath, [Text.Encoding]::UTF8)
+    if ($actualValue -cne $secondValue) {
+        throw "atomic replacement content mismatch"
+    }
+
+    $bytes = [IO.File]::ReadAllBytes($atomicReplacePath)
+    if (
+        $bytes.Length -ge 3 -and
+        $bytes[0] -eq 0xEF -and
+        $bytes[1] -eq 0xBB -and
+        $bytes[2] -eq 0xBF
+    ) {
+        throw "atomic replacement emitted a UTF-8 BOM"
+    }
+
+    $residualFiles = @(
+        Get-ChildItem -LiteralPath $atomicReplaceRoot -Force |
+            Where-Object {
+                $_.Name -like 'resume-state.json.tmp-*' -or
+                $_.Name -like 'resume-state.json.bak-*'
+            }
+    )
+
+    if ($residualFiles.Count -ne 0) {
+        throw "atomic replacement left temporary files: $($residualFiles.Name -join ', ')"
+    }
+} finally {
+    if (Test-Path -LiteralPath $atomicReplaceRoot) {
+        Remove-Item -LiteralPath $atomicReplaceRoot -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+Write-Host "PASS: atomic UTF-8 receipt replacement preserves content, no-BOM encoding, and cleanup"
 
 $installedRoot = [IO.Path]::GetFullPath(
     (Join-Path $PSScriptRoot "../..")
