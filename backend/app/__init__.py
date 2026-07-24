@@ -1,1 +1,1 @@
-"""YOnLearn Hub backend."""
+"""YOnLearn application package."""

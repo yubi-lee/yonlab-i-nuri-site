@@ -89,3 +89,9 @@ Tests cover migrations, constraints, transaction behavior, UTC policy, retention
 ## 20. Design Decisions
 
 PostgreSQL is the target relational database because the platform needs transactions, constraints, indexing, and mature backup tooling.
+
+## AI Training Platform Extension
+
+The database now includes organization and membership state, consent records, teacher profiles, diagnosis sessions/turns/evidence metadata/results, learning paths/enrollments/activities, source documents/versions/nodes/processing jobs, learning reports, and pilot metrics. Migration `0003` creates these tables from the SQLAlchemy metadata.
+
+Tenant ownership and membership are enforced in the API service before organization-scoped reads and writes. Raw diagnosis quotes are not stored; only a SHA-256 hash is retained. Document processing status is durable and parser failures do not silently produce ungrounded knowledge results. PostgreSQL remains the deployment target and SQLite is used for deterministic tests.

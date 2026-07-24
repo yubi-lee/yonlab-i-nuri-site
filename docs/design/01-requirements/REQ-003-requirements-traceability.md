@@ -46,3 +46,13 @@ correlation, interface-versioning, and deterministic-verification requirements
 (REQ-NF-002, REQ-NF-009, REQ-NF-011, and REQ-NF-015). Its endpoint contract is defined in
 ICD-001, and its API validation, safe-error, request-ID, and no-persistence scenarios are
 verified through VER-002; no new requirement identifier is introduced by this implementation.
+
+## AI Training Platform Traceability Extension
+
+| Requirement | Evidence | Verification |
+|---|---|---|
+| Tenant access is server-enforced | `backend/app/platform.py::require_membership` | `backend/tests/test_platform_slice.py` |
+| Diagnosis evidence is deterministic and privacy-safe | `backend/app/diagnosis.py`, `DiagnosisEvidenceRecord.quoted_span_hash` | Golden vectors and platform slice test |
+| Learning state and document grounding are durable | `LearningEnrollment`, `SourceDocument`, `DocumentNode`, `ProcessingJob` | Platform slice and migration tests |
+| Knowledge results provide citations or no-answer | `/api/v1/knowledge/search` | Platform slice test |
+| AI provider policy is isolated | `services/ai-gateway/app/main.py` | Gateway policy tests and service health |

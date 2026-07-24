@@ -85,3 +85,11 @@ Each mutating endpoint defines a database transaction boundary. Cross-provider s
 ## Security And Observability
 
 Every endpoint validates visibility and authorization. Logs and metrics include correlation ID, endpoint group, result class, and latency without raw secrets.
+
+## AI Training Platform Extension
+
+Organization-scoped operations require an active `OrganizationMembership` and server-side membership enforcement. The implemented platform slice adds organization/member/consent APIs, teacher profile, diagnosis sessions with SSE events, learning paths/enrollments/activities, document processing jobs, tenant-scoped citation-backed knowledge search, reports, and pilot metrics under `/api/v1`.
+
+Diagnosis remains deterministic and fixed-point based. Diagnosis evidence is stored only as metadata and a hash of the quoted span; raw spans are not returned by session completion or SSE. Knowledge search returns citations tied to a document node and a `no_answer` flag when no grounded result matches.
+
+The independent `services/ai-gateway` boundary contains no provider credentials or SDKs. Restricted and elevated-safeguarding requests are accepted only by the deterministic local route. The local document adapter supports text/Markdown/HTML and constrained native HWPX; PDF/OCR returns an explicit adapter-required job failure.

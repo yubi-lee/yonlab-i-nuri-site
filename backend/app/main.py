@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session, selectinload
 
+from app import platform_models as _platform_models  # noqa: F401
 from app.config import get_settings
 from app.database import Base, engine, get_db
 from app.diagnosis import POLICY_VERSION, score_dimension
@@ -27,6 +28,7 @@ from app.models import (
     Tag,
     User,
 )
+from app.platform import router as platform_router
 from app.rc1 import issue_tokens
 from app.rc1 import router as rc1_router
 from app.schemas import (
@@ -425,3 +427,4 @@ def admin_inquiry(
 
 
 app.include_router(rc1_router)
+app.include_router(platform_router)
