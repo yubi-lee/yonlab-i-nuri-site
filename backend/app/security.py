@@ -62,6 +62,23 @@ def current_user(
     return user
 
 
+def optional_current_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer),
+    db: Session = Depends(get_db),
+) -> User | None:
+    if not credentials:
+        return None
+    try:
+        payload = jwt.decode(
+            credentials.credentials, get_settings().jwt_secret, algorithms=["HS256"]
+        )
+    except jwt.PyJWTError as exc:
+        raise HTTPException(status_code=401, detail="???? ?? ?????.") from exc
+    user = db.get(User, payload.get("sub"))
+    if not user or not user.is_active:
+        raise HTTPException(status_code=401, detail="?? ???? ?? ? ????.")
+    return user
+
 def admin_user(user: User = Depends(current_user)) -> User:
     if user.role != Role.admin:
         raise HTTPException(status_code=403, detail="??? ??? ?????.")

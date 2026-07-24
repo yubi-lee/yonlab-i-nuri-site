@@ -30,6 +30,7 @@ test("member login, bookmark, and inquiry history", async ({ page }) => {
   await page.getByLabel("문의 내용").fill("브라우저 E2E 문의 내역 확인을 위한 충분히 긴 내용입니다.");
   await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "문의 보내기" }).click();
+  await expect(page.getByText("문의가 접수되었습니다.")).toBeVisible();
   await page.goto("/mypage");
   await expect(page.getByRole("heading", { name: "관심 자료" })).toBeVisible();
   await expect(page.getByText("E2E 문의").first()).toBeVisible();

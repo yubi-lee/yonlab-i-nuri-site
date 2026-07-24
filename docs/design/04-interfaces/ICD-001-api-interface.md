@@ -40,6 +40,19 @@
 | POST | `/me/bookmarks/{resourceId}` | User | resource id | Bookmark | Bookmark created idempotently |
 | DELETE | `/me/bookmarks/{resourceId}` | User | resource id | Empty | Bookmark removed idempotently |
 
+## Diagnosis Score Contract
+
+POST /api/v1/diagnosis/score is a public, strict Pydantic v2 JSON contract for deterministic
+scoring. The request contains anchor_count, one to one hundred evidence.v1 records, and optional
+fixed-six decimal dimension and indicator weights. Evidence records require UUID identifiers, a
+positive turn sequence, an anchor within the requested anchor count, non-negative code-point
+spans, and an end span no earlier than its start. Unknown fields and cross-record anchor-count
+mismatches are rejected with 422.
+
+The response contains the policy version, deterministic status and fixed-point score fields, the
+selected evidence identifier, the preserved request_id, and persisted: false. It never returns
+quoted_span or any other raw evidence field. Validation errors use the safe validation_error
+envelope with the same request_id; the endpoint does not create or update a database record.
 ## Administrator Endpoints
 
 | Method | Path | Auth | Input | Output | Success |

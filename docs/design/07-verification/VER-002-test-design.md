@@ -5,6 +5,7 @@
 | Area | Test focus |
 |---|---|
 | Public portal | Navigation, resource browsing, content browsing, search, downloads, inquiry submission |
+| Diagnosis scoring | Strict request validation, deterministic score response, safe errors, correlation, and no raw evidence persistence |
 | User and member | Registration, login, profile, bookmarks, inquiry history, inactive-account denial |
 | Authentication | Access token expiry, refresh rotation, replay detection, logout, password reset |
 | CMS | Eight entity types, lifecycle rules, audit records, authorization denial |
@@ -51,6 +52,11 @@
 ## Requirement Coverage
 
 All requirement IDs from `REQ-F-001` through `REQ-F-018` and `REQ-NF-001` through `REQ-NF-015` require at least one automated or review-based verification method.
+The diagnosis score API is covered by backend/tests/test_diagnosis_api.py:
+
+- valid evidence.v1 input returns the deterministic golden score and preserves X-Request-ID
+- unknown fields and mismatched anchor counts return a safe 422 validation envelope
+- the response contains no quoted span or raw evidence and explicitly reports persisted: false
 
 ## Test Data
 

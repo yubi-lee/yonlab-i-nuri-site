@@ -41,3 +41,8 @@
 ## Traceability Rule
 
 Every requirement is linked to at least one system design document, component or interface design, security or operations design, and verification document. The traceability purpose is design completeness and verifiability.
+The diagnosis score API is a contract-level implementation of the existing minimization,
+correlation, interface-versioning, and deterministic-verification requirements
+(REQ-NF-002, REQ-NF-009, REQ-NF-011, and REQ-NF-015). Its endpoint contract is defined in
+ICD-001, and its API validation, safe-error, request-ID, and no-persistence scenarios are
+verified through VER-002; no new requirement identifier is introduced by this implementation.

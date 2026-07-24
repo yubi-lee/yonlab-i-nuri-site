@@ -26,6 +26,7 @@ Product acceptance requires successful verification of:
 - email delivery workflows
 - search workflows
 - audit and observability
+- diagnosis scoring API validation, deterministic output, correlation, safe errors, and no raw evidence persistence
 - security controls
 - backup, restore, deployment, and rollback
 

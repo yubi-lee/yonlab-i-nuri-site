@@ -1,9 +1,11 @@
 import json
 import uuid
 from contextlib import asynccontextmanager
+from dataclasses import asdict
 from datetime import UTC, datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import func, or_, select, text
@@ -11,6 +13,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.config import get_settings
 from app.database import Base, engine, get_db
+from app.diagnosis import POLICY_VERSION, score_dimension
 from app.models import (
     FAQ,
     Article,
@@ -27,6 +30,8 @@ from app.models import (
 from app.rc1 import issue_tokens
 from app.rc1 import router as rc1_router
 from app.schemas import (
+    DiagnosisScoreRequest,
+    DiagnosisScoreResponse,
     InquiryCreate,
     InquiryOut,
     LoginRequest,
@@ -39,6 +44,7 @@ from app.security import (
     admin_user,
     current_user,
     hash_password,
+    optional_current_user,
     verify_password,
 )
 
@@ -66,6 +72,7 @@ app.add_middleware(
 @app.middleware("http")
 async def request_context(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    request.state.request_id = request_id
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -74,12 +81,33 @@ async def request_context(request: Request, call_next):
     return response
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_error(request: Request, _: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": {
+                "code": "validation_error",
+                "message": "요청 형식이 올바르지 않습니다.",
+                "request_id": request.state.request_id,
+            }
+        },
+    )
+
+
 @app.exception_handler(Exception)
-async def safe_error(_: Request, exc: Exception):
+async def safe_error(request: Request, exc: Exception):
     if isinstance(exc, HTTPException):
         raise exc
     return JSONResponse(
-        status_code=500, content={"error": {"code": "internal_error", "message": "??? ???? ?????."}}
+        status_code=500,
+        content={
+            "error": {
+                "code": "internal_error",
+                "message": "??? ???? ?????.",
+                "request_id": request.state.request_id,
+            }
+        },
     )
 
 
@@ -96,6 +124,21 @@ def live():
 def ready(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))
     return {"status": "ready"}
+
+
+@app.post(
+    "/api/v1/diagnosis/score",
+    response_model=DiagnosisScoreResponse,
+    tags=["diagnosis"],
+)
+def diagnosis_score(data: DiagnosisScoreRequest, request: Request):
+    result = score_dimension(data.model_dump(mode="json"))
+    return {
+        "policy_version": POLICY_VERSION,
+        **asdict(result),
+        "request_id": request.state.request_id,
+        "persisted": False,
+    }
 
 
 @app.post("/api/v1/auth/register", response_model=TokenOut, status_code=201, tags=["auth"])
@@ -261,10 +304,16 @@ def search(q: str = Query(min_length=1), db: Session = Depends(get_db)):
 
 
 @app.post("/api/v1/inquiries", response_model=InquiryOut, status_code=201, tags=["inquiries"])
-def create_inquiry(data: InquiryCreate, db: Session = Depends(get_db)):
+def create_inquiry(
+    data: InquiryCreate,
+    user: User | None = Depends(optional_current_user),
+    db: Session = Depends(get_db),
+):
     if not data.privacy_agreed:
         raise HTTPException(422, "???? ?? ??? ?????.")
-    item = Inquiry(**data.model_dump())
+    values = data.model_dump()
+    values["user_id"] = user.id if user else None
+    item = Inquiry(**values)
     db.add(item)
     db.commit()
     db.refresh(item)
