@@ -81,4 +81,3 @@ def test_score_endpoint_rejects_evidence_anchor_count_mismatch():
 
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "validation_error"
-
